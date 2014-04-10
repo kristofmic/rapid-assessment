@@ -6,7 +6,7 @@
     return {
     	restrict: 'A',
     	templateUrl: 'assets/javascripts/app/assessment/assessment_table.html',
-    	replace: true,
+    	replace: false,
     	scope: {
     		htRequirements: '=',
     		htFilter: '='
