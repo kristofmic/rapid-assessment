@@ -7,7 +7,7 @@
     <script src="assets/javascripts/build.js"></script>
     <link href='http://fonts.googleapis.com/css?family=Lato:400,700,400italic' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="assets/stylesheets/style.css">
+    <link rel="stylesheet" type="text/css" href="assets/stylesheets/build.css">
 	</head>
 
   <body ng-app='hitrust-ra'>

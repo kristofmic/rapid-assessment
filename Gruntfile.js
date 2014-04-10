@@ -2,6 +2,7 @@ module.exports = function(grunt) {
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
     scriptsPath: './assets/javascripts',
+    stylesheetsPath: './assets/stylesheets',
 
     concat: {
       options: {
@@ -21,6 +22,25 @@ module.exports = function(grunt) {
       }
     },
 
+    sass: {
+      dev: {
+        options: {
+          style: 'expanded' 
+        },
+        files: {
+          '<%= stylesheetsPath %>/build.css': '<%= stylesheetsPath %>/style.scss'
+        }
+      },
+      dist: {
+        options: {
+          style: 'compressed' 
+        },
+        files: {
+          '<%= stylesheetsPath %>/build.min.css': '<%= stylesheetsPath %>/style.scss'
+        }
+      }
+    }, 
+
     jshint: {
       options: { asi: true, force: true },
       all: ['<%= scriptsPath %>/**/*.js', '!<%= scriptsPath %>/build.js']
@@ -30,6 +50,10 @@ module.exports = function(grunt) {
       main: {
         files: ['<%= scriptsPath %>/**/*.js', '!<%= scriptsPath %>/build.js'],
         tasks: ['concat'] //, 'jshint']
+      },
+      css: {
+        files: '<%= stylesheetsPath %>/{,*/}*.{scss,sass}',
+        tasks: ['sass']
       },
 
       grunt: {
@@ -41,6 +65,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-jshint');
+  grunt.loadNpmTasks('grunt-contrib-sass');
 
-  grunt.registerTask('default', ['concat']);
+  grunt.registerTask('default', ['concat', 'sass:dev', 'sass:dist', 'watch']);
 };
