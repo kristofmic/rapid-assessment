@@ -1,12 +1,19 @@
 <div class='row'>
   <div class='col-sm-12'>
     <ul class="nav nav-tabs">
-      <li><a ui-sref='assessment.policy'>Policy</a></li>
-      <li><a href="#">Procedure</a></li>
-      <li><a href="#">Implemented</a></li>
-      <li><a href="#">Measured</a></li>
-      <li><a href="#">Managed</a></li>
+      <li  ng-class='{active: nav.active}' ng-repeat='nav in navs track by $index'>
+        <a ui-sref='{{nav.sref}}'>{{nav.label}}</a>
+      </li>
     </ul>
-    <div ui-view></div>
   </div>
 </div>
+<div class='row toolbar'>
+	<div class='col-sm-3 col-sm-offset-9'>
+		<form class="form-inline" role="search">
+      <div class="form-group">
+        <input type="text" class="form-control" placeholder="Search" ng-model='search'>
+      </div>
+    </form>
+	</div>
+</div>
+<div ui-view></div>

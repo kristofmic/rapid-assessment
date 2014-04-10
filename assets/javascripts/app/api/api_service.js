@@ -1,5 +1,4 @@
-(function(global){
-    var hitrust = global.HT = global.HT || {};
+(function(hitrust){
 
     hitrust.ra.factory('HTAPI', ['$http', '$q', function($http, $q) {
 
@@ -50,4 +49,4 @@
       destroy: destroy
     }
   }]);
-}(window));
+}(window.HT));

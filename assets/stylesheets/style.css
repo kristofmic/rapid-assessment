@@ -5,3 +5,15 @@
 #main table {
   font-size: 14px;
 }
+
+#main .toolbar {
+	padding: 7px 0;
+}
+
+#main .toolbar form {
+	margin-bottom: 0;
+}
+
+#main .toolbar form input {
+	width: 300px;
+}

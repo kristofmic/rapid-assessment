@@ -1,7 +1,10 @@
 {
-  "name": "HITRUST Rapid Assessment",
+  "name": "rapid-assessment",
   "version": "0.1.0",
   "devDependencies": {
-    "grunt": "~0.4.2"
+    "grunt": "^0.4.4",
+    "grunt-contrib-concat": "^0.4.0",
+    "grunt-contrib-watch": "^0.6.1",
+    "grunt-contrib-jshint": "^0.10.0"
   }
 }

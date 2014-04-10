@@ -1,6 +1,4 @@
-(function(global){
-  
-  var hitrust = global.HT = global.HT || {};
+(function(hitrust){
   
   hitrust.ra.factory('AssessmentSvc', ['HTAPI', function(api){
     
@@ -15,4 +13,4 @@
     };
   }]);
 
-}(window));
+}(window.HT));
