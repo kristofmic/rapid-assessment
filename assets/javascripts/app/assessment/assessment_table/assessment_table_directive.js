@@ -8,13 +8,24 @@
     };
 
     var control = ['$scope', function($scope) {
-        $scope.setResponse = function(fid) {
-            Assessment.put($scope.htAssessmentTable, $scope.htHeadings.response, fid, $scope.responses[fid]);
+        $scope.setResponse = function(req) {
+            Assessment.put($scope.htAssessmentTable, $scope.htHeadings.response, req.fID, req.response);
         };
 
-        $scope.setScope = function(fid) {
-            Assessment.put($scope.htAssessmentTable, $scope.htHeadings.scope, fid, $scope.scopes[fid]);
+        $scope.setScope = function(req) {
+            Assessment.put($scope.htAssessmentTable, $scope.htHeadings.scope, req.fID, req.scope);
         };
+
+        $scope.setSelected = function(req) {
+            $scope.$emit('reqSelect', req);
+        }
+
+        $scope.$on('toolbarSelect', function(e, select) {
+            _.each($scope.htRequirements, function(req){
+                req.select = select;
+            });
+        });
+
     }];
 
     return {
@@ -26,9 +37,9 @@
     	scope: {
             htAssessmentTable: '@',
     		htRequirements: '=',
-    		htFilter: '=',
             htHeadings: '=',
-            htScopeOptions: '='
+            htScopeOptions: '=',
+            htToolbar: '='
     	}
     };
   }]);

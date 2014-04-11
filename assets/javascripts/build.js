@@ -168,40 +168,36 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
 /* SOURCE: ./assets/javascripts/app/assessment/assessment_controller.js */
 (function(hitrust){
 
-  hitrust.ra.controller('AssessmentCtrl', ['$scope', function($scope){
-		$scope.navs = [
-			{
-				label: 'Policy',
-				sref: 'assessment.policy',
-				active: false
-			},
-			{
-				label: 'Procedure',
-				sref: 'assessment.procedure',
-				active: false
-			},
-			{
-				label: 'Implemented',
-				sref: 'assessment.implemented',
-				active: false
-			},
-			{
-				label: 'Measured',
-				sref: 'assessment.measured',
-				active: false
-			},
-			{
-				label: 'Managed',
-				sref: 'assessment.managed',
-				active: false
-			}
-		];
+  hitrust.ra.controller('AssessmentCtrl', ['$scope', 'HTNav', function($scope, navManager){
+		$scope.navs = navManager.get()
 
 		$scope.setActiveNav = function(index) {
-			angular.forEach($scope.navs, function(val, i) {
-				(i === index) ? val.active = true : val.active = false;
-			});
+			navManager.set(index);
 		};
+
+		$scope.toolbar = {
+			select: false,
+			requirements: {},
+			activeRequirements: 0,
+			selected: function() {
+				if (!$scope.toolbar.select) {$scope.toolbar.activeRequirements = 0;}
+				$scope.$broadcast('toolbarSelect', $scope.toolbar.select);
+			},
+		};
+
+		$scope.$on('reqSelect', function(e, req) {
+			if (req.select) {
+				$scope.toolbar.select = true;
+				$scope.toolbar.requirements[req.fID] = req;
+				$scope.toolbar.activeRequirements += 1;
+			} else {
+				$scope.toolbar.requirements[req.fID] = undefined;
+				$scope.toolbar.activeRequirements -= 1;
+				if ($scope.toolbar.activeRequirements === 0) {
+					$scope.toolbar.select = false;
+				}
+			}
+		});
 
   }]);
 
@@ -241,13 +237,24 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
     };
 
     var control = ['$scope', function($scope) {
-        $scope.setResponse = function(fid) {
-            Assessment.put($scope.htAssessmentTable, $scope.htHeadings.response, fid, $scope.responses[fid]);
+        $scope.setResponse = function(req) {
+            Assessment.put($scope.htAssessmentTable, $scope.htHeadings.response, req.fID, req.response);
         };
 
-        $scope.setScope = function(fid) {
-            Assessment.put($scope.htAssessmentTable, $scope.htHeadings.scope, fid, $scope.scopes[fid]);
+        $scope.setScope = function(req) {
+            Assessment.put($scope.htAssessmentTable, $scope.htHeadings.scope, req.fID, req.scope);
         };
+
+        $scope.setSelected = function(req) {
+            $scope.$emit('reqSelect', req);
+        }
+
+        $scope.$on('toolbarSelect', function(e, select) {
+            _.each($scope.htRequirements, function(req){
+                req.select = select;
+            });
+        });
+
     }];
 
     return {
@@ -259,9 +266,9 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
     	scope: {
             htAssessmentTable: '@',
     		htRequirements: '=',
-    		htFilter: '=',
             htHeadings: '=',
-            htScopeOptions: '='
+            htScopeOptions: '=',
+            htToolbar: '='
     	}
     };
   }]);
@@ -357,7 +364,7 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
   
   hitrust.ra.controller('ProcedureCtrl', ['$scope', 'AssessmentSvc', function($scope, Assessment){
     $scope.setActiveNav(1);
-    $scope.type = 'Procedure';
+    $scope.assessmentType = 'Procedure';
     $scope.requirements = Assessment.get();
     $scope.headings = {
       response: 'Documented',
@@ -372,4 +379,54 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
     ];
   }]);
 
+}(window.HT));/* END OF SOURCE */
+
+/* SOURCE: ./assets/javascripts/app/navigation/navigation_factory.js */
+(function(hitrust){
+
+    hitrust.ra.factory('HTNav', [function() {
+
+    var navs = [
+      {
+        label: 'Policy',
+        sref: 'assessment.policy',
+        active: false
+      },
+      {
+        label: 'Procedure',
+        sref: 'assessment.procedure',
+        active: false
+      },
+      {
+        label: 'Implemented',
+        sref: 'assessment.implemented',
+        active: false
+      },
+      {
+        label: 'Measured',
+        sref: 'assessment.measured',
+        active: false
+      },
+      {
+        label: 'Managed',
+        sref: 'assessment.managed',
+        active: false
+      }
+    ];
+
+    var get = function() {
+      return navs;
+    };
+
+    var set = function(index) {
+      angular.forEach(navs, function(val, i) {
+        (i === index) ? val.active = true : val.active = false;
+      });
+    };
+
+    return {
+      get: get,
+      set: set
+    };
+  }]);
 }(window.HT));

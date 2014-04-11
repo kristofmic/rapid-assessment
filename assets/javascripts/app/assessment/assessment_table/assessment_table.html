@@ -1,25 +1,31 @@
 <table class="table table-hover">
   <thead>
+    <th width='7%'></th>
     <th width='15%'>Domain</th>
     <th width='5%'>Control</th>
-    <th width='40%'>Requirement</th>
+    <th width='38%'>Requirement</th>
     <th width='15%'>{{htHeadings.response}}</th>
-    <th width='25%'>{{htHeadings.scope}}</th>
+    <th width='20%'>{{htHeadings.scope}}</th>
   </thead>
   <tbody>
-    <tr ng-repeat='req in htRequirements | orderBy:["Domain", "Control"] | filter:htFilter'>
+    <tr ng-repeat='req in htRequirements | orderBy:["Domain", "Control"] | filter:htToolbar.search'>
+      <td width='7%'>
+        <div class="form-group">
+          <input ng-change='setSelected(req)' ng-model='req.select' type='checkbox' />
+        </div>
+      </td>
       <td width='15%'>{{req.Domain}}</td>
       <td width='5%'>{{req.Control}}</td>
-      <td width='40%'>{{req.Requirement}}</td>
+      <td width='38%'>{{req.Requirement}}</td>
       <td width='15%'>
-        <select name='Documented' class="form-control" ng-model='responses[req.fID]' ng-change='setResponse(req.fID)'>
+        <select name='Documented' class="form-control" ng-model='req.response' ng-change='setResponse(req)'>
           <option value>-Select-</option>
           <option value='0'>No</option>
           <option value='1'>Yes</option>
         </select>
       </td>
-      <td width='25%'>
-        <select name='Scope' class="form-control" ng-model='scopes[req.fID]' ng-change='setScope(req.fID)'>
+      <td width='20%'>
+        <select name='Scope' class="form-control" ng-model='req.scope' ng-change='setScope(req)'>
           <option value>-Select-</option>
           <option ng-repeat='opt in htScopeOptions track by $index' value='{{$index}}'>{{opt}}</option>
         </select>
@@ -27,6 +33,6 @@
     </tr>
   </tbody>
 </table>
-<div class="alert alert-warning" ng-show='(htRequirements|filter:htFilter).length === 0'>
+<div class="alert alert-warning" ng-show='(htRequirements|filter:htToolbar.search).length === 0'>
   There are no search results. Please try again.
 </div>
