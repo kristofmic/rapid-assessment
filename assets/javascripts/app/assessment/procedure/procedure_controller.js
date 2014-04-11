@@ -2,7 +2,7 @@
   
   hitrust.ra.controller('ProcedureCtrl', ['$scope', 'AssessmentSvc', function($scope, Assessment){
     $scope.setActiveNav(1);
-    $scope.type = 'Procedure';
+    $scope.assessmentType = 'Procedure';
     $scope.requirements = Assessment.get();
     $scope.headings = {
       response: 'Documented',
