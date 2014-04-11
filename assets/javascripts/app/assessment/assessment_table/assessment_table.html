@@ -2,30 +2,26 @@
   <thead>
     <th width='15%'>Domain</th>
     <th width='5%'>Control</th>
-    <th width='45%'>Requirement</th>
-    <th width='10%'>Documented</th>
-    <th width='25%'>Appplied to Scope of Environment</th>
+    <th width='40%'>Requirement</th>
+    <th width='15%'>{{htHeadings.response}}</th>
+    <th width='25%'>{{htHeadings.scope}}</th>
   </thead>
   <tbody>
     <tr ng-repeat='req in htRequirements | orderBy:["Domain", "Control"] | filter:htFilter'>
       <td width='15%'>{{req.Domain}}</td>
       <td width='5%'>{{req.Control}}</td>
-      <td width='45%'>{{req.Requirement}}</td>
-      <td widht='10%'>
-        <select name='Documented' class="form-control">
+      <td width='40%'>{{req.Requirement}}</td>
+      <td width='15%'>
+        <select name='Documented' class="form-control" ng-model='responses[req.fID]' ng-change='setResponse(req.fID)'>
           <option value>-Select-</option>
           <option value='0'>No</option>
           <option value='1'>Yes</option>
         </select>
       </td>
       <td width='25%'>
-        <select name='Scope' class="form-control">
+        <select name='Scope' class="form-control" ng-model='scopes[req.fID]' ng-change='setScope(req.fID)'>
           <option value>-Select-</option>
-          <option value='0'>None</option>
-          <option value='1'>Less than half</option>
-          <option value='2'>Half</option>
-          <option value='3'>More than half</option>
-          <option value='4'>All</option>
+          <option ng-repeat='opt in htScopeOptions track by $index' value='{{$index}}'>{{opt}}</option>
         </select>
       </td>
     </tr>

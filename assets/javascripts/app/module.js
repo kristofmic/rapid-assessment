@@ -5,7 +5,7 @@
 
   hitrust.ra.config(['$stateProvider', '$urlRouterProvider', 
   function($stateProvider, $urlRouterProvider){
-    $urlRouterProvider.otherwise("/assessment");
+    $urlRouterProvider.otherwise("/assessment/policy");
 
     $stateProvider
       .state('assessment', {
@@ -15,27 +15,27 @@
       })
       .state('assessment.policy', {
         url: '/policy',
-        templateUrl: 'assets/javascripts/app/assessment/policy/policy.html',
+        templateUrl: 'assets/javascripts/app/assessment/assessment_questionnaire.html',
         controller: 'PolicyCtrl'
       })
       .state('assessment.procedure', {
         url: '/procedure',
-        templateUrl: 'assets/javascripts/app/assessment/procedure/procedure.html',
+        templateUrl: 'assets/javascripts/app/assessment/assessment_questionnaire.html',
         controller: 'ProcedureCtrl'
       })
       .state('assessment.implemented', {
         url: '/implemented',
-        templateUrl: 'assets/javascripts/app/assessment/implemented/implemented.html',
+        templateUrl: 'assets/javascripts/app/assessment/assessment_questionnaire.html',
         controller: 'ImplementedCtrl'
       })
       .state('assessment.measured', {
         url: '/measured',
-        templateUrl: 'assets/javascripts/app/assessment/measured/measured.html',
+        templateUrl: 'assets/javascripts/app/assessment/assessment_questionnaire.html',
         controller: 'MeasuredCtrl'
       })
       .state('assessment.managed', {
         url: '/managed',
-        templateUrl: 'assets/javascripts/app/assessment/managed/managed.html',
+        templateUrl: 'assets/javascripts/app/assessment/assessment_questionnaire.html',
         controller: 'ManagedCtrl'
       });
   }]);

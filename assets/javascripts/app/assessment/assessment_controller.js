@@ -35,10 +35,6 @@
 			});
 		};
 
-		window.getScope = function() {
-    	return $scope;
-    }
-
   }]);
 
 }(window.HT));

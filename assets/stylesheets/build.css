@@ -7,9 +7,6 @@
 #main .toolbar {
   padding: 7px 0;
 }
-#main .toolbar form {
+#main .toolbar .form-group {
   margin-bottom: 0;
-}
-#main .toolbar form input {
-  width: 300px;
 }
