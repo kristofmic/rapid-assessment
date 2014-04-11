@@ -1,0 +1,5 @@
+ - toolbar (mass assignments)
+ - separate response and scope model per type (policy, procedure, etc.)
+ - pagination
+ - answering in separate view
+ - dashboard
