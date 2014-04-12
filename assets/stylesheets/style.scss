@@ -45,6 +45,24 @@ button, .btn, input, select, textarea, a {
       margin-top: 4px;
     }
 
+    .star-label {
+      display: inline-block;
+      margin-left: 8px;
+      margin-top: 5px;
+      cursor: pointer;
+
+      span {
+        height: 14px;
+        width: 15px;
+        font-size: 17px;
+        color: #ccc;
+
+        &.glyphicon-star {
+          color: #000;
+        }
+      }
+    }
+
     button.dropdown-toggle {
       margin-top: 2px;
     }

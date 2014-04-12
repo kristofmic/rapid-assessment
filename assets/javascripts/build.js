@@ -512,6 +512,32 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
 
 }(window.HT));/* END OF SOURCE */
 
+/* SOURCE: ./assets/javascripts/app/inputs/star_directive.js */
+(function(hitrust){
+
+  hitrust.ra.directive('htStar', [function(){
+
+    var linker = function(scope, elem, attrs) {
+    };
+
+    var control = ['$scope', function($scope) {
+    }];
+
+    return {
+      restrict: 'A',
+      templateUrl: 'assets/javascripts/app/inputs/star.html',
+      replace: false,
+      link: linker,
+      controller: control,
+      scope: {
+        htStarModel: '=',
+        htStarId: '@'
+      }
+    };
+  }]);
+
+}(window.HT));/* END OF SOURCE */
+
 /* SOURCE: ./assets/javascripts/app/navigation/navigation_factory.js */
 (function(hitrust){
 

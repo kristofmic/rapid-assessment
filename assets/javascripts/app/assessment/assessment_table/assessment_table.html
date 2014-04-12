@@ -11,6 +11,7 @@
     <tr ng-repeat='req in (fhtRequirements = (htRequirements | orderBy:["Domain", "Control"] | filter:htFilter)) track by $index' ng-class="{warning:req.select}">
       <td width='7%'>
         <span ht-checkbox ht-checkbox-id='req-select-{{$index}}' ht-checkbox-change='setSelected' ht-checkbox-model='req.select'></span>
+        <span ht-star ht-star-id='req-star-{{$index}}' ht-star-model='req.starred'></span>
       </td>
       <td width='15%'>{{req.Domain}}</td>
       <td width='5%'>{{req.Control}}</td>

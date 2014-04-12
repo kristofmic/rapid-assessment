@@ -1,4 +1,3 @@
- - separate response and scope model per type (policy, procedure, etc.)
  - star/flag requirements
  - column ordering
  - pagination
