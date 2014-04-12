@@ -3,8 +3,8 @@
     <th width='7%'></th>
     <th width='15%'>Domain</th>
     <th width='5%'>Control</th>
-    <th width='38%'>Requirement</th>
-    <th width='15%'>{{htHeadings.response}}</th>
+    <th width='43%'>Requirement</th>
+    <th width='10%'>{{htHeadings.response}}</th>
     <th width='20%'>{{htHeadings.scope}}</th>
   </thead>
   <tbody>
@@ -14,16 +14,12 @@
       </td>
       <td width='15%'>{{req.Domain}}</td>
       <td width='5%'>{{req.Control}}</td>
-      <td width='38%'>{{req.Requirement}}</td>
-      <td width='15%'>
-        <span ht-select ht-select-options='htResponseOptions' ht-select-model='req.response' ht-select-change='setAnswer' ht-select-type='response'></span>
-
+      <td width='43%'>{{req.Requirement}}</td>
+      <td width='10%'>
+        <span ht-select ht-select-options='htResponseOptions' ht-select-model='req' ht-select-change='setAnswer' ht-select-property='response'></span>
       </td>
       <td width='20%'>
-        <select class="form-control" ng-model='req.scope' ng-change='setAnswer("scope", req)'>
-          <option value>-Select-</option>
-          <option ng-repeat='opt in htScopeOptions track by $index' value='{{$index}}'>{{opt}}</option>
-        </select>
+        <span ht-select ht-select-options='htScopeOptions' ht-select-model='req' ht-select-change='setAnswer' ht-select-property='scope'></span>
       </td>
     </tr>
   </tbody>

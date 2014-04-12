@@ -188,8 +188,8 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
 				}
 				$scope.$broadcast('toolbarSelect', value);
 			},
-			setAnswer: function(type, answer) {
-				$scope.$broadcast('toolbarAnswer', type, answer);
+			setAnswer: function(model, type, index) {
+				$scope.$broadcast('toolbarAnswer', type, model[type]);
 			}
 		};
 
@@ -243,8 +243,8 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
     };
 
     var control = ['$scope', function($scope) {
-        $scope.setAnswer = function(type, req) {
-            Assessment.put($scope.htAssessmentTable, $scope.htHeadings[type], req.fID, req[type]);
+        $scope.setAnswer = function(model, prop, index) {
+            Assessment.put($scope.htAssessmentTable, $scope.htHeadings[prop], model.fID, model[prop]);
         };
 
         $scope.setSelected = function(value) {
@@ -261,7 +261,7 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
             _.each($scope.htRequirements, function(req) {
                 if (req.select) {
                     req[type] = answer;
-                    $scope.setAnswer(type, req);
+                    $scope.setAnswer(req, type, answer);
                 }
             });
         });
@@ -452,12 +452,10 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
     };
 
     var control = ['$scope', function($scope) {
-      $scope.selectedLabel = '-Select-';
 
       $scope.select = function($index) {
-        $scope.htSelectModel = $index;
-        $scope.selectedLabel = $scope.htSelectOptions[$index];
-        $scope.htSelectChange($scope.htSelectType, $scope.htSelectModel);
+        $scope.htSelectModel[$scope.htSelectProperty] = $index;
+        $scope.htSelectChange($scope.htSelectModel, $scope.htSelectProperty, $index);
       };
     }];
 
@@ -471,7 +469,7 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
         htSelectOptions: '=',
         htSelectChange: '=',
         htSelectModel: '=',
-        htSelectType: '@'
+        htSelectProperty: '@',
       }
     };
   }]);

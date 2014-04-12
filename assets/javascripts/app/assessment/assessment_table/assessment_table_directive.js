@@ -8,8 +8,8 @@
     };
 
     var control = ['$scope', function($scope) {
-        $scope.setAnswer = function(type, req) {
-            Assessment.put($scope.htAssessmentTable, $scope.htHeadings[type], req.fID, req[type]);
+        $scope.setAnswer = function(model, prop, index) {
+            Assessment.put($scope.htAssessmentTable, $scope.htHeadings[prop], model.fID, model[prop]);
         };
 
         $scope.setSelected = function(value) {
@@ -26,7 +26,7 @@
             _.each($scope.htRequirements, function(req) {
                 if (req.select) {
                     req[type] = answer;
-                    $scope.setAnswer(type, req);
+                    $scope.setAnswer(req, type, answer);
                 }
             });
         });

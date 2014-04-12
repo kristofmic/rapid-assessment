@@ -20,8 +20,8 @@
 				}
 				$scope.$broadcast('toolbarSelect', value);
 			},
-			setAnswer: function(type, answer) {
-				$scope.$broadcast('toolbarAnswer', type, answer);
+			setAnswer: function(model, type, index) {
+				$scope.$broadcast('toolbarAnswer', type, model[type]);
 			}
 		};
 

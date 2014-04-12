@@ -6,12 +6,10 @@
     };
 
     var control = ['$scope', function($scope) {
-      $scope.selectedLabel = '-Select-';
 
       $scope.select = function($index) {
-        $scope.htSelectModel = $index;
-        $scope.selectedLabel = $scope.htSelectOptions[$index];
-        $scope.htSelectChange($scope.htSelectType, $scope.htSelectModel);
+        $scope.htSelectModel[$scope.htSelectProperty] = $index;
+        $scope.htSelectChange($scope.htSelectModel, $scope.htSelectProperty, $index);
       };
     }];
 
@@ -25,7 +23,7 @@
         htSelectOptions: '=',
         htSelectChange: '=',
         htSelectModel: '=',
-        htSelectType: '@'
+        htSelectProperty: '@',
       }
     };
   }]);
