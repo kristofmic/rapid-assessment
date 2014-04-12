@@ -1,11 +1,14 @@
 (function(hitrust){
 
-  hitrust.ra.controller('AssessmentCtrl', ['$scope', 'HTNav', 'AssessmentSvc', function($scope, navManager, assessment){
-		$scope.navs = navManager.get()
-		$scope.requirements = assessment.get();
+  hitrust.ra.controller('AssessmentCtrl', ['$scope', 'HTNav', function($scope, navManager){
+		$scope.navs = navManager.get();
 
 		$scope.setActiveNav = function(index) {
 			navManager.set(index);
+		};
+
+		$scope.setRequirements = function(reqs) {
+			$scope.requirements = reqs;
 		};
 
 		$scope.toolbar = {
@@ -27,6 +30,13 @@
 			},
 			setAnswer: function(model, type, index) {
 				$scope.$broadcast('toolbarAnswer', type, model[type]);
+			},
+			reset: function() {
+				$scope.toolbar.select = false;
+				$scope.toolbar.activeRequirements = 0;
+				$scope.toolbar.response = '';
+				$scope.toolbar.scope = '';
+				$scope.toolbar.selectPartial = false;
 			}
 		};
 

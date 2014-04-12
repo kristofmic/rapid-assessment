@@ -3,19 +3,19 @@
     <th width='7%'></th>
     <th width='15%'>Domain</th>
     <th width='5%'>Control</th>
-    <th width='43%'>Requirement</th>
-    <th width='10%'>{{htHeadings.response}}</th>
+    <th width='40%'>Requirement</th>
+    <th width='13%'>{{htHeadings.response}}</th>
     <th width='20%'>{{htHeadings.scope}}</th>
   </thead>
   <tbody>
-    <tr ng-repeat='req in (fhtRequirements = (htRequirements | orderBy:["Domain", "Control"] | filter:htFilter)) track by $index'>
+    <tr ng-repeat='req in (fhtRequirements = (htRequirements | orderBy:["Domain", "Control"] | filter:htFilter)) track by $index' ng-class="{warning:req.select}">
       <td width='7%'>
         <span ht-checkbox ht-checkbox-id='req-select-{{$index}}' ht-checkbox-change='setSelected' ht-checkbox-model='req.select'></span>
       </td>
       <td width='15%'>{{req.Domain}}</td>
       <td width='5%'>{{req.Control}}</td>
-      <td width='43%'>{{req.Requirement}}</td>
-      <td width='10%'>
+      <td width='40%'>{{req.Requirement}}</td>
+      <td width='13%'>
         <span ht-select ht-select-options='htResponseOptions' ht-select-model='req' ht-select-change='setAnswer' ht-select-property='response'></span>
       </td>
       <td width='20%'>
