@@ -177,12 +177,21 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
 
 		$scope.toolbar = {
 			select: false,
+			response: '',
+			scope: '',
 			requirements: {},
 			activeRequirements: 0,
 			selected: function() {
-				if (!$scope.toolbar.select) {$scope.toolbar.activeRequirements = 0;}
+				if (!$scope.toolbar.select) {
+					$scope.toolbar.activeRequirements = 0;
+					$scope.toolbar.response = '';
+					$scope.toolbar.scope = '';
+				}
 				$scope.$broadcast('toolbarSelect', $scope.toolbar.select);
 			},
+			setAnswer: function(type, answer) {
+				$scope.$broadcast('toolbarAnswer', type, answer);
+			}
 		};
 
 		$scope.$on('reqSelect', function(e, req) {
@@ -250,8 +259,16 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
         }
 
         $scope.$on('toolbarSelect', function(e, select) {
-            _.each($scope.htRequirements, function(req){
+            _.each($scope.fhtRequirements, function(req) {
                 req.select = select;
+            });
+        });
+
+        $scope.$on('toolbarAnswer', function(e, type, answer) {
+            _.each($scope.htRequirements, function(req) {
+                if (req.select) {
+                    req[type] = answer;
+                }
             });
         });
 
@@ -268,7 +285,7 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
     		htRequirements: '=',
             htHeadings: '=',
             htScopeOptions: '=',
-            htToolbar: '='
+            htFilter: '='
     	}
     };
   }]);

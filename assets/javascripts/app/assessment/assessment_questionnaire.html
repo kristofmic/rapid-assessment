@@ -1,9 +1,40 @@
+<div class='row toolbar'>
+  <div class='col-xs-1'>
+    <div class="form-group">
+      <input ng-change='toolbar.selected()' ng-model='toolbar.select' type='checkbox' />
+    </div>
+  </div>
+  <div class='col-xs-5'>
+    <form class="form-inline" role="form" ng-show='toolbar.select'>
+      <div class='form-group'>
+        <select class="form-control" ng-model='toolbar.response' ng-change='toolbar.setAnswer("response", toolbar.response)'>
+          <option value=''>-Select-</option>
+          <option value='0'>No</option>
+          <option value='1'>Yes</option>
+        </select>
+      </div>
+      <div class='form-group'>
+        <select class="form-control" ng-model='toolbar.scope' ng-change='toolbar.setAnswer("scope", toolbar.scope)'>
+          <option value=''>-Select-</option>
+          <option ng-repeat='opt in scopeOptions track by $index' value='{{$index}}'>{{opt}}</option>
+        </select>
+      </div>
+    </form>
+  </div>
+
+  <div class='col-xs-3 col-xs-offset-3'>
+    <div class="form-group">
+      <input type="text" class="form-control" placeholder="Search" ng-model='toolbar.search'>
+    </div>
+  </div>
+</div>
+
 <div class='row'>
   <div class='col-sm-12'>
     <div ht-assessment-table='{{assessmentType}}'
          ht-requirements='requirements' 
          ht-headings='headings' 
-         ht-toolbar='toolbar'
+         ht-filter='toolbar.search'
          ht-scope-options='scopeOptions'>
     </div>
   </div>

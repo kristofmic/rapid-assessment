@@ -21,8 +21,16 @@
         }
 
         $scope.$on('toolbarSelect', function(e, select) {
-            _.each($scope.htRequirements, function(req){
+            _.each($scope.fhtRequirements, function(req) {
                 req.select = select;
+            });
+        });
+
+        $scope.$on('toolbarAnswer', function(e, type, answer) {
+            _.each($scope.htRequirements, function(req) {
+                if (req.select) {
+                    req[type] = answer;
+                }
             });
         });
 
@@ -39,7 +47,7 @@
     		htRequirements: '=',
             htHeadings: '=',
             htScopeOptions: '=',
-            htToolbar: '='
+            htFilter: '='
     	}
     };
   }]);

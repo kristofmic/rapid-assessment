@@ -8,7 +8,7 @@
     <th width='20%'>{{htHeadings.scope}}</th>
   </thead>
   <tbody>
-    <tr ng-repeat='req in htRequirements | orderBy:["Domain", "Control"] | filter:htToolbar.search'>
+    <tr ng-repeat='req in (fhtRequirements = (htRequirements | orderBy:["Domain", "Control"] | filter:htFilter))'>
       <td width='7%'>
         <div class="form-group">
           <input ng-change='setSelected(req)' ng-model='req.select' type='checkbox' />
@@ -18,14 +18,14 @@
       <td width='5%'>{{req.Control}}</td>
       <td width='38%'>{{req.Requirement}}</td>
       <td width='15%'>
-        <select name='Documented' class="form-control" ng-model='req.response' ng-change='setResponse(req)'>
+        <select class="form-control" ng-model='req.response' ng-change='setResponse(req)'>
           <option value>-Select-</option>
           <option value='0'>No</option>
           <option value='1'>Yes</option>
         </select>
       </td>
       <td width='20%'>
-        <select name='Scope' class="form-control" ng-model='req.scope' ng-change='setScope(req)'>
+        <select class="form-control" ng-model='req.scope' ng-change='setScope(req)'>
           <option value>-Select-</option>
           <option ng-repeat='opt in htScopeOptions track by $index' value='{{$index}}'>{{opt}}</option>
         </select>
@@ -33,6 +33,6 @@
     </tr>
   </tbody>
 </table>
-<div class="alert alert-warning" ng-show='(htRequirements|filter:htToolbar.search).length === 0'>
+<div class="alert alert-warning" ng-show='(htRequirements|filter:htFilter).length === 0'>
   There are no search results. Please try again.
 </div>

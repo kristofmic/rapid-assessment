@@ -9,12 +9,21 @@
 
 		$scope.toolbar = {
 			select: false,
+			response: '',
+			scope: '',
 			requirements: {},
 			activeRequirements: 0,
 			selected: function() {
-				if (!$scope.toolbar.select) {$scope.toolbar.activeRequirements = 0;}
+				if (!$scope.toolbar.select) {
+					$scope.toolbar.activeRequirements = 0;
+					$scope.toolbar.response = '';
+					$scope.toolbar.scope = '';
+				}
 				$scope.$broadcast('toolbarSelect', $scope.toolbar.select);
 			},
+			setAnswer: function(type, answer) {
+				$scope.$broadcast('toolbarAnswer', type, answer);
+			}
 		};
 
 		$scope.$on('reqSelect', function(e, req) {
