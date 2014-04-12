@@ -168,8 +168,9 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
 /* SOURCE: ./assets/javascripts/app/assessment/assessment_controller.js */
 (function(hitrust){
 
-  hitrust.ra.controller('AssessmentCtrl', ['$scope', 'HTNav', function($scope, navManager){
+  hitrust.ra.controller('AssessmentCtrl', ['$scope', 'HTNav', 'AssessmentSvc', function($scope, navManager, assessment){
 		$scope.navs = navManager.get()
+		$scope.requirements = assessment.get();
 
 		$scope.setActiveNav = function(index) {
 			navManager.set(index);
@@ -177,6 +178,7 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
 
 		$scope.toolbar = {
 			select: false,
+			selectPartial: false,
 			response: '',
 			scope: '',
 			activeRequirements: 0,
@@ -185,7 +187,10 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
 					$scope.toolbar.activeRequirements = 0;
 					$scope.toolbar.response = '';
 					$scope.toolbar.scope = '';
+				} else {
+					$scope.toolbar.activeRequirements = $scope.requirements.length;
 				}
+				$scope.toolbar.selectPartial = false;
 				$scope.$broadcast('toolbarSelect', value);
 			},
 			setAnswer: function(model, type, index) {
@@ -196,11 +201,19 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
 		$scope.$on('requirementSelect', function(e, value) {
 			if (value) {
 				$scope.toolbar.select = true;
+				$scope.toolbar.selectPartial = true;
 				$scope.toolbar.activeRequirements += 1;
+				if ($scope.toolbar.activeRequirements === $scope.requirements.length) {
+					$scope.toolbar.selectPartial = false;	
+				}
 			} else {
 				$scope.toolbar.activeRequirements -= 1;
+				if ($scope.toolbar.activeRequirements !== $scope.requirements.length) {
+					$scope.toolbar.selectPartial = true;
+				}
 				if ($scope.toolbar.activeRequirements === 0) {
 					$scope.toolbar.select = false;
+					$scope.toolbar.selectPartial = false;
 				}
 			}
 		});
@@ -290,10 +303,9 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
 /* SOURCE: ./assets/javascripts/app/assessment/implemented/implemented_controller.js */
 (function(hitrust){
   
-  hitrust.ra.controller('ImplementedCtrl', ['$scope', 'AssessmentSvc', function($scope, Assessment){
+  hitrust.ra.controller('ImplementedCtrl', ['$scope', function($scope){
     $scope.setActiveNav(2);
     $scope.assessmentType = 'Implemented';
-    $scope.requirements = Assessment.get();
     $scope.headings = {
       response: 'Implemented',
       scope: 'Applied to Scope of Environment'
@@ -316,10 +328,9 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
 /* SOURCE: ./assets/javascripts/app/assessment/managed/managed_controller.js */
 (function(hitrust){
   
-  hitrust.ra.controller('ManagedCtrl', ['$scope', 'AssessmentSvc', function($scope, Assessment){
+  hitrust.ra.controller('ManagedCtrl', ['$scope', function($scope){
     $scope.setActiveNav(4);
     $scope.assessmentType = 'Managed';
-    $scope.requirements = Assessment.get();
     $scope.headings = {
       response: 'Corrective Actions',
       scope: 'Types of Corrective Actions'
@@ -340,10 +351,9 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
 /* SOURCE: ./assets/javascripts/app/assessment/measured/measured_controller.js */
 (function(hitrust){
   
-  hitrust.ra.controller('MeasuredCtrl', ['$scope', 'AssessmentSvc', function($scope, Assessment){
+  hitrust.ra.controller('MeasuredCtrl', ['$scope', function($scope){
     $scope.setActiveNav(3);
     $scope.assessmentType = 'Measured';
-    $scope.requirements = Assessment.get();
     $scope.headings = {
       response: 'Review',
       scope: 'Types of Reviews'
@@ -364,10 +374,9 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
 /* SOURCE: ./assets/javascripts/app/assessment/policy/policy_controller.js */
 (function(hitrust){
   
-  hitrust.ra.controller('PolicyCtrl', ['$scope', 'AssessmentSvc', function($scope, Assessment){
+  hitrust.ra.controller('PolicyCtrl', ['$scope', function($scope){
     $scope.setActiveNav(0);
     $scope.assessmentType = 'Policy';
-    $scope.requirements = Assessment.get();
     $scope.headings = {
       response: 'Documented',
       scope: 'Applies to Scope of Environment'
@@ -390,10 +399,9 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
 /* SOURCE: ./assets/javascripts/app/assessment/procedure/procedure_controller.js */
 (function(hitrust){
   
-  hitrust.ra.controller('ProcedureCtrl', ['$scope', 'AssessmentSvc', function($scope, Assessment){
+  hitrust.ra.controller('ProcedureCtrl', ['$scope', function($scope){
     $scope.setActiveNav(1);
     $scope.assessmentType = 'Procedure';
-    $scope.requirements = Assessment.get();
     $scope.headings = {
       response: 'Documented',
       scope: 'Applies to Scope of Environment'
@@ -436,7 +444,8 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
       scope: {
         htCheckboxId: '@',
         htCheckboxChange: '=',
-        htCheckboxModel: '='
+        htCheckboxModel: '=',
+        htCheckboxPartial: '='
       }
     };
   }]);

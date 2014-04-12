@@ -1,9 +1,8 @@
 (function(hitrust){
   
-  hitrust.ra.controller('ManagedCtrl', ['$scope', 'AssessmentSvc', function($scope, Assessment){
+  hitrust.ra.controller('ManagedCtrl', ['$scope', function($scope){
     $scope.setActiveNav(4);
     $scope.assessmentType = 'Managed';
-    $scope.requirements = Assessment.get();
     $scope.headings = {
       response: 'Corrective Actions',
       scope: 'Types of Corrective Actions'

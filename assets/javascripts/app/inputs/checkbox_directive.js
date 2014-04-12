@@ -20,7 +20,8 @@
       scope: {
         htCheckboxId: '@',
         htCheckboxChange: '=',
-        htCheckboxModel: '='
+        htCheckboxModel: '=',
+        htCheckboxPartial: '='
       }
     };
   }]);

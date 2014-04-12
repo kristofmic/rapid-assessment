@@ -1,9 +1,8 @@
 (function(hitrust){
   
-  hitrust.ra.controller('MeasuredCtrl', ['$scope', 'AssessmentSvc', function($scope, Assessment){
+  hitrust.ra.controller('MeasuredCtrl', ['$scope', function($scope){
     $scope.setActiveNav(3);
     $scope.assessmentType = 'Measured';
-    $scope.requirements = Assessment.get();
     $scope.headings = {
       response: 'Review',
       scope: 'Types of Reviews'

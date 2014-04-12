@@ -40,6 +40,10 @@ button, .btn, input, select, textarea, a {
 }
 #main table .checkbox-label {
   margin-left: 8px;
+  margin-top: 4px;
+}
+#main table button.dropdown-toggle {
+  margin-top: 2px;
 }
 #main .toolbar {
   padding: 7px 0;
@@ -48,12 +52,12 @@ button, .btn, input, select, textarea, a {
   padding: 8px 12px;
   border: 1px solid #ddd;
   border-radius: 4px;
-  width: 41px;
+  width: 42px;
 }
 #main .checkbox-label {
   display: inline-block;
   margin: 0 auto;
-  border: 1px solid #ddd;
+  border: 1px solid #ccc;
   background-color: #fff;
   cursor: pointer;
 }
@@ -64,7 +68,8 @@ button, .btn, input, select, textarea, a {
 }
 #main .checkbox-label span {
   height: 14px;
-  width: 14px;
+  width: 15px;
   font-size: 14px;
   color: #444;
+  line-height: .87;
 }

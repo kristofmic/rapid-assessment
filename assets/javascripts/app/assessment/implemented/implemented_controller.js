@@ -1,9 +1,8 @@
 (function(hitrust){
   
-  hitrust.ra.controller('ImplementedCtrl', ['$scope', 'AssessmentSvc', function($scope, Assessment){
+  hitrust.ra.controller('ImplementedCtrl', ['$scope', function($scope){
     $scope.setActiveNav(2);
     $scope.assessmentType = 'Implemented';
-    $scope.requirements = Assessment.get();
     $scope.headings = {
       response: 'Implemented',
       scope: 'Applied to Scope of Environment'
