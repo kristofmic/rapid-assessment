@@ -1,23 +1,18 @@
 <div class='row toolbar'>
   <div class='col-xs-1'>
     <div class="form-group">
-      <input ng-change='toolbar.selected()' ng-model='toolbar.select' type='checkbox' />
+      <div id='toolbar-select-container'>
+        <span ht-checkbox ht-checkbox-id='toolbar-select' ht-checkbox-change='toolbar.selected' ht-checkbox-model='toolbar.select'></span>
+      </div>
     </div>
   </div>
   <div class='col-xs-5'>
     <form class="form-inline" role="form" ng-show='toolbar.select'>
       <div class='form-group'>
-        <select class="form-control" ng-model='toolbar.response' ng-change='toolbar.setAnswer("response", toolbar.response)'>
-          <option value=''>-Select-</option>
-          <option value='0'>No</option>
-          <option value='1'>Yes</option>
-        </select>
+        <span ht-select ht-select-options='responseOptions' ht-select-model='toolbar.response' ht-select-change='toolbar.setAnswer' ht-select-type='response'></span>
       </div>
       <div class='form-group'>
-        <select class="form-control" ng-model='toolbar.scope' ng-change='toolbar.setAnswer("scope", toolbar.scope)'>
-          <option value=''>-Select-</option>
-          <option ng-repeat='opt in scopeOptions track by $index' value='{{$index}}'>{{opt}}</option>
-        </select>
+        <span ht-select ht-select-options='scopeOptions' ht-select-model='toolbar.scope' ht-select-change='toolbar.setAnswer' ht-select-type='scope'></span>
       </div>
     </form>
   </div>
@@ -35,7 +30,8 @@
          ht-requirements='requirements' 
          ht-headings='headings' 
          ht-filter='toolbar.search'
-         ht-scope-options='scopeOptions'>
+         ht-scope-options='scopeOptions'
+         ht-response-options='responseOptions'>
     </div>
   </div>
 </div>

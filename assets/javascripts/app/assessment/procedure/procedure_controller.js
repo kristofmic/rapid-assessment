@@ -15,6 +15,10 @@
       'Greater than Half',
       'All'
     ];
+    $scope.responseOptions = [
+      'No',
+      'Yes'
+    ];
   }]);
 
 }(window.HT));

@@ -11,28 +11,25 @@
 			select: false,
 			response: '',
 			scope: '',
-			requirements: {},
 			activeRequirements: 0,
-			selected: function() {
-				if (!$scope.toolbar.select) {
+			selected: function(value) {
+				if (!value) {
 					$scope.toolbar.activeRequirements = 0;
 					$scope.toolbar.response = '';
 					$scope.toolbar.scope = '';
 				}
-				$scope.$broadcast('toolbarSelect', $scope.toolbar.select);
+				$scope.$broadcast('toolbarSelect', value);
 			},
 			setAnswer: function(type, answer) {
 				$scope.$broadcast('toolbarAnswer', type, answer);
 			}
 		};
 
-		$scope.$on('reqSelect', function(e, req) {
-			if (req.select) {
+		$scope.$on('requirementSelect', function(e, value) {
+			if (value) {
 				$scope.toolbar.select = true;
-				$scope.toolbar.requirements[req.fID] = req;
 				$scope.toolbar.activeRequirements += 1;
 			} else {
-				$scope.toolbar.requirements[req.fID] = undefined;
 				$scope.toolbar.activeRequirements -= 1;
 				if ($scope.toolbar.activeRequirements === 0) {
 					$scope.toolbar.select = false;

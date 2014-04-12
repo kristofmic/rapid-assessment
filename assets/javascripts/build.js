@@ -179,28 +179,25 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
 			select: false,
 			response: '',
 			scope: '',
-			requirements: {},
 			activeRequirements: 0,
-			selected: function() {
-				if (!$scope.toolbar.select) {
+			selected: function(value) {
+				if (!value) {
 					$scope.toolbar.activeRequirements = 0;
 					$scope.toolbar.response = '';
 					$scope.toolbar.scope = '';
 				}
-				$scope.$broadcast('toolbarSelect', $scope.toolbar.select);
+				$scope.$broadcast('toolbarSelect', value);
 			},
 			setAnswer: function(type, answer) {
 				$scope.$broadcast('toolbarAnswer', type, answer);
 			}
 		};
 
-		$scope.$on('reqSelect', function(e, req) {
-			if (req.select) {
+		$scope.$on('requirementSelect', function(e, value) {
+			if (value) {
 				$scope.toolbar.select = true;
-				$scope.toolbar.requirements[req.fID] = req;
 				$scope.toolbar.activeRequirements += 1;
 			} else {
-				$scope.toolbar.requirements[req.fID] = undefined;
 				$scope.toolbar.activeRequirements -= 1;
 				if ($scope.toolbar.activeRequirements === 0) {
 					$scope.toolbar.select = false;
@@ -246,16 +243,12 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
     };
 
     var control = ['$scope', function($scope) {
-        $scope.setResponse = function(req) {
-            Assessment.put($scope.htAssessmentTable, $scope.htHeadings.response, req.fID, req.response);
+        $scope.setAnswer = function(type, req) {
+            Assessment.put($scope.htAssessmentTable, $scope.htHeadings[type], req.fID, req[type]);
         };
 
-        $scope.setScope = function(req) {
-            Assessment.put($scope.htAssessmentTable, $scope.htHeadings.scope, req.fID, req.scope);
-        };
-
-        $scope.setSelected = function(req) {
-            $scope.$emit('reqSelect', req);
+        $scope.setSelected = function(value) {
+            $scope.$emit('requirementSelect', value);
         }
 
         $scope.$on('toolbarSelect', function(e, select) {
@@ -268,6 +261,7 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
             _.each($scope.htRequirements, function(req) {
                 if (req.select) {
                     req[type] = answer;
+                    $scope.setAnswer(type, req);
                 }
             });
         });
@@ -285,6 +279,7 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
     		htRequirements: '=',
             htHeadings: '=',
             htScopeOptions: '=',
+            htResponseOptions: '=',
             htFilter: '='
     	}
     };
@@ -310,6 +305,10 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
       'Greater than Half',
       'All'
     ];
+    $scope.responseOptions = [
+      'No',
+      'Yes'
+    ];
   }]);
 
 }(window.HT));/* END OF SOURCE */
@@ -330,6 +329,10 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
       'Independent',
       'Metrics'
     ];
+    $scope.responseOptions = [
+      'No',
+      'Yes'
+    ];
   }]);
 
 }(window.HT));/* END OF SOURCE */
@@ -349,6 +352,10 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
       'Operational',
       'Independent',
       'Metrics'
+    ];
+    $scope.responseOptions = [
+      'No',
+      'Yes'
     ];
   }]);
 
@@ -372,6 +379,10 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
       'Greater than Half',
       'All'
     ];
+    $scope.responseOptions = [
+      'No',
+      'Yes'
+    ];
   }]);
 
 }(window.HT));/* END OF SOURCE */
@@ -394,6 +405,75 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
       'Greater than Half',
       'All'
     ];
+    $scope.responseOptions = [
+      'No',
+      'Yes'
+    ];
+  }]);
+
+}(window.HT));/* END OF SOURCE */
+
+/* SOURCE: ./assets/javascripts/app/inputs/checkbox_directive.js */
+(function(hitrust){
+  
+  hitrust.ra.directive('htCheckbox', [function(){
+
+    var linker = function(scope, elem, attrs) {
+    };
+
+    var control = ['$scope', function($scope) {
+      $scope.change = function() {
+        $scope.htCheckboxChange($scope.htCheckboxModel);
+      };
+    }];
+
+    return {
+      restrict: 'A',
+      templateUrl: 'assets/javascripts/app/inputs/checkbox.html',
+      replace: false,
+      link: linker,
+      controller: control,
+      scope: {
+        htCheckboxId: '@',
+        htCheckboxChange: '=',
+        htCheckboxModel: '='
+      }
+    };
+  }]);
+
+}(window.HT));/* END OF SOURCE */
+
+/* SOURCE: ./assets/javascripts/app/inputs/select_directive.js */
+(function(hitrust){
+  
+  hitrust.ra.directive('htSelect', [function(){
+
+    var linker = function(scope, elem, attrs) {
+    };
+
+    var control = ['$scope', function($scope) {
+      $scope.selectedLabel = '-Select-';
+
+      $scope.select = function($index) {
+        $scope.htSelectModel = $index;
+        $scope.selectedLabel = $scope.htSelectOptions[$index];
+        $scope.htSelectChange($scope.htSelectType, $scope.htSelectModel);
+      };
+    }];
+
+    return {
+      restrict: 'A',
+      templateUrl: 'assets/javascripts/app/inputs/select.html',
+      replace: false,
+      link: linker,
+      controller: control,
+      scope: {
+        htSelectOptions: '=',
+        htSelectChange: '=',
+        htSelectModel: '=',
+        htSelectType: '@'
+      }
+    };
   }]);
 
 }(window.HT));/* END OF SOURCE */

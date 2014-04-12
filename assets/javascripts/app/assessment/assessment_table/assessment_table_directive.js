@@ -8,16 +8,12 @@
     };
 
     var control = ['$scope', function($scope) {
-        $scope.setResponse = function(req) {
-            Assessment.put($scope.htAssessmentTable, $scope.htHeadings.response, req.fID, req.response);
+        $scope.setAnswer = function(type, req) {
+            Assessment.put($scope.htAssessmentTable, $scope.htHeadings[type], req.fID, req[type]);
         };
 
-        $scope.setScope = function(req) {
-            Assessment.put($scope.htAssessmentTable, $scope.htHeadings.scope, req.fID, req.scope);
-        };
-
-        $scope.setSelected = function(req) {
-            $scope.$emit('reqSelect', req);
+        $scope.setSelected = function(value) {
+            $scope.$emit('requirementSelect', value);
         }
 
         $scope.$on('toolbarSelect', function(e, select) {
@@ -30,6 +26,7 @@
             _.each($scope.htRequirements, function(req) {
                 if (req.select) {
                     req[type] = answer;
+                    $scope.setAnswer(type, req);
                 }
             });
         });
@@ -47,6 +44,7 @@
     		htRequirements: '=',
             htHeadings: '=',
             htScopeOptions: '=',
+            htResponseOptions: '=',
             htFilter: '='
     	}
     };

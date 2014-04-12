@@ -13,6 +13,10 @@
       'Independent',
       'Metrics'
     ];
+    $scope.responseOptions = [
+      'No',
+      'Yes'
+    ];
   }]);
 
 }(window.HT));

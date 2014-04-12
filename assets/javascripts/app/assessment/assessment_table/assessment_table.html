@@ -8,24 +8,19 @@
     <th width='20%'>{{htHeadings.scope}}</th>
   </thead>
   <tbody>
-    <tr ng-repeat='req in (fhtRequirements = (htRequirements | orderBy:["Domain", "Control"] | filter:htFilter))'>
+    <tr ng-repeat='req in (fhtRequirements = (htRequirements | orderBy:["Domain", "Control"] | filter:htFilter)) track by $index'>
       <td width='7%'>
-        <div class="form-group">
-          <input ng-change='setSelected(req)' ng-model='req.select' type='checkbox' />
-        </div>
+        <span ht-checkbox ht-checkbox-id='req-select-{{$index}}' ht-checkbox-change='setSelected' ht-checkbox-model='req.select'></span>
       </td>
       <td width='15%'>{{req.Domain}}</td>
       <td width='5%'>{{req.Control}}</td>
       <td width='38%'>{{req.Requirement}}</td>
       <td width='15%'>
-        <select class="form-control" ng-model='req.response' ng-change='setResponse(req)'>
-          <option value>-Select-</option>
-          <option value='0'>No</option>
-          <option value='1'>Yes</option>
-        </select>
+        <span ht-select ht-select-options='htResponseOptions' ht-select-model='req.response' ht-select-change='setAnswer' ht-select-type='response'></span>
+
       </td>
       <td width='20%'>
-        <select class="form-control" ng-model='req.scope' ng-change='setScope(req)'>
+        <select class="form-control" ng-model='req.scope' ng-change='setAnswer("scope", req)'>
           <option value>-Select-</option>
           <option ng-repeat='opt in htScopeOptions track by $index' value='{{$index}}'>{{opt}}</option>
         </select>
