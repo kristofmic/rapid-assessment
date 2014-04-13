@@ -4,6 +4,7 @@
     $scope.setActiveNav(2);
     $scope.assessmentType = 'Implemented';
     $scope.setRequirements(Assessment.get($scope.assessmentType));
+    $scope.toolbar.reset();
     $scope.headings = {
       response: 'Implemented',
       scope: 'Applied to Scope of Environment'

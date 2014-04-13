@@ -1,8 +1,20 @@
 <div class='row toolbar'>
   <div class='col-xs-1'>
     <div class="form-group">
-      <div id='toolbar-select-container'>
-        <span ht-checkbox ht-checkbox-id='toolbar-select' ht-checkbox-change='toolbar.selected' ht-checkbox-model='toolbar.select' ht-checkbox-partial='toolbar.selectPartial'></span>
+      <div class="btn-group">
+        <span id='toolbar-select-container' class="btn btn-default">
+          <span ht-checkbox ht-checkbox-id='toolbar-select' ht-checkbox-change='toolbar.selected' ht-checkbox-model='toolbar.select' ht-checkbox-partial='toolbar.selectPartial'></span>
+        </span>
+        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+          <span class="caret"></span>
+          <span class="sr-only">Toggle Dropdown</span>
+        </button>
+        <ul class="dropdown-menu" role="menu">
+          <li><span ng-click='toolbar.starred(true)'>Starred</span></li>
+          <li><span ng-click='toolbar.starred(false)'>Unstarred</span></li>
+          <li class="divider"></li>
+          <li><span class='text-danger' ng-click='toolbar.clearAnswer()'>Clear answers</span></li>
+        </ul>
       </div>
     </div>
   </div>

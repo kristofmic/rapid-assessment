@@ -188,23 +188,32 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
 			selected: function(value) {
 				if (!value) {
 					$scope.toolbar.activeRequirements = 0;
-					$scope.toolbar.response = '';
-					$scope.toolbar.scope = '';
+					$scope.toolbar.resetAnswers();
 				} else {
 					$scope.toolbar.activeRequirements = $scope.requirements.length;
 				}
 				$scope.toolbar.selectPartial = false;
 				$scope.$broadcast('toolbarSelect', value);
 			},
+			starred: function(value) {
+				$scope.$broadcast('toolbarStarred', value);
+			},
 			setAnswer: function(model, type, index) {
 				$scope.$broadcast('toolbarAnswer', type, model[type]);
+			},
+			clearAnswer: function() {
+				$scope.$broadcast('toolbarClear');
+				$scope.toolbar.resetAnswers();
+			},
+			resetAnswers: function() {
+				$scope.toolbar.response = null;
+				$scope.toolbar.scope = null;
 			},
 			reset: function() {
 				$scope.toolbar.select = false;
 				$scope.toolbar.activeRequirements = 0;
-				$scope.toolbar.response = '';
-				$scope.toolbar.scope = '';
 				$scope.toolbar.selectPartial = false;
+				$scope.toolbar.resetAnswers();
 			}
 		};
 
@@ -299,6 +308,25 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
             });
         });
 
+        $scope.$on('toolbarClear', function(e) {
+            _.each($scope.htRequirements, function(req) {
+                if (req.select) {
+                    req.response = null;
+                    $scope.setAnswer(req, 'response', null);
+                    req.scope = null;
+                    $scope.setAnswer(req, 'scope', null);
+                }
+            });
+        });
+
+        $scope.$on('toolbarStarred', function(e, value) {
+            _.each($scope.htRequirements, function(req) {
+              if (req.select) {
+                req.starred = value;
+              }
+            });
+        });
+
     }];
 
     return {
@@ -327,6 +355,7 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
     $scope.setActiveNav(2);
     $scope.assessmentType = 'Implemented';
     $scope.setRequirements(Assessment.get($scope.assessmentType));
+    $scope.toolbar.reset();
     $scope.headings = {
       response: 'Implemented',
       scope: 'Applied to Scope of Environment'
@@ -353,6 +382,7 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
     $scope.setActiveNav(4);
     $scope.assessmentType = 'Managed';
     $scope.setRequirements(Assessment.get($scope.assessmentType));
+    $scope.toolbar.reset();
     $scope.headings = {
       response: 'Corrective Actions',
       scope: 'Types of Corrective Actions'
@@ -377,6 +407,7 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
     $scope.setActiveNav(3);
     $scope.assessmentType = 'Measured';
     $scope.setRequirements(Assessment.get($scope.assessmentType));
+    $scope.toolbar.reset();
     $scope.headings = {
       response: 'Review',
       scope: 'Types of Reviews'

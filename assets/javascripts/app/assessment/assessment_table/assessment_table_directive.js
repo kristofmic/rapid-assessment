@@ -31,6 +31,25 @@
             });
         });
 
+        $scope.$on('toolbarClear', function(e) {
+            _.each($scope.htRequirements, function(req) {
+                if (req.select) {
+                    req.response = null;
+                    $scope.setAnswer(req, 'response', null);
+                    req.scope = null;
+                    $scope.setAnswer(req, 'scope', null);
+                }
+            });
+        });
+
+        $scope.$on('toolbarStarred', function(e, value) {
+            _.each($scope.htRequirements, function(req) {
+              if (req.select) {
+                req.starred = value;
+              }
+            });
+        });
+
     }];
 
     return {

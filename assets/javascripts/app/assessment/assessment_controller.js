@@ -20,23 +20,32 @@
 			selected: function(value) {
 				if (!value) {
 					$scope.toolbar.activeRequirements = 0;
-					$scope.toolbar.response = '';
-					$scope.toolbar.scope = '';
+					$scope.toolbar.resetAnswers();
 				} else {
 					$scope.toolbar.activeRequirements = $scope.requirements.length;
 				}
 				$scope.toolbar.selectPartial = false;
 				$scope.$broadcast('toolbarSelect', value);
 			},
+			starred: function(value) {
+				$scope.$broadcast('toolbarStarred', value);
+			},
 			setAnswer: function(model, type, index) {
 				$scope.$broadcast('toolbarAnswer', type, model[type]);
+			},
+			clearAnswer: function() {
+				$scope.$broadcast('toolbarClear');
+				$scope.toolbar.resetAnswers();
+			},
+			resetAnswers: function() {
+				$scope.toolbar.response = null;
+				$scope.toolbar.scope = null;
 			},
 			reset: function() {
 				$scope.toolbar.select = false;
 				$scope.toolbar.activeRequirements = 0;
-				$scope.toolbar.response = '';
-				$scope.toolbar.scope = '';
 				$scope.toolbar.selectPartial = false;
+				$scope.toolbar.resetAnswers();
 			}
 		};
 

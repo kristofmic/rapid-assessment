@@ -1,22 +1,25 @@
 <table class="table table-hover">
   <thead>
-    <th width='7%'></th>
-    <th width='15%'>Domain</th>
-    <th width='5%'>Control</th>
-    <th width='40%'>Requirement</th>
-    <th width='13%'>{{htHeadings.response}}</th>
-    <th width='20%'>{{htHeadings.scope}}</th>
+    <th></th>
+    <th></th>
+    <th>Domain</th>
+    <th>Control</th>
+    <th>Requirement</th>
+    <th>{{htHeadings.response}}</th>
+    <th>{{htHeadings.scope}}</th>
   </thead>
   <tbody>
     <tr ng-repeat='req in (fhtRequirements = (htRequirements | orderBy:["Domain", "Control"] | filter:htFilter)) track by $index' ng-class="{warning:req.select}">
-      <td width='7%'>
+      <td width='2%'>
         <span ht-checkbox ht-checkbox-id='req-select-{{$index}}' ht-checkbox-change='setSelected' ht-checkbox-model='req.select'></span>
+      </td>
+      <td width='2.5%'>
         <span ht-star ht-star-id='req-star-{{$index}}' ht-star-model='req.starred'></span>
       </td>
-      <td width='15%'>{{req.Domain}}</td>
+      <td width='20%'>{{req.Domain}}</td>
       <td width='5%'>{{req.Control}}</td>
-      <td width='40%'>{{req.Requirement}}</td>
-      <td width='13%'>
+      <td width='40.5%'>{{req.Requirement}}</td>
+      <td width='10%'>
         <span ht-select ht-select-options='htResponseOptions' ht-select-model='req' ht-select-change='setAnswer' ht-select-property='response'></span>
       </td>
       <td width='20%'>

@@ -4,6 +4,7 @@
     $scope.setActiveNav(4);
     $scope.assessmentType = 'Managed';
     $scope.setRequirements(Assessment.get($scope.assessmentType));
+    $scope.toolbar.reset();
     $scope.headings = {
       response: 'Corrective Actions',
       scope: 'Types of Corrective Actions'
