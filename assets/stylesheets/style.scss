@@ -46,19 +46,26 @@ button, .btn, input, select, textarea, a {
     }
 
     .star-label {
-      display: inline-block;
       margin-left: 8px;
-      margin-top: 5px;
       cursor: pointer;
 
       span {
         height: 14px;
         width: 15px;
-        font-size: 17px;
+        font-size: 18px;
         color: #ccc;
+        line-height: .87;
+
+        &:hover {
+          color: #bbb;
+        }
 
         &.glyphicon-star {
-          color: #000;
+          color: #f0ad4e;
+
+          &:hover {
+            text-shadow: 1px 1px rgba(0,0,0,.075);
+          }
         }
       }
     }
