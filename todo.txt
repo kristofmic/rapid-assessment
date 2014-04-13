@@ -1,5 +1,6 @@
- - star/flag requirements
+ - pull out toolbar to own directive/service
  - column ordering
  - pagination
- - answering in separate view
+ - answering in separate view (maybe)
  - dashboard
+ - alerts
