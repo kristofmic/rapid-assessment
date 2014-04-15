@@ -10,7 +10,7 @@
   </thead>
   <tbody>
     <tr ng-repeat='req in (fhtRequirements = (htRequirements | orderBy:["Domain", "Control"] | filter:htFilter)) track by $index' ng-class="{warning:req.select}">
-      <td width='2%'>
+      <td width='2.5%'>
         <span ht-checkbox ht-checkbox-id='req-select-{{$index}}' ht-checkbox-change='setSelected' ht-checkbox-model='req.select'></span>
       </td>
       <td width='2.5%'>
@@ -18,11 +18,11 @@
       </td>
       <td width='20%'>{{req.Domain}}</td>
       <td width='5%'>{{req.Control}}</td>
-      <td width='40.5%'>{{req.Requirement}}</td>
-      <td width='10%'>
+      <td width='33%'>{{req.Requirement}}</td>
+      <td width='14%'>
         <span ht-select ht-select-options='htResponseOptions' ht-select-model='req' ht-select-change='setAnswer' ht-select-property='response'></span>
       </td>
-      <td width='20%'>
+      <td width='24%'>
         <span ht-select ht-select-options='htScopeOptions' ht-select-model='req' ht-select-change='setAnswer' ht-select-property='scope'></span>
       </td>
     </tr>

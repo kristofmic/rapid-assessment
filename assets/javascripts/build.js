@@ -150,9 +150,6 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
   
   hitrust.inputs.directive('htCheckbox', [function(){
 
-    var linker = function(scope, elem, attrs) {
-    };
-
     var control = ['$scope', function($scope) {
       $scope.change = function() {
         $scope.htCheckboxChange($scope.htCheckboxModel);
@@ -163,7 +160,6 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
       restrict: 'A',
       templateUrl: 'assets/javascripts/app/inputs/checkbox.html',
       replace: false,
-      link: linker,
       controller: control,
       scope: {
         htCheckboxId: '@',
@@ -181,9 +177,6 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
   
   hitrust.inputs.directive('htSelect', [function(){
 
-    var linker = function(scope, elem, attrs) {
-    };
-
     var control = ['$scope', function($scope) {
 
       $scope.select = function($index) {
@@ -196,7 +189,6 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
       restrict: 'A',
       templateUrl: 'assets/javascripts/app/inputs/select.html',
       replace: false,
-      link: linker,
       controller: control,
       scope: {
         htSelectOptions: '=',
@@ -214,18 +206,10 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
 
   hitrust.inputs.directive('htStar', [function(){
 
-    var linker = function(scope, elem, attrs) {
-    };
-
-    var control = ['$scope', function($scope) {
-    }];
-
     return {
       restrict: 'A',
       templateUrl: 'assets/javascripts/app/inputs/star.html',
       replace: false,
-      link: linker,
-      controller: control,
       scope: {
         htStarModel: '=',
         htStarId: '@'
@@ -248,7 +232,6 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
 
   assessment.controller('AssessmentCtrl', ['$scope', 'htNav', function($scope, nav){
 		$scope.navs = nav.get();
-
   }]);
 
 }(window.HT.assessment));/* END OF SOURCE */
@@ -518,6 +501,8 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
         'No',
         'Yes'
       ];
+
+      $scope.searchModel = $scope.$parent.searchModel;
     }
   ]);
 
@@ -547,6 +532,8 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
         'No',
         'Yes'
       ];
+
+      $scope.searchModel = $scope.$parent.searchModel;
     }
   ]);
 

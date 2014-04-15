@@ -2,9 +2,6 @@
   
   hitrust.inputs.directive('htSelect', [function(){
 
-    var linker = function(scope, elem, attrs) {
-    };
-
     var control = ['$scope', function($scope) {
 
       $scope.select = function($index) {
@@ -17,7 +14,6 @@
       restrict: 'A',
       templateUrl: 'assets/javascripts/app/inputs/select.html',
       replace: false,
-      link: linker,
       controller: control,
       scope: {
         htSelectOptions: '=',
