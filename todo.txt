@@ -1,6 +1,6 @@
- - pull out toolbar to own directive/service
  - column ordering
- - pagination
- - answering in separate view (maybe)
+ - column filtering
  - dashboard
+ - pagination (maybe)
+ - answering in separate view (maybe)
  - alerts
