@@ -235,63 +235,11 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
 
 }(window.HT));/* END OF SOURCE */
 
-/* SOURCE: ./assets/javascripts/app/navigation/navigation.js */
-(function(global) {
-
-  global.angular.module('ht-nav', [])
-    .factory('htNav', [function() {
-
-	    var navs = [
-	      {
-	        label: 'Policy',
-	        sref: 'assessment.policy',
-	        active: false
-	      },
-	      {
-	        label: 'Procedure',
-	        sref: 'assessment.procedure',
-	        active: false
-	      },
-	      {
-	        label: 'Implemented',
-	        sref: 'assessment.implemented',
-	        active: false
-	      },
-	      {
-	        label: 'Measured',
-	        sref: 'assessment.measured',
-	        active: false
-	      },
-	      {
-	        label: 'Managed',
-	        sref: 'assessment.managed',
-	        active: false
-	      }
-	    ];
-
-	    var get = function() {
-	      return navs;
-	    };
-
-	    var set = function(index) {
-	      angular.forEach(navs, function(val, i) {
-	        (i === index) ? val.active = true : val.active = false;
-	      });
-	    };
-
-	    return {
-	      get: get,
-	      set: set
-	    };
-	  }]);
-
-}(window));/* END OF SOURCE */
-
 /* SOURCE: ./assets/javascripts/app/assessment/assessment.js */
 (function(global) {
 
 	var hitrust = global.HT = global.HT || {};
-  hitrust.assessment = angular.module('ht-assessment', ['ht-events', 'ht-api', 'ht-nav', 'ht-inputs']);
+  hitrust.assessment = angular.module('ht-assessment', ['ht-events', 'ht-api', 'ht-inputs']);
 
 }(window));/* END OF SOURCE */
 
@@ -300,14 +248,6 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
 
   assessment.controller('AssessmentCtrl', ['$scope', 'htNav', function($scope, nav){
 		$scope.navs = nav.get();
-
-		$scope.setActiveNav = function(index) {
-			nav.set(index);
-		};
-
-		$scope.setRequirements = function(reqs) {
-			$scope.requirements = reqs;
-		};
 
   }]);
 
@@ -423,131 +363,192 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
 /* SOURCE: ./assets/javascripts/app/assessment/implemented/implemented_controller.js */
 (function(assessment){
   
-  assessment.controller('ImplementedCtrl', ['$scope', 'AssessmentSvc', function($scope, Assessment){
-    $scope.setActiveNav(2);
-    $scope.assessmentType = 'Implemented';
-    $scope.setRequirements(Assessment.get($scope.assessmentType));
-    $scope.$broadcast('toolbarReset');
-    $scope.headings = {
-      response: 'Implemented',
-      scope: 'Applied to Scope of Environment'
-    };
-    $scope.scopeOptions = [
-      'None',
-      'Less than Half',
-      'Half',
-      'Greater than Half',
-      'All'
-    ];
-    $scope.responseOptions = [
-      'No',
-      'Yes'
-    ];
-  }]);
+  assessment.controller('ImplementedCtrl', ['$scope', 'AssessmentSvc', 'htEvents', 'htNav',
+    function($scope, Assessment, events, nav){
+      nav.set(2);
+      $scope.assessmentType = 'Implemented';
+      $scope.requirements = Assessment.get($scope.assessmentType);
+      events.raise('toolbarReset');
+      $scope.headings = {
+        response: 'Implemented',
+        scope: 'Applied to Scope of Environment'
+      };
+      $scope.scopeOptions = [
+        'None',
+        'Less than Half',
+        'Half',
+        'Greater than Half',
+        'All'
+      ];
+      $scope.responseOptions = [
+        'No',
+        'Yes'
+      ];
+    }
+  ]);
 
 }(window.HT.assessment));/* END OF SOURCE */
 
 /* SOURCE: ./assets/javascripts/app/assessment/managed/managed_controller.js */
 (function(assessment){
   
-  assessment.controller('ManagedCtrl', ['$scope', 'AssessmentSvc', function($scope, Assessment){
-    $scope.setActiveNav(4);
-    $scope.assessmentType = 'Managed';
-    $scope.setRequirements(Assessment.get($scope.assessmentType));
-    $scope.$broadcast('toolbarReset');
-    $scope.headings = {
-      response: 'Corrective Actions',
-      scope: 'Types of Corrective Actions'
-    };
-    $scope.scopeOptions = [
-      'Operational',
-      'Independent',
-      'Metrics'
-    ];
-    $scope.responseOptions = [
-      'No',
-      'Yes'
-    ];
-  }]);
+  assessment.controller('ManagedCtrl', ['$scope', 'AssessmentSvc', 'htEvents', 'htNav',
+    function($scope, Assessment, events, nav){
+      nav.set(4);
+      $scope.assessmentType = 'Managed';
+      $scope.requirements = Assessment.get($scope.assessmentType);
+      events.raise('toolbarReset');
+      $scope.headings = {
+        response: 'Corrective Actions',
+        scope: 'Types of Corrective Actions'
+      };
+      $scope.scopeOptions = [
+        'Operational',
+        'Independent',
+        'Metrics'
+      ];
+      $scope.responseOptions = [
+        'No',
+        'Yes'
+      ];
+    }
+  ]);
 
 }(window.HT.assessment));/* END OF SOURCE */
 
 /* SOURCE: ./assets/javascripts/app/assessment/measured/measured_controller.js */
 (function(assessment){
   
-  assessment.controller('MeasuredCtrl', ['$scope', 'AssessmentSvc', function($scope, Assessment){
-    $scope.setActiveNav(3);
-    $scope.assessmentType = 'Measured';
-    $scope.setRequirements(Assessment.get($scope.assessmentType));
-    $scope.$broadcast('toolbarReset');
-    $scope.headings = {
-      response: 'Review',
-      scope: 'Types of Reviews'
-    };
-    $scope.scopeOptions = [
-      'Operational',
-      'Independent',
-      'Metrics'
-    ];
-    $scope.responseOptions = [
-      'No',
-      'Yes'
-    ];
-  }]);
+  assessment.controller('MeasuredCtrl', ['$scope', 'AssessmentSvc', 'htEvents', 'htNav',
+    function($scope, Assessment, events, nav){
+      nav.set(3);
+      $scope.assessmentType = 'Measured';
+      $scope.requirements = Assessment.get($scope.assessmentType);
+      events.raise('toolbarReset');
+      $scope.headings = {
+        response: 'Review',
+        scope: 'Types of Reviews'
+      };
+      $scope.scopeOptions = [
+        'Operational',
+        'Independent',
+        'Metrics'
+      ];
+      $scope.responseOptions = [
+        'No',
+        'Yes'
+      ];
+    }
+  ]);
+
+}(window.HT.assessment));/* END OF SOURCE */
+
+/* SOURCE: ./assets/javascripts/app/assessment/navigation/navigation_factory.js */
+(function(assessment) {
+
+  assessment.factory('htNav', [function() {
+
+	    var navs = [
+	      {
+	        label: 'Policy',
+	        sref: 'assessment.policy',
+	        active: false
+	      },
+	      {
+	        label: 'Procedure',
+	        sref: 'assessment.procedure',
+	        active: false
+	      },
+	      {
+	        label: 'Implemented',
+	        sref: 'assessment.implemented',
+	        active: false
+	      },
+	      {
+	        label: 'Measured',
+	        sref: 'assessment.measured',
+	        active: false
+	      },
+	      {
+	        label: 'Managed',
+	        sref: 'assessment.managed',
+	        active: false
+	      }
+	    ];
+
+	    var get = function() {
+	      return navs;
+	    };
+
+	    var set = function(index) {
+	      angular.forEach(navs, function(val, i) {
+	        (i === index) ? val.active = true : val.active = false;
+	      });
+	    };
+
+	    return {
+	      get: get,
+	      set: set
+	    };
+	  }]);
 
 }(window.HT.assessment));/* END OF SOURCE */
 
 /* SOURCE: ./assets/javascripts/app/assessment/policy/policy_controller.js */
 (function(assessment){
   
-  assessment.controller('PolicyCtrl', ['$scope', 'AssessmentSvc', function($scope, Assessment){
-    $scope.setActiveNav(0);
-    $scope.assessmentType = 'Policy';
-    $scope.setRequirements(Assessment.get($scope.assessmentType));
-    $scope.$broadcast('toolbarReset');
-    $scope.headings = {
-      response: 'Documented',
-      scope: 'Applies to Scope of Environment'
-    };
-    $scope.scopeOptions = [
-      'None',
-      'Less than Half',
-      'Half',
-      'Greater than Half',
-      'All'
-    ];
-    $scope.responseOptions = [
-      'No',
-      'Yes'
-    ];
-  }]);
+  assessment.controller('PolicyCtrl', ['$scope', 'AssessmentSvc', 'htEvents', 'htNav',
+    function($scope, Assessment, events, nav){
+      nav.set(0);
+      $scope.assessmentType = 'Policy';
+      $scope.requirements = Assessment.get($scope.assessmentType);
+      events.raise('toolbarReset');
+      $scope.headings = {
+        response: 'Documented',
+        scope: 'Applies to Scope of Environment'
+      };
+      $scope.scopeOptions = [
+        'None',
+        'Less than Half',
+        'Half',
+        'Greater than Half',
+        'All'
+      ];
+      $scope.responseOptions = [
+        'No',
+        'Yes'
+      ];
+    }
+  ]);
 
 }(window.HT.assessment));/* END OF SOURCE */
 
 /* SOURCE: ./assets/javascripts/app/assessment/procedure/procedure_controller.js */
 (function(assessment){
   
-  assessment.controller('ProcedureCtrl', ['$scope', 'AssessmentSvc', function($scope, Assessment){
-    $scope.setActiveNav(1);
-    $scope.assessmentType = 'Procedure';
-    $scope.setRequirements(Assessment.get($scope.assessmentType));
-    $scope.$broadcast('toolbarReset');
-    $scope.headings = {
-      response: 'Documented',
-      scope: 'Applies to Scope of Environment'
-    };
-    $scope.scopeOptions = [
-      'None',
-      'Less than Half',
-      'Half',
-      'Greater than Half',
-      'All'
-    ];
-    $scope.responseOptions = [
-      'No',
-      'Yes'
-    ];
-  }]);
+  assessment.controller('ProcedureCtrl', ['$scope', 'AssessmentSvc', 'htEvents', 'htNav', 
+    function($scope, Assessment, events, nav){
+      nav.set(1);
+      $scope.assessmentType = 'Procedure';
+      $scope.requirements = Assessment.get($scope.assessmentType);
+      events.raise('toolbarReset');
+      $scope.headings = {
+        response: 'Documented',
+        scope: 'Applies to Scope of Environment'
+      };
+      $scope.scopeOptions = [
+        'None',
+        'Less than Half',
+        'Half',
+        'Greater than Half',
+        'All'
+      ];
+      $scope.responseOptions = [
+        'No',
+        'Yes'
+      ];
+    }
+  ]);
 
 }(window.HT.assessment));/* END OF SOURCE */
 

@@ -1,7 +1,6 @@
-(function(global) {
+(function(assessment) {
 
-  global.angular.module('ht-nav', [])
-    .factory('htNav', [function() {
+  assessment.factory('htNav', [function() {
 
 	    var navs = [
 	      {
@@ -47,4 +46,4 @@
 	    };
 	  }]);
 
-}(window));
+}(window.HT.assessment));
