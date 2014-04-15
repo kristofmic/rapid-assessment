@@ -14,8 +14,17 @@ module.exports = function(grunt) {
       dist: {
         src: [
           '<%= scriptsPath %>/vendor/**/*.js',
+          '<%= scriptsPath %>/app/api/api.js',
+          '<%= scriptsPath %>/app/api/*.js',
+          '<%= scriptsPath %>/app/event_manager/events.js',
+          '<%= scriptsPath %>/app/event_manager/*.js',
+          '<%= scriptsPath %>/app/inputs/inputs.js',
+          '<%= scriptsPath %>/app/inputs/*.js',
+          '<%= scriptsPath %>/app/navigation/navigation.js',
+          '<%= scriptsPath %>/app/navigation/*.js',
+          '<%= scriptsPath %>/app/assessment/assessment.js',
+          '<%= scriptsPath %>/app/assessment/**/*.js',
           '<%= scriptsPath %>/app/module.js',
-          '<%= scriptsPath %>/app/**/*.js',
           '!<%= scriptsPath %>/build.js'
         ],
         dest: '<%= scriptsPath %>/build.js'

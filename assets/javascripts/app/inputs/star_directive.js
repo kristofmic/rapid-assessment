@@ -1,6 +1,6 @@
 (function(hitrust){
 
-  hitrust.ra.directive('htStar', [function(){
+  hitrust.inputs.directive('htStar', [function(){
 
     var linker = function(scope, elem, attrs) {
     };

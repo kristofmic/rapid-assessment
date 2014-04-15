@@ -1,6 +1,6 @@
-(function(hitrust){
+(function(assessment){
   
-  hitrust.ra.factory('AssessmentSvc', ['HTAPI', function(api){
+  assessment.factory('AssessmentSvc', ['HTAPI', function(api){
     var requirements = {}; 
 
     var get = function(type) {
@@ -28,4 +28,4 @@
     };
   }]);
 
-}(window.HT));
+}(window.HT.assessment));

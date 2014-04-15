@@ -1,6 +1,6 @@
-(function(hitrust){
+(function(assessment){
   
-  hitrust.ra.directive('htAssessmentTable', ['AssessmentSvc', function(Assessment){
+  assessment.directive('htAssessmentTable', ['AssessmentSvc', 'htEvents', function(Assessment, events){
 
     var linker = function(scope, elem, attrs) {
         scope.responses = {};
@@ -13,20 +13,20 @@
         };
 
         $scope.setSelected = function(value) {
-            $scope.$emit('requirementSelect', value);
+            events.raise('requirementSelect', value);
         }
 
-        $scope.$on('toolbarSelect', function(e, select) {
+        $scope.$on('toolbarSelect', function(e, args) {
             _.each($scope.fhtRequirements, function(req) {
-                req.select = select;
+                req.select = args.value;
             });
         });
 
-        $scope.$on('toolbarAnswer', function(e, type, answer) {
+        $scope.$on('toolbarAnswer', function(e, args) {
             _.each($scope.htRequirements, function(req) {
                 if (req.select) {
-                    req[type] = answer;
-                    $scope.setAnswer(req, type, answer);
+                    req[args.type] = args.answer;
+                    $scope.setAnswer(req, args.type, args.answer);
                 }
             });
         });
@@ -42,10 +42,10 @@
             });
         });
 
-        $scope.$on('toolbarStarred', function(e, value) {
+        $scope.$on('toolbarStarred', function(e, args) {
             _.each($scope.htRequirements, function(req) {
               if (req.select) {
-                req.starred = value;
+                req.starred = args.value;
               }
             });
         });
@@ -69,4 +69,4 @@
     };
   }]);
 
-}(window.HT));
+}(window.HT.assessment));

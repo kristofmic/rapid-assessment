@@ -1,10 +1,10 @@
-(function(hitrust){
+(function(assessment){
   
-  hitrust.ra.controller('MeasuredCtrl', ['$scope', 'AssessmentSvc', function($scope, Assessment){
+  assessment.controller('MeasuredCtrl', ['$scope', 'AssessmentSvc', function($scope, Assessment){
     $scope.setActiveNav(3);
     $scope.assessmentType = 'Measured';
     $scope.setRequirements(Assessment.get($scope.assessmentType));
-    $scope.toolbar.reset();
+    $scope.$broadcast('toolbarReset');
     $scope.headings = {
       response: 'Review',
       scope: 'Types of Reviews'
@@ -20,4 +20,4 @@
     ];
   }]);
 
-}(window.HT));
+}(window.HT.assessment));

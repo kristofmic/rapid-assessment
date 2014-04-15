@@ -1,49 +1,13 @@
-<div class='row toolbar'>
-  <div class='col-xs-1'>
-    <div class="form-group">
-      <div class="btn-group">
-        <span id='toolbar-select-container' class="btn btn-default">
-          <span ht-checkbox ht-checkbox-id='toolbar-select' ht-checkbox-change='toolbar.selected' ht-checkbox-model='toolbar.select' ht-checkbox-partial='toolbar.selectPartial'></span>
-        </span>
-        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-          <span class="caret"></span>
-          <span class="sr-only">Toggle Dropdown</span>
-        </button>
-        <ul class="dropdown-menu" role="menu">
-          <li><span ng-click='toolbar.starred(true)'>Starred</span></li>
-          <li><span ng-click='toolbar.starred(false)'>Unstarred</span></li>
-          <li class="divider"></li>
-          <li><span class='text-danger' ng-click='toolbar.clearAnswer()'>Clear answers</span></li>
-        </ul>
-      </div>
-    </div>
-  </div>
-  <div class='col-xs-4'>
-    <form class="form-inline" role="form" ng-show='toolbar.select'>
-      <div class='form-group'>
-        <span ht-select ht-select-options='responseOptions' ht-select-model='toolbar' ht-select-change='toolbar.setAnswer' ht-select-property='response'></span>
-      </div>
-      <div class='form-group'>
-        <span ht-select ht-select-options='scopeOptions' ht-select-model='toolbar' ht-select-change='toolbar.setAnswer' ht-select-property='scope'></span>
-      </div>
-    </form>
-  </div>
-
-  <div class='col-xs-3 col-xs-offset-4'>
-    <div class="form-group">
-      <input type="text" class="form-control" placeholder="Search" ng-model='toolbar.search'>
-    </div>
-  </div>
-</div>
+<div ht-toolbar ht-requirements-count='requirements.length' ht-search='searchModel' ht-scopes='scopeOptions' ht-responses='responseOptions'></div>
 
 <div class='row'>
   <div class='col-sm-12'>
     <div ht-assessment-table='{{assessmentType}}'
          ht-requirements='requirements' 
          ht-headings='headings' 
-         ht-filter='toolbar.search'
          ht-scope-options='scopeOptions'
-         ht-response-options='responseOptions'>
+         ht-response-options='responseOptions'
+         ht-filter='searchModel'>
     </div>
   </div>
 </div>

@@ -1,10 +1,10 @@
-(function(hitrust){
+(function(assessment){
   
-  hitrust.ra.controller('ManagedCtrl', ['$scope', 'AssessmentSvc', function($scope, Assessment){
+  assessment.controller('ManagedCtrl', ['$scope', 'AssessmentSvc', function($scope, Assessment){
     $scope.setActiveNav(4);
     $scope.assessmentType = 'Managed';
     $scope.setRequirements(Assessment.get($scope.assessmentType));
-    $scope.toolbar.reset();
+    $scope.$broadcast('toolbarReset');
     $scope.headings = {
       response: 'Corrective Actions',
       scope: 'Types of Corrective Actions'
@@ -20,4 +20,4 @@
     ];
   }]);
 
-}(window.HT));
+}(window.HT.assessment));

@@ -1,6 +1,6 @@
 (function(hitrust){
   
-  hitrust.ra.directive('htCheckbox', [function(){
+  hitrust.inputs.directive('htCheckbox', [function(){
 
     var linker = function(scope, elem, attrs) {
     };

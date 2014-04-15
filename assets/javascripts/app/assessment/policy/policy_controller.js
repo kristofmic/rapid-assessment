@@ -1,10 +1,10 @@
-(function(hitrust){
+(function(assessment){
   
-  hitrust.ra.controller('PolicyCtrl', ['$scope', 'AssessmentSvc', function($scope, Assessment){
+  assessment.controller('PolicyCtrl', ['$scope', 'AssessmentSvc', function($scope, Assessment){
     $scope.setActiveNav(0);
     $scope.assessmentType = 'Policy';
     $scope.setRequirements(Assessment.get($scope.assessmentType));
-    $scope.toolbar.reset();
+    $scope.$broadcast('toolbarReset');
     $scope.headings = {
       response: 'Documented',
       scope: 'Applies to Scope of Environment'
@@ -22,4 +22,4 @@
     ];
   }]);
 
-}(window.HT));
+}(window.HT.assessment));

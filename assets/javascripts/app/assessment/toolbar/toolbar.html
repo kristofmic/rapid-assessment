@@ -1,0 +1,40 @@
+<div class='row toolbar'>
+
+  <div class='col-xs-1'>
+    <div class="form-group">
+      <div class="btn-group">
+        <span id='toolbar-select-container' class="btn btn-default">
+          <span ht-checkbox ht-checkbox-id='toolbar-select' ht-checkbox-change='selected' ht-checkbox-model='select' ht-checkbox-partial='selectPartial'></span>
+        </span>
+        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+          <span class="caret"></span>
+          <span class="sr-only">Toggle Dropdown</span>
+        </button>
+        <ul class="dropdown-menu" role="menu">
+          <li><span ng-click='starred(true)'>Starred</span></li>
+          <li><span ng-click='starred(false)'>Unstarred</span></li>
+          <li class="divider"></li>
+          <li><span class='text-danger' ng-click='clearAnswer()'>Clear answers</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class='col-xs-4'>
+    <form class="form-inline" role="form" ng-show='select'>
+      <div class='form-group'>
+        <span ht-select ht-select-options='htResponses' ht-select-model='answers' ht-select-change='setAnswer' ht-select-property='response'></span>
+      </div>
+      <div class='form-group'>
+        <span ht-select ht-select-options='htScopes' ht-select-model='answers' ht-select-change='setAnswer' ht-select-property='scope'></span>
+      </div>
+    </form>
+  </div>
+
+  <div class='col-xs-3 col-xs-offset-4'>
+    <div class="form-group">
+      <input type="text" class="form-control" placeholder="Search" ng-model='htSearch'>
+    </div>
+  </div>
+
+</div>

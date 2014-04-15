@@ -1,7 +1,7 @@
 (function(global) {
 
   var hitrust = global.HT = global.HT || {};
-  hitrust.ra = angular.module('hitrust-ra', ['ui.router']);
+  hitrust.ra = angular.module('hitrust-ra', ['ui.router', 'ht-assessment']);
 
   hitrust.ra.config(['$stateProvider', '$urlRouterProvider', 
   function($stateProvider, $urlRouterProvider){
@@ -11,7 +11,8 @@
       .state('assessment', {
         url: '/assessment',
         templateUrl: 'assets/javascripts/app/assessment/assessment.html',
-        controller: 'AssessmentCtrl'
+        controller: 'AssessmentCtrl',
+        abstract: true
       })
       .state('assessment.policy', {
         url: '/policy',
