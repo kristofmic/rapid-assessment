@@ -20,9 +20,10 @@
       <td width='5%'>{{req.Control}}</td>
       <td width='33%'>{{req.Requirement}}</td>
       <td width='14%'>
-        <span ht-select ht-select-options='htResponseOptions' ht-select-option-label-prop='attDesc' ht-select-option-value-prop='attId' ht-on-select='saveAnswer(value, option, req)'></span>
+        <span ht-select ht-select-options='htResponseOptions' ht-select-option-label-prop='attDesc' ht-select-option-value-prop='attId' ht-selected='req.response.attDesc' ht-on-select='saveAnswer(value, option, req)'></span>
       </td>
       <td width='24%'>
+        <span ht-select ht-select-options='htScopeOptions' ht-select-option-label-prop='attDesc' ht-select-option-value-prop='attId' ht-selected='req.scope.attDesc' ht-on-select='saveAnswer(value, option, req)'></span>
       </td>
     </tr>
   </tbody>

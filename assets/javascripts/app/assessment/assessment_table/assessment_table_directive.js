@@ -11,7 +11,8 @@
 
     var control = ['$scope', 'htEvents', 'AssessmentSvc', function($scope, events, assessment) {
         $scope.saveAnswer = function(attrId, option, req) {
-            console.log(req);
+            req[option.answerType] = option;
+            assessment.saveFinding(req.fID, attrId);
         };
 
         $scope.setSelected = function(value) {
@@ -25,35 +26,30 @@
         });
 
         $scope.$on('toolbarAnswer', function(e, args) {
-            _.each($scope.htRequirements, function(req) {
+            _.each($scope.fhtRequirements, function(req) {
                 if (req.select) {
-                    req[args.type] = args.answer;
-                    $scope.setAnswer(req, args.type, args.answer);
+                    $scope.saveAnswer(args.option.attId, args.option, req);
                 }
             });
         });
 
         $scope.$on('toolbarClear', function(e) {
-            _.each($scope.htRequirements, function(req) {
+            _.each($scope.fhtRequirements, function(req) {
                 if (req.select) {
                     req.response = null;
-                    $scope.setAnswer(req, 'response', null);
+                    $scope.saveAnswer(null, null);
                     req.scope = null;
-                    $scope.setAnswer(req, 'scope', null);
+                    $scope.saveAnswer(null, null);
                 }
             });
         });
 
         $scope.$on('toolbarStarred', function(e, args) {
-            _.each($scope.htRequirements, function(req) {
+            _.each($scope.fhtRequirements, function(req) {
               if (req.select) {
                 req.starred = args.value;
               }
             });
-        });
-
-        $scope.$on('toolbarFilter', function(e, args) {
-            $scope.htFilter[args.filter] = args.value;
         });
 
     }];

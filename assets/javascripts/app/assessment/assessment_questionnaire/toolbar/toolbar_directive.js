@@ -16,7 +16,7 @@
 					$scope.activeRequirements = 0;
 					reset();
 				} else {
-					$scope.activeRequirements = $scope.htRequirementsCount;
+					$scope.activeRequirements = $scope.requirementsCount;
 				}
 				selectPartial = false;
 				events.raise('toolbarSelect', {value: value});
@@ -26,12 +26,8 @@
 				events.raise('toolbarStarred', {value: value});
 			};
 
-			$scope.setAnswer = function(model, type, index) {
-				events.raise('toolbarAnswer', 
-					{	
-						type: type, 
-						answer: model[type]
-					}
+			$scope.setAnswers = function(attrId, option) {
+				events.raise('toolbarAnswer', {	option: option }
 				);
 			};
 
@@ -52,43 +48,7 @@
 				$scope.resetAnswers();
 			}
 
-			$scope.filter = (function(){
-				var filters = [];
-
-				var updateFilters = function(filter, value) {
-					if (value) {
-						filters.push(filter);
-					} else {
-						_.remove(filters, function(f) {
-							return f === filter;
-						});
-					}
-				};
-
-				var applied = function(filter) {
-					return _.contains(filters, filter);
-				};
-
-				var remove = function(filter) {
-					updateFilters(filter, false);
-					events.raise('toolbarFilter', {filter: filter, value: undefined})
-				};
-
-				var add = function(filter) {
-					if (!applied(filter)) {
-						updateFilters(filter, true);
-						events.raise('toolbarFilter', {filter: filter, value: true})
-					}
-				};
-
-				return {
-					filters: filters,
-					remove: remove,
-					add: add
-				};
-			}());
-
-			$scope.$on('toolbarReset', function(e) {
+			$scope.$on('resetToolbar', function(e) {
 				reset();
 			});
 
@@ -97,12 +57,12 @@
 					$scope.select = true;
 					$scope.selectPartial = true;
 					$scope.activeRequirements += 1;
-					if ($scope.activeRequirements === $scope.htRequirementsCount) {
+					if ($scope.activeRequirements === $scope.requirementsCount) {
 						$scope.selectPartial = false;	
 					}
 				} else {
 					$scope.activeRequirements -= 1;
-					if ($scope.activeRequirements !== $scope.htRequirementsCount) {
+					if ($scope.activeRequirements !== $scope.requirementsCount) {
 						$scope.selectPartial = true;
 					}
 					if ($scope.activeRequirements === 0) {
@@ -120,10 +80,10 @@
 			templateUrl: 'assets/javascripts/app/assessment/assessment_questionnaire/toolbar/toolbar.html',
 			controller: control,
 			scope: {
-				htRequirementsCount: '@',
-				htSearch: '=',
-				htScopes: '=',
-				htResponses: '='
+				requirementsCount: '@htRequirementsCount',
+				search: '=htSearch',
+				scopeOptions: '=htScopeOptions',
+				responseOptions: '=htResponseOptions'
 			}
 		}
 

@@ -24,6 +24,7 @@
         options: '=htSelectOptions',
         label: '@htSelectOptionLabelProp',
         value: '@htSelectOptionValueProp',
+        selected: '=htSelected',
         onSelect: '&htOnSelect'
       }
     };
