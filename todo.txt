@@ -1,7 +1,13 @@
+ - implementing attributes and updated select
+ - mocking out endpoints
+ 	+ GET (requirements): get_Data.php
+ 	+ GET (attributes): ajax/getRAAttrs.php
+ 	+ POST (finding): ajax/updateFindings.php
+ - measured/managed multi-select
  - column ordering
  - column filtering
  - dashboard
+ - maintain state (toolbar, checks, etc.) across all assessments (maybe)
  - pagination (maybe)
  - answering in separate view (maybe)
- - maintain state (toolbar, checks, etc.) across all assessments
- - alerts
+ - alerts (maybe)

@@ -2,11 +2,15 @@
   
   hitrust.inputs.directive('htSelect', [function(){
 
-    var control = ['$scope', function($scope) {
+    var linker = function(scope, elem, attrs) {
+      scope.label = scope.label || 'label';
+      scope.value = scope.value || 'value';
+    };
 
-      $scope.select = function($index) {
-        $scope.htSelectModel[$scope.htSelectProperty] = $index;
-        $scope.htSelectChange($scope.htSelectModel, $scope.htSelectProperty, $index);
+    var control = ['$scope', function($scope) {
+      $scope.select = function(option) {
+        $scope.selected = option[$scope.label];
+        $scope.onSelect({value: option[$scope.value], option: option});
       };
     }];
 
@@ -14,12 +18,13 @@
       restrict: 'A',
       templateUrl: 'assets/javascripts/app/inputs/select.html',
       replace: false,
+      link: linker,
       controller: control,
       scope: {
-        htSelectOptions: '=',
-        htSelectChange: '=',
-        htSelectModel: '=',
-        htSelectProperty: '@',
+        options: '=htSelectOptions',
+        label: '@htSelectOptionLabelProp',
+        value: '@htSelectOptionValueProp',
+        onSelect: '&htOnSelect'
       }
     };
   }]);

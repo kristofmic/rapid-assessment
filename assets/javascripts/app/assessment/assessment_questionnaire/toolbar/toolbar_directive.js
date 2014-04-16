@@ -117,10 +117,10 @@
 		return {
 			restrict: 'A',
 			replace: false,
-			templateUrl: 'assets/javascripts/app/assessment/toolbar/toolbar.html',
+			templateUrl: 'assets/javascripts/app/assessment/assessment_questionnaire/toolbar/toolbar.html',
 			controller: control,
 			scope: {
-				htRequirementsCount: '=',
+				htRequirementsCount: '@',
 				htSearch: '=',
 				htScopes: '=',
 				htResponses: '='

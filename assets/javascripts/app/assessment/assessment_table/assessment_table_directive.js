@@ -1,19 +1,17 @@
 (function(assessment){
   
-  assessment.directive('htAssessmentTable', ['AssessmentSvc', 'htEvents', function(Assessment, events){
+  assessment.directive('htAssessmentTable', [function(){
 
     var linker = function(scope, elem, attrs) {
         scope.responses = {};
         scope.scopes = {};
-
         scope.defaultOrder = ["Domain", "Control"];
-
         scope.htFilter = {};
     };
 
-    var control = ['$scope', function($scope) {
-        $scope.setAnswer = function(model, prop, index) {
-            Assessment.put($scope.htAssessmentTable, $scope.htHeadings[prop], model.fID, model[prop]);
+    var control = ['$scope', 'htEvents', 'AssessmentSvc', function($scope, events, assessment) {
+        $scope.saveAnswer = function(attrId, option, req) {
+            console.log(req);
         };
 
         $scope.setSelected = function(value) {

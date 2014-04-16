@@ -3,10 +3,13 @@
   assessment.controller('AssessmentQuestionnaireCtrl', ['$scope', '$state', 'htEvents', 'AssessmentSvc', 
 		function($scope, $state, events, assessment){
 
-			$scope.requirements = assessment.get($state.current.data.type);
+			var type = $state.current.data.type;
+			var attributes = assessment.getAttributes(type);
+
+			$scope.requirements = assessment.getRequirements(type);
 			$scope.headings = $state.current.data.headings;
-			$scope.scopeOptions = $state.current.data.scopeOptions;
-			$scope.responseOptions = $state.current.data.responseOptions;
+			$scope.scopeOptions = _.filter(attributes, function(attr) { return attr.answerType === 'scope'; });
+			$scope.responseOptions = _.filter(attributes, function(attr) { return attr.answerType === 'response'; });
 		
 			$scope.setNav($state.current.data.nav);
 			events.raise('toolbarReset');
