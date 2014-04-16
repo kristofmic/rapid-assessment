@@ -69,11 +69,11 @@ button, .btn, input, select, textarea, a {
 #main .toolbar {
   padding: 7px 0;
 }
-#main .toolbar #toolbar-select-container {
+#main .toolbar #toolbar-select-container, #main .toolbar #toolbar-filter-container {
   padding: 8px 12px;
   border: 1px solid #ddd;
 }
-#main .toolbar #toolbar-select-container:hover, #main .toolbar #toolbar-select-container:active, #main .toolbar #toolbar-select-container:focus {
+#main .toolbar #toolbar-select-container:hover, #main .toolbar #toolbar-select-container:active, #main .toolbar #toolbar-select-container:focus, #main .toolbar #toolbar-filter-container:hover, #main .toolbar #toolbar-filter-container:active, #main .toolbar #toolbar-filter-container:focus {
   border-color: #ddd;
   background-color: #fff;
   cursor: default;
@@ -81,11 +81,27 @@ button, .btn, input, select, textarea, a {
   -webkit-box-shadow: none;
   -moz-box-shadow: none;
 }
-#main .toolbar #toolbar-select-container + .dropdown-toggle {
+#main .toolbar #toolbar-filter-container {
+  padding-top: 9px;
+  padding-bottom: 9px;
+}
+#main .toolbar #toolbar-select-container + .dropdown-toggle, #main .toolbar #toolbar-filter-container + .dropdown-toggle {
   height: 34px;
 }
-#main .toolbar #toolbar-select-container + .dropdown-toggle .caret {
+#main .toolbar #toolbar-select-container + .dropdown-toggle .caret, #main .toolbar #toolbar-filter-container + .dropdown-toggle .caret {
   margin-left: 0;
+}
+#main .toolbar .label-filter {
+  font-weight: normal;
+  font-size: 12px;
+  padding: 4px;
+  margin-right: 4px;
+  border-radius: 2px;
+}
+#main .toolbar .label-filter .close {
+  float: none;
+  font-size: 16px;
+  margin-left: 4px;
 }
 #main .checkbox-label {
   display: inline-block;

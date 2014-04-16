@@ -52,6 +52,42 @@
 				$scope.resetAnswers();
 			}
 
+			$scope.filter = (function(){
+				var filters = [];
+
+				var updateFilters = function(filter, value) {
+					if (value) {
+						filters.push(filter);
+					} else {
+						_.remove(filters, function(f) {
+							return f === filter;
+						});
+					}
+				};
+
+				var applied = function(filter) {
+					return _.contains(filters, filter);
+				};
+
+				var remove = function(filter) {
+					updateFilters(filter, false);
+					events.raise('toolbarFilter', {filter: filter, value: undefined})
+				};
+
+				var add = function(filter) {
+					if (!applied(filter)) {
+						updateFilters(filter, true);
+						events.raise('toolbarFilter', {filter: filter, value: true})
+					}
+				};
+
+				return {
+					filters: filters,
+					remove: remove,
+					add: add
+				};
+			}());
+
 			$scope.$on('toolbarReset', function(e) {
 				reset();
 			});

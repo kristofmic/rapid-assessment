@@ -20,7 +20,7 @@
     </div>
   </div>
 
-  <div class='col-xs-4'>
+  <div class='col-xs-3'>
     <form class="form-inline" role="form" ng-show='select'>
       <div class='form-group'>
         <span ht-select ht-select-options='htResponses' ht-select-model='answers' ht-select-change='setAnswer' ht-select-property='response'></span>
@@ -31,7 +31,34 @@
     </form>
   </div>
 
-  <div class='col-xs-3 col-xs-offset-4'>
+  <div class='col-xs-1'>
+    <div class='form-group'>
+      <div class="btn-group">
+        <span id='toolbar-filter-container' class="btn btn-default">
+          <span class='glyphicon glyphicon-filter'></span>
+        </span>
+        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+          <span class="caret"></span>
+          <span class="sr-only">Toggle Dropdown</span>
+        </button>
+        <ul class="dropdown-menu" role="menu">
+          <li><span ng-click='filter.add("select")'>Selected</span></li>
+          <li><span ng-click='filter.add("starred")'>Starred</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class='col-xs-3'>
+    <form class="form-inline" role="form">
+      <span class="label label-primary label-filter" ng-repeat='f in filter.filters'>
+        {{f}}
+        <button type="button" class="close" aria-hidden="true" ng-click='filter.remove(f)'>&times;</button>
+      </span>
+    </form>
+  </div>
+
+  <div class='col-xs-3'>
     <div class="form-group">
       <input type="text" class="form-control" placeholder="Search" ng-model='htSearch'>
     </div>

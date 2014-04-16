@@ -80,7 +80,7 @@ button, .btn, input, select, textarea, a {
 	.toolbar {
 		padding: 7px 0;
 
-    #toolbar-select-container {
+    #toolbar-select-container, #toolbar-filter-container {
       padding: 8px 12px;
       border: 1px solid #ddd;
 
@@ -94,11 +94,30 @@ button, .btn, input, select, textarea, a {
       }
     }
 
-    #toolbar-select-container + .dropdown-toggle {
+    #toolbar-filter-container {
+      padding-top: 9px;
+      padding-bottom: 9px;
+    }
+
+    #toolbar-select-container + .dropdown-toggle, #toolbar-filter-container + .dropdown-toggle {
       height: 34px;
 
       .caret {
         margin-left: 0;
+      }
+    }
+
+    .label-filter {
+      font-weight: normal;
+      font-size: 12px;
+      padding: 4px;
+      margin-right: 4px;
+      border-radius: 2px;
+
+      .close {
+        float: none;
+        font-size: 16px;
+        margin-left: 4px;
       }
     }
 	}

@@ -5,6 +5,10 @@
     var linker = function(scope, elem, attrs) {
         scope.responses = {};
         scope.scopes = {};
+
+        scope.defaultOrder = ["Domain", "Control"];
+
+        scope.htFilter = {};
     };
 
     var control = ['$scope', function($scope) {
@@ -50,6 +54,10 @@
             });
         });
 
+        $scope.$on('toolbarFilter', function(e, args) {
+            $scope.htFilter[args.filter] = args.value;
+        });
+
     }];
 
     return {
@@ -64,7 +72,7 @@
             htHeadings: '=',
             htScopeOptions: '=',
             htResponseOptions: '=',
-            htFilter: '='
+            htSearch: '='
     	}
     };
   }]);
