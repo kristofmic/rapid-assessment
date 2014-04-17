@@ -402,7 +402,11 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
   
   hitrust.inputs.directive('htMultiSelect', [function(){
     var getSelectedLabel = function(selected, sortByProperty, labelProperty) {
-      return _.pluck(_.sortBy(selected, sortByProperty), labelProperty).join(', ');
+      if (selected.length > 3) {
+        return selected.length + " items selected";
+      } else {
+        return _.pluck(_.sortBy(selected, sortByProperty), labelProperty).join(', ');
+      }
     };
 
     var linker = function(scope, elem, attrs) {
@@ -414,7 +418,10 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
     };
 
     var control = ['$scope', function($scope) {
-      $scope.select = function(option) {
+      $scope.select = function($event, option) {
+        $event.preventDefault();
+        $event.stopPropagation();
+
         if ($scope.selectedValues[option[$scope.value]]) {
           _.remove($scope.selected, function(select) { return select[$scope.value] === option[$scope.value]; });
           $scope.selectedValues[option[$scope.value]] = false;
@@ -426,6 +433,7 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
         }
         $scope.selectedLabel = getSelectedLabel($scope.selected, $scope.value, $scope.label);
       };
+
     }];
 
     return {
