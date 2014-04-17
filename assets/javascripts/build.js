@@ -401,17 +401,30 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
 (function(hitrust){
   
   hitrust.inputs.directive('htMultiSelect', [function(){
+    var getSelectedLabel = function(selected, sortByProperty, labelProperty) {
+      return _.pluck(_.sortBy(selected, sortByProperty), labelProperty).join(', ');
+    };
 
     var linker = function(scope, elem, attrs) {
       scope.label = scope.label || 'label';
       scope.value = scope.value || 'value';
-      scope.selected = attrs['ht-selected-label'];
+      scope.selected = [];
+      scope.selectedValues = {};
+      scope.selectedLabel = getSelectedLabel(scope.selected, scope.value, scope.label);
     };
 
     var control = ['$scope', function($scope) {
       $scope.select = function(option) {
-        $scope.selected = option[$scope.label];
-        $scope.onSelect({value: option[$scope.value], option: option});
+        if ($scope.selectedValues[option[$scope.value]]) {
+          _.remove($scope.selected, function(select) { return select[$scope.value] === option[$scope.value]; });
+          $scope.selectedValues[option[$scope.value]] = false;
+          $scope.onSelect({value: null, option: option});
+        } else {
+          $scope.selected.push(option);
+          $scope.selectedValues[option[$scope.value]] = true;
+          $scope.onSelect({value: option[$scope.value], option: option});
+        }
+        $scope.selectedLabel = getSelectedLabel($scope.selected, $scope.value, $scope.label);
       };
     }];
 
@@ -611,7 +624,7 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
 			templateUrl: 'assets/javascripts/app/assessment/assessment_questionnaire/toolbar/toolbar.html',
 			controller: control,
 			scope: {
-				requirementsCount: '@htRequirementsCount',
+				requirementsCount: '=htRequirementsCount',
 				search: '=htSearch',
 				scopeOptions: '=htScopeOptions',
 				responseOptions: '=htResponseOptions'

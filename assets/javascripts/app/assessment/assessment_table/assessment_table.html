@@ -23,6 +23,7 @@
         <span ht-select ht-select-options='htResponseOptions' ht-select-option-label-prop='attDesc' ht-select-option-value-prop='attId' ht-selected='req.response.attDesc' ht-on-select='saveAnswer(value, option, req)'></span>
       </td>
       <td width='24%'>
+      <!-- NEED TO DYNAMICALLY DETERMINE WHICH SELECT TO USE. LOOK INTO COMPILE FUNCTION ON DIRECTIVES -->
         <span ht-multi-select ht-select-options='htScopeOptions' ht-select-option-label-prop='attDesc' ht-select-option-value-prop='attId' ht-selected='req.scope.attDesc' ht-on-select='saveAnswer(value, option, req)'></span>
       </td>
     </tr>

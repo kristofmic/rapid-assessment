@@ -80,7 +80,7 @@
 			templateUrl: 'assets/javascripts/app/assessment/assessment_questionnaire/toolbar/toolbar.html',
 			controller: control,
 			scope: {
-				requirementsCount: '@htRequirementsCount',
+				requirementsCount: '=htRequirementsCount',
 				search: '=htSearch',
 				scopeOptions: '=htScopeOptions',
 				responseOptions: '=htResponseOptions'

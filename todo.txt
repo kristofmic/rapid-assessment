@@ -3,6 +3,9 @@
  	+ GET (attributes): ajax/getRAAttrs.php
  	+ POST (finding): ajax/updateFindings.php
  - measured/managed multi-select
+ - toolbar Clear
+
+ 
  - column ordering
  - column filtering
  - dashboard
