@@ -4,7 +4,7 @@
 
     var control = ['$scope', function($scope) {
       $scope.change = function() {
-        $scope.htCheckboxChange($scope.htCheckboxModel);
+        $scope.onChange({value: $scope.htCheckboxModel});
       };
     }];
 
@@ -15,7 +15,7 @@
       controller: control,
       scope: {
         htCheckboxId: '@',
-        htCheckboxChange: '=',
+        onChange: '&htCheckboxChange',
         htCheckboxModel: '=',
         htCheckboxPartial: '='
       }

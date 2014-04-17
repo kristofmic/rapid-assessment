@@ -11,7 +11,7 @@
   <tbody>
     <tr ng-repeat='req in (fhtRequirements = (htRequirements | orderBy:defaultOrder | filter:htSearch | filter:htFilter)) track by $index' ng-class="{warning:req.select}">
       <td width='2.5%'>
-        <span ht-checkbox ht-checkbox-id='req-select-{{$index}}' ht-checkbox-change='setSelected' ht-checkbox-model='req.select'></span>
+        <span ht-checkbox ht-checkbox-id='req-select-{{$index}}' ht-checkbox-change='setSelected(value)' ht-checkbox-model='req.select'></span>
       </td>
       <td width='2.5%'>
         <span ht-star ht-star-id='req-star-{{$index}}' ht-star-model='req.starred'></span>
@@ -23,7 +23,7 @@
         <span ht-select ht-select-options='htResponseOptions' ht-select-option-label-prop='attDesc' ht-select-option-value-prop='attId' ht-selected='req.response.attDesc' ht-on-select='saveAnswer(value, option, req)'></span>
       </td>
       <td width='24%'>
-        <span ht-select ht-select-options='htScopeOptions' ht-select-option-label-prop='attDesc' ht-select-option-value-prop='attId' ht-selected='req.scope.attDesc' ht-on-select='saveAnswer(value, option, req)'></span>
+        <span ht-multi-select ht-select-options='htScopeOptions' ht-select-option-label-prop='attDesc' ht-select-option-value-prop='attId' ht-selected='req.scope.attDesc' ht-on-select='saveAnswer(value, option, req)'></span>
       </td>
     </tr>
   </tbody>

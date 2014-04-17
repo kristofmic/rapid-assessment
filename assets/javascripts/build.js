@@ -377,7 +377,7 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
 
     var control = ['$scope', function($scope) {
       $scope.change = function() {
-        $scope.htCheckboxChange($scope.htCheckboxModel);
+        $scope.onChange({value: $scope.htCheckboxModel});
       };
     }];
 
@@ -388,9 +388,44 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
       controller: control,
       scope: {
         htCheckboxId: '@',
-        htCheckboxChange: '=',
+        onChange: '&htCheckboxChange',
         htCheckboxModel: '=',
         htCheckboxPartial: '='
+      }
+    };
+  }]);
+
+}(window.HT));/* END OF SOURCE */
+
+/* SOURCE: ./assets/javascripts/app/inputs/multiselect_directive.js */
+(function(hitrust){
+  
+  hitrust.inputs.directive('htMultiSelect', [function(){
+
+    var linker = function(scope, elem, attrs) {
+      scope.label = scope.label || 'label';
+      scope.value = scope.value || 'value';
+      scope.selected = attrs['ht-selected-label'];
+    };
+
+    var control = ['$scope', function($scope) {
+      $scope.select = function(option) {
+        $scope.selected = option[$scope.label];
+        $scope.onSelect({value: option[$scope.value], option: option});
+      };
+    }];
+
+    return {
+      restrict: 'A',
+      templateUrl: 'assets/javascripts/app/inputs/multiselect.html',
+      replace: false,
+      link: linker,
+      controller: control,
+      scope: {
+        options: '=htSelectOptions',
+        label: '@htSelectOptionLabelProp',
+        value: '@htSelectOptionValueProp',
+        onSelect: '&htOnSelect'
       }
     };
   }]);
@@ -591,6 +626,9 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
 (function(assessment){
   
   assessment.factory('AssessmentSvc', ['HTAPI', function(api){
+    // MAKE THIS A QUERY STRING PARAMETER
+    var useMocks = true;
+
     var requirements = {}; 
     var attributes = {};
     var attrMap = {
@@ -616,7 +654,18 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
 
     var getRequirements = function(type) {
       if (!requirements[type]) {
-      	requirements[type] = reqData();
+        if (useMocks) {
+          requirements[type] = reqData();
+        } else {
+          // NEED TO RETHINK THIS AND HOW TO BETTER RESOLVE THE RESULT OF THE AJAX CALL
+          // MAYBE JUST RETURN THE PROMISE AND LET THE CALLER/CONTROLLER HANDLE IT
+          api.fetch('/ajax/get_Data.php')
+          .then(function(result) {
+            requirements[type] = result;
+          }, function(reason) {
+            console.log(reason.error);
+          });
+        } 
       } else {
       	_.each(requirements[type], function(req) {
       		req.select = false;
@@ -627,13 +676,22 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
 
     var getAttributes = function(type) {
       if (!attributes[type]) {
-        var attrs = _.map(attrData(), function(attr) {
-          attr.assessmentType = attrMap[attr.attTypeId].assessmentType;
-          attr.answerType = attrMap[attr.attTypeId].answerType;
-          return attr;
-        });
+        var atts;
+        if (useMocks) {
+          attrs = attrData();
+        } else {
+          // NEED TO RETHINK THIS AND HOW TO BETTER RESOLVE THE RESULT OF THE AJAX CALL
+          api.fetch('/ajax/getRAAttrs.php')
+          .then(function(result) {
+            attrs = result;
+          }, function(reason) {
+            console.log(reason.error);
+          });
+        } 
 
         attributes = _.groupBy(attrs, function(attr) {
+          attr.assessmentType = attrMap[attr.attTypeId].assessmentType;
+          attr.answerType = attrMap[attr.attTypeId].answerType;
           return attr.assessmentType;
         });
       }
@@ -641,7 +699,11 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
     };
 
     var saveFinding = function(fID, attrId) {
-      console.log('Saved: fID-' + fID + ' attrId-' + attrId);
+      if (useMocks) {
+        console.log('Saved: fID-' + fID + ' attrId-' + attrId);
+      } else {
+        api.create('ajax/updateFindings.php', {fID: fID, attId: attrId})
+      }
     };
     
     return {

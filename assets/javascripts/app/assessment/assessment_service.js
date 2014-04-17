@@ -1,6 +1,9 @@
 (function(assessment){
   
   assessment.factory('AssessmentSvc', ['HTAPI', function(api){
+    // MAKE THIS A QUERY STRING PARAMETER
+    var useMocks = true;
+
     var requirements = {}; 
     var attributes = {};
     var attrMap = {
@@ -26,7 +29,18 @@
 
     var getRequirements = function(type) {
       if (!requirements[type]) {
-      	requirements[type] = reqData();
+        if (useMocks) {
+          requirements[type] = reqData();
+        } else {
+          // NEED TO RETHINK THIS AND HOW TO BETTER RESOLVE THE RESULT OF THE AJAX CALL
+          // MAYBE JUST RETURN THE PROMISE AND LET THE CALLER/CONTROLLER HANDLE IT
+          api.fetch('/ajax/get_Data.php')
+          .then(function(result) {
+            requirements[type] = result;
+          }, function(reason) {
+            console.log(reason.error);
+          });
+        } 
       } else {
       	_.each(requirements[type], function(req) {
       		req.select = false;
@@ -37,13 +51,22 @@
 
     var getAttributes = function(type) {
       if (!attributes[type]) {
-        var attrs = _.map(attrData(), function(attr) {
-          attr.assessmentType = attrMap[attr.attTypeId].assessmentType;
-          attr.answerType = attrMap[attr.attTypeId].answerType;
-          return attr;
-        });
+        var atts;
+        if (useMocks) {
+          attrs = attrData();
+        } else {
+          // NEED TO RETHINK THIS AND HOW TO BETTER RESOLVE THE RESULT OF THE AJAX CALL
+          api.fetch('/ajax/getRAAttrs.php')
+          .then(function(result) {
+            attrs = result;
+          }, function(reason) {
+            console.log(reason.error);
+          });
+        } 
 
         attributes = _.groupBy(attrs, function(attr) {
+          attr.assessmentType = attrMap[attr.attTypeId].assessmentType;
+          attr.answerType = attrMap[attr.attTypeId].answerType;
           return attr.assessmentType;
         });
       }
@@ -51,7 +74,11 @@
     };
 
     var saveFinding = function(fID, attrId) {
-      console.log('Saved: fID-' + fID + ' attrId-' + attrId);
+      if (useMocks) {
+        console.log('Saved: fID-' + fID + ' attrId-' + attrId);
+      } else {
+        api.create('ajax/updateFindings.php', {fID: fID, attId: attrId})
+      }
     };
     
     return {

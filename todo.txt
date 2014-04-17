@@ -1,4 +1,3 @@
- - implementing attributes and updated select
  - mocking out endpoints
  	+ GET (requirements): get_Data.php
  	+ GET (attributes): ajax/getRAAttrs.php
@@ -11,3 +10,4 @@
  - pagination (maybe)
  - answering in separate view (maybe)
  - alerts (maybe)
+ 
