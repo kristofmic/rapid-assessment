@@ -402,7 +402,7 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
   
   hitrust.inputs.directive('htMultiSelect', [function(){
     var getSelectedLabel = function(selected, sortByProperty, labelProperty) {
-      if (selected.length > 3) {
+      if (selected.length > 2) {
         return selected.length + " items selected";
       } else {
         return _.pluck(_.sortBy(selected, sortByProperty), labelProperty).join(', ');
@@ -412,9 +412,19 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
     var linker = function(scope, elem, attrs) {
       scope.label = scope.label || 'label';
       scope.value = scope.value || 'value';
-      scope.selected = [];
+      scope.selected = scope.selected || [];
       scope.selectedValues = {};
       scope.selectedLabel = getSelectedLabel(scope.selected, scope.value, scope.label);
+
+      scope.$watchCollection('selected', function(newVal, oldVal) {
+        if (angular.isArray(newVal)){
+          scope.selectedValues = {};
+          _.each(newVal, function(val) {
+            scope.selectedValues[val[scope.value]] = true;
+          });
+          scope.selectedLabel = getSelectedLabel(newVal, scope.value, scope.label);
+        }
+      });
     };
 
     var control = ['$scope', function($scope) {
@@ -425,12 +435,19 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
         if ($scope.selectedValues[option[$scope.value]]) {
           _.remove($scope.selected, function(select) { return select[$scope.value] === option[$scope.value]; });
           $scope.selectedValues[option[$scope.value]] = false;
-          $scope.onSelect({value: null, option: option});
+          _.each($scope.options, function(opt) {
+            if (opt[$scope.value] === option[$scope.value]) {
+              opt.partial = false;
+            }
+          });
         } else {
           $scope.selected.push(option);
           $scope.selectedValues[option[$scope.value]] = true;
-          $scope.onSelect({value: option[$scope.value], option: option});
         }
+        $scope.onSelect()({
+          value: $scope.selectedValues[option[$scope.value]], 
+          option: option
+        });
         $scope.selectedLabel = getSelectedLabel($scope.selected, $scope.value, $scope.label);
       };
 
@@ -446,7 +463,9 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
         options: '=htSelectOptions',
         label: '@htSelectOptionLabelProp',
         value: '@htSelectOptionValueProp',
-        onSelect: '&htOnSelect'
+        partial: '@htSelectOptionPartialProp',
+        onSelect: '&htOnSelect',
+        selected: '=htSelected'
       }
     };
   }]);
@@ -461,12 +480,18 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
     var linker = function(scope, elem, attrs) {
       scope.label = scope.label || 'label';
       scope.value = scope.value || 'value';
+
+      scope.$watch('selected', function(newVal, oldVal) {
+        if (newVal && newVal[scope.label]){
+          scope.selected = newVal[scope.label];
+        }
+      });
     };
 
     var control = ['$scope', function($scope) {
       $scope.select = function(option) {
         $scope.selected = option[$scope.label];
-        $scope.onSelect({value: option[$scope.value], option: option});
+        $scope.onSelect()({value: option[$scope.value], option: option});
       };
     }];
 
@@ -482,6 +507,53 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
         value: '@htSelectOptionValueProp',
         selected: '=htSelected',
         onSelect: '&htOnSelect'
+      }
+    };
+  }]);
+
+}(window.HT));/* END OF SOURCE */
+
+/* SOURCE: ./assets/javascripts/app/inputs/select_factory_directive.js */
+(function(hitrust){
+  
+  hitrust.inputs.directive('htSelectFactory', ['$compile', function($compile){
+
+    var selectFactory = function(selected) {
+      var template = "<span ";
+
+      if (angular.isArray(selected)) {
+        template += "ht-multi-select " +
+                    "ht-select-option-partial-prop='{{htSelectOptionPartialProp}}'";
+      } else {
+        template += "ht-select ";
+      }
+
+      template += "ht-select-options='htSelectOptions' " +
+                  "ht-select-option-label-prop='{{htSelectOptionLabelProp}}' " +
+                  "ht-select-option-value-prop='{{htSelectOptionValueProp}}' " +
+                  "ht-selected='htSelected' " +
+                  "ht-on-select='htOnSelect'></span>";
+      return template;
+    };
+
+    var linker = function(scope, element, attrs) {
+      element.html(
+        selectFactory(scope.htSelected)
+      );
+      $compile(element.contents())(scope);
+    };
+
+    return {
+      restrict: 'A',
+      replace: true,
+      link: linker,
+      scope: {
+        htSelectOptions: '=',
+        htSelectOptionLabelProp: '@',
+        htSelectOptionValueProp: '@',
+        htSelectOptionPartialProp: '@',
+        htSelected: '=',
+        htOnSelect: '&'
       }
     };
   }]);
@@ -533,16 +605,28 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
   assessment.controller('AssessmentQuestionnaireCtrl', ['$scope', '$state', 'htEvents', 'AssessmentSvc', 
 		function($scope, $state, events, assessment){
 
-			var type = $state.current.data.type;
-			var attributes = assessment.getAttributes(type);
+			$scope.type = $state.current.data.type;
 
-			$scope.requirements = assessment.getRequirements(type);
+			assessment.getRequirements($scope.type, function(reqs) {
+				$scope.requirements = reqs;
+			});
+			_.each($scope.requirements, function(req) {
+				req.select = false;
+			});
+
 			$scope.headings = $state.current.data.headings;
-			$scope.scopeOptions = _.filter(attributes, function(attr) { return attr.answerType === 'scope'; });
-			$scope.responseOptions = _.filter(attributes, function(attr) { return attr.answerType === 'response'; });
+
+			assessment.getAttributes($scope.type, function(attrs) {
+				$scope.scopeOptions = _.filter(attrs, function(attr) { return attr.answerType === 'scope'; });
+				$scope.responseOptions = _.filter(attrs, function(attr) { return attr.answerType === 'response'; });
+			});
 		
 			$scope.setNav($state.current.data.nav);
 			events.raise('resetToolbar');
+
+			window.getScope = function() {
+				return $scope;
+			};
 
 		}
 	]);
@@ -559,16 +643,22 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
 			$scope.selectPartial = false;
 			$scope.activeRequirements = 0;
 			$scope.answers = {
-				response: null,
-				scope: null
-			}
+				response: ''
+			};
+			if ($scope.type === "Measured" || $scope.type === "Managed") {
+        var originalScope = [];
+      } else {
+      	var originalScope = '';  
+      }
+      $scope.answers.scope = _.clone(originalScope);
 
 			$scope.selected = function(value) {
 				if (!value) {
 					$scope.activeRequirements = 0;
 					reset();
 				} else {
-					$scope.activeRequirements = $scope.requirementsCount;
+					$scope.activeRequirements = $scope.requirements.length;
+					setupMultiSelect($scope.requirements);
 				}
 				selectPartial = false;
 				events.raise('toolbarSelect', {value: value});
@@ -578,9 +668,8 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
 				events.raise('toolbarStarred', {value: value});
 			};
 
-			$scope.setAnswers = function(attrId, option) {
-				events.raise('toolbarAnswer', {	option: option }
-				);
+			$scope.setAnswers = function(value, option) {
+				events.raise('toolbarAnswer', {	option: option, value: !!value});
 			};
 
 			$scope.clearAnswer = function() {
@@ -589,8 +678,11 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
 			};
 
 			$scope.resetAnswers = function() {
-				$scope.answers.response = null;
-				$scope.answers.scope = null;
+				$scope.answers.response = '';
+				$scope.answers.scope = _.clone(originalScope);
+				_.each($scope.scopeOptions, function(opt){
+					opt.partial = null;
+				});
 			};
 
 			var reset = function() {
@@ -598,28 +690,63 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
 				$scope.activeRequirements = 0;
 				$scope.selectPartial = false;
 				$scope.resetAnswers();
-			}
+			};
+
+			var setupMultiSelect = function(reqs) {
+				if (angular.isArray($scope.answers.scope)) {
+					_.each(reqs, function(req){
+						_.each(req.scope, function(selected) {
+							var index = _.findIndex($scope.answers.scope, function(opt) {
+								return opt.attId === selected.attId
+							});
+							if (index >= 0) {
+								$scope.answers.scope[index].count += 1;
+							}
+							else {
+								$scope.answers.scope.push(_.clone(selected));
+								_.last($scope.answers.scope).count = 1;
+							}
+						});
+					});
+
+					_.each($scope.answers.scope, function(opt) {
+						var index = _.findIndex($scope.scopeOptions, function(sOpt) {
+							return sOpt.attId === opt.attId;
+						});
+						if (index >= 0) {
+							if (opt.count < $scope.activeRequirements) {
+								$scope.scopeOptions[index].partial = true;
+							} 
+							else {
+								$scope.scopeOptions[index].partial = false;
+							}
+						}
+					});	
+				}
+			};
 
 			$scope.$on('resetToolbar', function(e) {
 				reset();
 			});
 
-			$scope.$on('requirementSelect', function(e, value) {
-				if (value) {
+			$scope.$on('requirementSelect', function(e, args) {
+				if (args.value) {
 					$scope.select = true;
 					$scope.selectPartial = true;
 					$scope.activeRequirements += 1;
-					if ($scope.activeRequirements === $scope.requirementsCount) {
+					if ($scope.activeRequirements === $scope.requirements.length) {
 						$scope.selectPartial = false;	
 					}
+					setupMultiSelect([args.req]);
 				} else {
 					$scope.activeRequirements -= 1;
-					if ($scope.activeRequirements !== $scope.requirementsCount) {
+					if ($scope.activeRequirements !== $scope.requirements.length) {
 						$scope.selectPartial = true;
 					}
 					if ($scope.activeRequirements === 0) {
 						$scope.select = false;
 						$scope.selectPartial = false;
+						$scope.resetAnswers();
 					}
 				}
 			});
@@ -632,10 +759,11 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
 			templateUrl: 'assets/javascripts/app/assessment/assessment_questionnaire/toolbar/toolbar.html',
 			controller: control,
 			scope: {
-				requirementsCount: '=htRequirementsCount',
+				requirements: '=htRequirements',
 				search: '=htSearch',
 				scopeOptions: '=htScopeOptions',
-				responseOptions: '=htResponseOptions'
+				responseOptions: '=htResponseOptions',
+				type: '@htAssessmentType'
 			}
 		}
 
@@ -647,9 +775,6 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
 (function(assessment){
   
   assessment.factory('AssessmentSvc', ['HTAPI', function(api){
-    // MAKE THIS A QUERY STRING PARAMETER
-    var useMocks = true;
-
     var requirements = {}; 
     var attributes = {};
     var attrMap = {
@@ -673,57 +798,69 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
       return [{"attId":1426,"attTypeId":1314,"attDesc":"No","listItem":"Policy_Documented_No"},{"attId":1427,"attTypeId":1314,"attDesc":"Yes","listItem":"Policy_Documented_Yes"},{"attId":1428,"attTypeId":1315,"attDesc":"No","listItem":"Procedure_Documented_No"},{"attId":1429,"attTypeId":1315,"attDesc":"Yes","listItem":"Procedure_Documented_Yes"},{"attId":1430,"attTypeId":1316,"attDesc":"No","listItem":"Implemented_Documented_No"},{"attId":1431,"attTypeId":1316,"attDesc":"Yes","listItem":"Implemented_Documented_Yes"},{"attId":1432,"attTypeId":1317,"attDesc":"No","listItem":"Measured_Documented_No"},{"attId":1433,"attTypeId":1317,"attDesc":"Yes","listItem":"Measured_Documented_Yes"},{"attId":1434,"attTypeId":1318,"attDesc":"No","listItem":"Managed_Documented_No"},{"attId":1435,"attTypeId":1318,"attDesc":"Yes","listItem":"Managed_Documented_Yes"},{"attId":1443,"attTypeId":1321,"attDesc":"None","listItem":"Policy_AppliedScope_None"},{"attId":1444,"attTypeId":1321,"attDesc":"Less than half","listItem":"Policy_AppliedScope_LtHalf"},{"attId":1445,"attTypeId":1321,"attDesc":"Half","listItem":"Policy_AppliedScope_Half"},{"attId":1446,"attTypeId":1321,"attDesc":"More than half","listItem":"Policy_AppliedScope_GtHalf"},{"attId":1447,"attTypeId":1321,"attDesc":"All","listItem":"Policy_AppliedScope_All"},{"attId":1448,"attTypeId":1322,"attDesc":"None","listItem":"Procedure_AppliedScope_None"},{"attId":1449,"attTypeId":1322,"attDesc":"Less than half","listItem":"Procedure_AppliedScope_LtHalf"},{"attId":1450,"attTypeId":1322,"attDesc":"Half","listItem":"Procedure_AppliedScope_Half"},{"attId":1451,"attTypeId":1322,"attDesc":"More than half","listItem":"Procedure_AppliedScope_GtHalf"},{"attId":1452,"attTypeId":1322,"attDesc":"All","listItem":"Procedure_AppliedScope_All"},{"attId":1453,"attTypeId":1323,"attDesc":"Operational","listItem":"Measured_ReviewType_Operationa"},{"attId":1454,"attTypeId":1323,"attDesc":"Independent","listItem":"Measured_ReviewType_Independen"},{"attId":1455,"attTypeId":1323,"attDesc":"Metrics","listItem":"Measured_ReviewType_Metrics"},{"attId":1456,"attTypeId":1324,"attDesc":"Operational","listItem":"Managed_ReviewType_Operational"},{"attId":1457,"attTypeId":1324,"attDesc":"Independent","listItem":"Managed_ReviewType_Independent"},{"attId":1458,"attTypeId":1324,"attDesc":"Metrics","listItem":"Managed_ReviewType_Metrics"},{"attId":1448,"attTypeId":1325,"attDesc":"None","listItem":"Implemented_AppliedScope_None"},{"attId":1449,"attTypeId":1325,"attDesc":"Less than half","listItem":"Implemented_AppliedScope_LtHalf"},{"attId":1450,"attTypeId":1325,"attDesc":"Half","listItem":"Implemented_AppliedScope_Half"},{"attId":1451,"attTypeId":1325,"attDesc":"More than half","listItem":"Implemented_AppliedScope_GtHalf"},{"attId":1452,"attTypeId":1325,"attDesc":"All","listItem":"Implemented_AppliedScope_All"}];
     };
 
-    var getRequirements = function(type) {
+    var formatRequirements = function(reqs, type) {
+      _.each(reqs, function(req) {
+        req.select = false;
+        req.starred = false;
+        req.response = '';
+        if (type === "Measured" || type === "Managed") {
+          req.scope = [];
+        } else { 
+          req.scope = '';
+        }
+      });
+
+      return reqs;
+    }
+
+    var formatAttributes = function(attrs) {
+      return _.groupBy(attrs, function(attr) {
+        attr.assessmentType = attrMap[attr.attTypeId].assessmentType;
+        attr.answerType = attrMap[attr.attTypeId].answerType;
+        return attr.assessmentType;
+      });
+    }
+
+    var getRequirements = function(type, callBack) {
       if (!requirements[type]) {
-        if (useMocks) {
-          requirements[type] = reqData();
-        } else {
-          // NEED TO RETHINK THIS AND HOW TO BETTER RESOLVE THE RESULT OF THE AJAX CALL
-          // MAYBE JUST RETURN THE PROMISE AND LET THE CALLER/CONTROLLER HANDLE IT
-          api.fetch('/ajax/get_Data.php')
-          .then(function(result) {
-            requirements[type] = result;
-          }, function(reason) {
-            console.log(reason.error);
-          });
-        } 
-      } else {
-      	_.each(requirements[type], function(req) {
-      		req.select = false;
-      	});
-      }
-      return requirements[type];
-    };
-
-    var getAttributes = function(type) {
-      if (!attributes[type]) {
-        var atts;
-        if (useMocks) {
-          attrs = attrData();
-        } else {
-          // NEED TO RETHINK THIS AND HOW TO BETTER RESOLVE THE RESULT OF THE AJAX CALL
-          api.fetch('/ajax/getRAAttrs.php')
-          .then(function(result) {
-            attrs = result;
-          }, function(reason) {
-            console.log(reason.error);
-          });
-        } 
-
-        attributes = _.groupBy(attrs, function(attr) {
-          attr.assessmentType = attrMap[attr.attTypeId].assessmentType;
-          attr.answerType = attrMap[attr.attTypeId].answerType;
-          return attr.assessmentType;
+        api.fetch('ajax/get_Data.php')
+        .then(function(result) {
+          requirements[type] = formatRequirements(result, type);
+          // SEE ABOUT CONVERTING THIS TO RETURN PROMISE
+          callBack(requirements[type]);
+        }, function(reason) {
+          console.log(reason.error);
         });
       }
-      return attributes[type];
+      else {
+        callBack(requirements[type]);
+      }
     };
 
-    var saveFinding = function(fID, attrId) {
-      if (useMocks) {
-        console.log('Saved: fID-' + fID + ' attrId-' + attrId);
-      } else {
-        api.create('ajax/updateFindings.php', {fID: fID, attId: attrId})
+    var getAttributes = function(type, callBack) {
+      if (!attributes[type]) {
+        api.fetch('ajax/getRAAttrs.php')
+        .then(function(result) {
+          attributes = formatAttributes(result);
+          // SEE ABOUT CONVERTING THIS TO RETURN PROMISE
+          callBack(attributes[type]);
+        }, function(reason) {
+          console.log(reason.error);
+        });
+        
+      }
+      else {
+        callBack(attributes[type]);
+      }
+    };
+
+    var saveFinding = function(fID, attrId, value) {
+      console.log('Saving: fID-' + fID + ' attrId-' + attrId + ' value-' + value);
+      if (value) {
+        api.update('ajax/updateFindings.php', {fID: fID, attId: attrId});
+      }
+      else {
+        api.destroy('ajax/updateFindings.php', {fID: fID, attId: attrId})
       }
     };
     
@@ -749,31 +886,46 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
     };
 
     var control = ['$scope', 'htEvents', 'AssessmentSvc', function($scope, events, assessment) {
-        $scope.saveAnswer = function(attrId, option, req) {
-            req[option.answerType] = option;
-            assessment.saveFinding(req.fID, attrId);
+        var saveToolbarAnswer = function(value, option, req) {
+            if (option.answerType === 'scope' && angular.isArray(req[option.answerType])) {
+                if (value) {
+                    req[option.answerType].push(option);
+                }
+                else {
+                    _.remove(req[option.answerType], function(opt) { return opt.attId === option.attId});
+                }
+            } 
+            else {
+                req[option.answerType] = option;
+            }
+
+            $scope.saveAnswer(value, option, req);
         };
 
-        $scope.setSelected = function(value) {
-            events.raise('requirementSelect', value);
+        $scope.saveAnswer = function(value, option, req) {
+            assessment.saveFinding(req.fID, option.attId, !!value);
+        };
+
+        $scope.setSelected = function(value, req) {
+            events.raise('requirementSelect', {value: value, req: req} );
         }
 
         $scope.$on('toolbarSelect', function(e, args) {
-            _.each($scope.fhtRequirements, function(req) {
+            _.each($scope.htfRequirements, function(req) {
                 req.select = args.value;
             });
         });
 
         $scope.$on('toolbarAnswer', function(e, args) {
-            _.each($scope.fhtRequirements, function(req) {
+            _.each($scope.htfRequirements, function(req) {
                 if (req.select) {
-                    $scope.saveAnswer(args.option.attId, args.option, req);
+                    saveToolbarAnswer(args.value, args.option, req); // NEED TO HANDLE THIS SO IT UPDATES SELECTS
                 }
             });
         });
 
         $scope.$on('toolbarClear', function(e) {
-            _.each($scope.fhtRequirements, function(req) {
+            _.each($scope.htfRequirements, function(req) {
                 if (req.select) {
                     req.response = null;
                     $scope.saveAnswer(null, null);
@@ -784,7 +936,7 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
         });
 
         $scope.$on('toolbarStarred', function(e, args) {
-            _.each($scope.fhtRequirements, function(req) {
+            _.each($scope.htfRequirements, function(req) {
               if (req.select) {
                 req.starred = args.value;
               }
@@ -802,6 +954,7 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
     	scope: {
             htAssessmentTable: '@',
     		htRequirements: '=',
+            htfRequirements: '=?',
             htHeadings: '=',
             htScopeOptions: '=',
             htResponseOptions: '=',
@@ -890,18 +1043,7 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
           headings: {
             response: 'Documented',
             scope: 'Applies to Scope of Environment'
-          },
-          scopeOptions: [
-            'None',
-            'Less than Half',
-            'Half',
-            'Greater than Half',
-            'All'
-          ],
-          responseOptions: [
-            'No',
-            'Yes'
-          ]
+          }
         }
       })
       .state('assessment.procedure', {
@@ -914,18 +1056,7 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
           headings: {
             response: 'Documented',
             scope: 'Applies to Scope of Environment'
-          },
-          scopeOptions: [
-            'None',
-            'Less than Half',
-            'Half',
-            'Greater than Half',
-            'All'
-          ],
-          responseOptions: [
-            'No',
-            'Yes'
-          ]
+          }
         }
       })
       .state('assessment.implemented', {
@@ -938,18 +1069,7 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
           headings: {
             response: 'Implemented',
             scope: 'Applied to Scope of Environment'
-          },
-          scopeOptions: [
-            'None',
-            'Less than Half',
-            'Half',
-            'Greater than Half',
-            'All'
-          ],
-          responseOptions: [
-            'No',
-            'Yes'
-          ]
+          }
         }
       })
       .state('assessment.measured', {
@@ -962,16 +1082,7 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
           headings: {
             response: 'Review',
             scope: 'Types of Reviews'
-          },
-          scopeOptions: [
-            'Operational',
-            'Independent',
-            'Metrics'
-          ],
-          responseOptions: [
-            'No',
-            'Yes'
-          ]
+          }
         }
       })
       .state('assessment.managed', {
@@ -984,16 +1095,7 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
           headings: {
             response: 'Corrective Actions',
             scope: 'Types of Corrective Actions'
-          },
-          scopeOptions: [
-            'Operational',
-            'Independent',
-            'Metrics'
-          ],
-          responseOptions: [
-            'No',
-            'Yes'
-          ]
+          }
         }
       });
   }]);

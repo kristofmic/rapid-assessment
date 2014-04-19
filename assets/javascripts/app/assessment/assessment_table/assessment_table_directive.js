@@ -10,31 +10,46 @@
     };
 
     var control = ['$scope', 'htEvents', 'AssessmentSvc', function($scope, events, assessment) {
-        $scope.saveAnswer = function(attrId, option, req) {
-            req[option.answerType] = option;
-            assessment.saveFinding(req.fID, attrId);
+        var saveToolbarAnswer = function(value, option, req) {
+            if (option.answerType === 'scope' && angular.isArray(req[option.answerType])) {
+                if (value) {
+                    req[option.answerType].push(option);
+                }
+                else {
+                    _.remove(req[option.answerType], function(opt) { return opt.attId === option.attId});
+                }
+            } 
+            else {
+                req[option.answerType] = option;
+            }
+
+            $scope.saveAnswer(value, option, req);
         };
 
-        $scope.setSelected = function(value) {
-            events.raise('requirementSelect', value);
+        $scope.saveAnswer = function(value, option, req) {
+            assessment.saveFinding(req.fID, option.attId, !!value);
+        };
+
+        $scope.setSelected = function(value, req) {
+            events.raise('requirementSelect', {value: value, req: req} );
         }
 
         $scope.$on('toolbarSelect', function(e, args) {
-            _.each($scope.fhtRequirements, function(req) {
+            _.each($scope.htfRequirements, function(req) {
                 req.select = args.value;
             });
         });
 
         $scope.$on('toolbarAnswer', function(e, args) {
-            _.each($scope.fhtRequirements, function(req) {
+            _.each($scope.htfRequirements, function(req) {
                 if (req.select) {
-                    $scope.saveAnswer(args.option.attId, args.option, req);
+                    saveToolbarAnswer(args.value, args.option, req); // NEED TO HANDLE THIS SO IT UPDATES SELECTS
                 }
             });
         });
 
         $scope.$on('toolbarClear', function(e) {
-            _.each($scope.fhtRequirements, function(req) {
+            _.each($scope.htfRequirements, function(req) {
                 if (req.select) {
                     req.response = null;
                     $scope.saveAnswer(null, null);
@@ -45,7 +60,7 @@
         });
 
         $scope.$on('toolbarStarred', function(e, args) {
-            _.each($scope.fhtRequirements, function(req) {
+            _.each($scope.htfRequirements, function(req) {
               if (req.select) {
                 req.starred = args.value;
               }
@@ -63,6 +78,7 @@
     	scope: {
             htAssessmentTable: '@',
     		htRequirements: '=',
+            htfRequirements: '=?',
             htHeadings: '=',
             htScopeOptions: '=',
             htResponseOptions: '=',

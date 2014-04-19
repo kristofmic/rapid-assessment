@@ -1,11 +1,11 @@
  - mocking out endpoints
- 	+ GET (requirements): get_Data.php
- 	+ GET (attributes): ajax/getRAAttrs.php
- 	+ POST (finding): ajax/updateFindings.php
- - measured/managed multi-select
- - toolbar Clear
-
+ 	+ ensure all data Al asked for is sent on all ajax requests
+ - toolbar 
+ 	+ need to get access to filtered requirements, not full set of requirements
  
+ - loading gif
+  + between state loads
+  + during ajax calls
  - column ordering
  - column filtering
  - dashboard

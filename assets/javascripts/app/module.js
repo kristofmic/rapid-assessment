@@ -24,18 +24,7 @@
           headings: {
             response: 'Documented',
             scope: 'Applies to Scope of Environment'
-          },
-          scopeOptions: [
-            'None',
-            'Less than Half',
-            'Half',
-            'Greater than Half',
-            'All'
-          ],
-          responseOptions: [
-            'No',
-            'Yes'
-          ]
+          }
         }
       })
       .state('assessment.procedure', {
@@ -48,18 +37,7 @@
           headings: {
             response: 'Documented',
             scope: 'Applies to Scope of Environment'
-          },
-          scopeOptions: [
-            'None',
-            'Less than Half',
-            'Half',
-            'Greater than Half',
-            'All'
-          ],
-          responseOptions: [
-            'No',
-            'Yes'
-          ]
+          }
         }
       })
       .state('assessment.implemented', {
@@ -72,18 +50,7 @@
           headings: {
             response: 'Implemented',
             scope: 'Applied to Scope of Environment'
-          },
-          scopeOptions: [
-            'None',
-            'Less than Half',
-            'Half',
-            'Greater than Half',
-            'All'
-          ],
-          responseOptions: [
-            'No',
-            'Yes'
-          ]
+          }
         }
       })
       .state('assessment.measured', {
@@ -96,16 +63,7 @@
           headings: {
             response: 'Review',
             scope: 'Types of Reviews'
-          },
-          scopeOptions: [
-            'Operational',
-            'Independent',
-            'Metrics'
-          ],
-          responseOptions: [
-            'No',
-            'Yes'
-          ]
+          }
         }
       })
       .state('assessment.managed', {
@@ -118,16 +76,7 @@
           headings: {
             response: 'Corrective Actions',
             scope: 'Types of Corrective Actions'
-          },
-          scopeOptions: [
-            'Operational',
-            'Independent',
-            'Metrics'
-          ],
-          responseOptions: [
-            'No',
-            'Yes'
-          ]
+          }
         }
       });
   }]);

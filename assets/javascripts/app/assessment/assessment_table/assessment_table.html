@@ -1,34 +1,33 @@
 <table class="table table-hover">
   <thead>
-    <th></th>
-    <th></th>
-    <th>Domain</th>
-    <th>Control</th>
-    <th>Requirement</th>
-    <th>{{htHeadings.response}}</th>
-    <th>{{htHeadings.scope}}</th>
+    <th width='2.5%'></th>
+    <th width='2.5%'></th>
+    <th width='19%'>Domain</th>
+    <th width='5%'>Control</th>
+    <th width='33%'>Requirement</th>
+    <th width='14%'>{{htHeadings.response}}</th>
+    <th width='25%'>{{htHeadings.scope}}</th>
   </thead>
   <tbody>
-    <tr ng-repeat='req in (fhtRequirements = (htRequirements | orderBy:defaultOrder | filter:htSearch | filter:htFilter)) track by $index' ng-class="{warning:req.select}">
+    <tr ng-repeat='req in (htfRequirements = (htRequirements | orderBy:defaultOrder | filter:htSearch | filter:htFilter)) track by $index' ng-class="{warning:req.select}">
       <td width='2.5%'>
-        <span ht-checkbox ht-checkbox-id='req-select-{{$index}}' ht-checkbox-change='setSelected(value)' ht-checkbox-model='req.select'></span>
+        <span ht-checkbox ht-checkbox-id='req-select-{{$index}}' ht-checkbox-change='setSelected(value, req)' ht-checkbox-model='req.select'></span>
       </td>
       <td width='2.5%'>
         <span ht-star ht-star-id='req-star-{{$index}}' ht-star-model='req.starred'></span>
       </td>
-      <td width='20%'>{{req.Domain}}</td>
+      <td width='19%'>{{req.Domain}}</td>
       <td width='5%'>{{req.Control}}</td>
       <td width='33%'>{{req.Requirement}}</td>
       <td width='14%'>
-        <span ht-select ht-select-options='htResponseOptions' ht-select-option-label-prop='attDesc' ht-select-option-value-prop='attId' ht-selected='req.response.attDesc' ht-on-select='saveAnswer(value, option, req)'></span>
+        <span ht-select-factory ht-select-options='htResponseOptions' ht-select-option-label-prop='attDesc' ht-select-option-value-prop='attId' ht-selected='req.response' ht-on-select='saveAnswer(value, option, req)'></span>
       </td>
-      <td width='24%'>
-      <!-- NEED TO DYNAMICALLY DETERMINE WHICH SELECT TO USE. LOOK INTO COMPILE FUNCTION ON DIRECTIVES -->
-        <span ht-multi-select ht-select-options='htScopeOptions' ht-select-option-label-prop='attDesc' ht-select-option-value-prop='attId' ht-selected='req.scope.attDesc' ht-on-select='saveAnswer(value, option, req)'></span>
+      <td width='25%'>
+        <span ht-select-factory ht-select-options='htScopeOptions' ht-select-option-label-prop='attDesc' ht-select-option-value-prop='attId' ht-selected='req.scope' ht-on-select='saveAnswer(value, option, req)'></span>
       </td>
     </tr>
   </tbody>
 </table>
-<div class="alert alert-warning" ng-show='(htRequirements|filter:htFilter).length === 0'>
+<div class="alert alert-warning" ng-show='htfRequirements.length === 0'>
   There are no search results. Please try again.
 </div>

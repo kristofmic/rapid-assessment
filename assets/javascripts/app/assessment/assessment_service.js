@@ -1,9 +1,6 @@
 (function(assessment){
   
   assessment.factory('AssessmentSvc', ['HTAPI', function(api){
-    // MAKE THIS A QUERY STRING PARAMETER
-    var useMocks = true;
-
     var requirements = {}; 
     var attributes = {};
     var attrMap = {
@@ -27,57 +24,69 @@
       return [{"attId":1426,"attTypeId":1314,"attDesc":"No","listItem":"Policy_Documented_No"},{"attId":1427,"attTypeId":1314,"attDesc":"Yes","listItem":"Policy_Documented_Yes"},{"attId":1428,"attTypeId":1315,"attDesc":"No","listItem":"Procedure_Documented_No"},{"attId":1429,"attTypeId":1315,"attDesc":"Yes","listItem":"Procedure_Documented_Yes"},{"attId":1430,"attTypeId":1316,"attDesc":"No","listItem":"Implemented_Documented_No"},{"attId":1431,"attTypeId":1316,"attDesc":"Yes","listItem":"Implemented_Documented_Yes"},{"attId":1432,"attTypeId":1317,"attDesc":"No","listItem":"Measured_Documented_No"},{"attId":1433,"attTypeId":1317,"attDesc":"Yes","listItem":"Measured_Documented_Yes"},{"attId":1434,"attTypeId":1318,"attDesc":"No","listItem":"Managed_Documented_No"},{"attId":1435,"attTypeId":1318,"attDesc":"Yes","listItem":"Managed_Documented_Yes"},{"attId":1443,"attTypeId":1321,"attDesc":"None","listItem":"Policy_AppliedScope_None"},{"attId":1444,"attTypeId":1321,"attDesc":"Less than half","listItem":"Policy_AppliedScope_LtHalf"},{"attId":1445,"attTypeId":1321,"attDesc":"Half","listItem":"Policy_AppliedScope_Half"},{"attId":1446,"attTypeId":1321,"attDesc":"More than half","listItem":"Policy_AppliedScope_GtHalf"},{"attId":1447,"attTypeId":1321,"attDesc":"All","listItem":"Policy_AppliedScope_All"},{"attId":1448,"attTypeId":1322,"attDesc":"None","listItem":"Procedure_AppliedScope_None"},{"attId":1449,"attTypeId":1322,"attDesc":"Less than half","listItem":"Procedure_AppliedScope_LtHalf"},{"attId":1450,"attTypeId":1322,"attDesc":"Half","listItem":"Procedure_AppliedScope_Half"},{"attId":1451,"attTypeId":1322,"attDesc":"More than half","listItem":"Procedure_AppliedScope_GtHalf"},{"attId":1452,"attTypeId":1322,"attDesc":"All","listItem":"Procedure_AppliedScope_All"},{"attId":1453,"attTypeId":1323,"attDesc":"Operational","listItem":"Measured_ReviewType_Operationa"},{"attId":1454,"attTypeId":1323,"attDesc":"Independent","listItem":"Measured_ReviewType_Independen"},{"attId":1455,"attTypeId":1323,"attDesc":"Metrics","listItem":"Measured_ReviewType_Metrics"},{"attId":1456,"attTypeId":1324,"attDesc":"Operational","listItem":"Managed_ReviewType_Operational"},{"attId":1457,"attTypeId":1324,"attDesc":"Independent","listItem":"Managed_ReviewType_Independent"},{"attId":1458,"attTypeId":1324,"attDesc":"Metrics","listItem":"Managed_ReviewType_Metrics"},{"attId":1448,"attTypeId":1325,"attDesc":"None","listItem":"Implemented_AppliedScope_None"},{"attId":1449,"attTypeId":1325,"attDesc":"Less than half","listItem":"Implemented_AppliedScope_LtHalf"},{"attId":1450,"attTypeId":1325,"attDesc":"Half","listItem":"Implemented_AppliedScope_Half"},{"attId":1451,"attTypeId":1325,"attDesc":"More than half","listItem":"Implemented_AppliedScope_GtHalf"},{"attId":1452,"attTypeId":1325,"attDesc":"All","listItem":"Implemented_AppliedScope_All"}];
     };
 
-    var getRequirements = function(type) {
+    var formatRequirements = function(reqs, type) {
+      _.each(reqs, function(req) {
+        req.select = false;
+        req.starred = false;
+        req.response = '';
+        if (type === "Measured" || type === "Managed") {
+          req.scope = [];
+        } else { 
+          req.scope = '';
+        }
+      });
+
+      return reqs;
+    }
+
+    var formatAttributes = function(attrs) {
+      return _.groupBy(attrs, function(attr) {
+        attr.assessmentType = attrMap[attr.attTypeId].assessmentType;
+        attr.answerType = attrMap[attr.attTypeId].answerType;
+        return attr.assessmentType;
+      });
+    }
+
+    var getRequirements = function(type, callBack) {
       if (!requirements[type]) {
-        if (useMocks) {
-          requirements[type] = reqData();
-        } else {
-          // NEED TO RETHINK THIS AND HOW TO BETTER RESOLVE THE RESULT OF THE AJAX CALL
-          // MAYBE JUST RETURN THE PROMISE AND LET THE CALLER/CONTROLLER HANDLE IT
-          api.fetch('/ajax/get_Data.php')
-          .then(function(result) {
-            requirements[type] = result;
-          }, function(reason) {
-            console.log(reason.error);
-          });
-        } 
-      } else {
-      	_.each(requirements[type], function(req) {
-      		req.select = false;
-      	});
-      }
-      return requirements[type];
-    };
-
-    var getAttributes = function(type) {
-      if (!attributes[type]) {
-        var atts;
-        if (useMocks) {
-          attrs = attrData();
-        } else {
-          // NEED TO RETHINK THIS AND HOW TO BETTER RESOLVE THE RESULT OF THE AJAX CALL
-          api.fetch('/ajax/getRAAttrs.php')
-          .then(function(result) {
-            attrs = result;
-          }, function(reason) {
-            console.log(reason.error);
-          });
-        } 
-
-        attributes = _.groupBy(attrs, function(attr) {
-          attr.assessmentType = attrMap[attr.attTypeId].assessmentType;
-          attr.answerType = attrMap[attr.attTypeId].answerType;
-          return attr.assessmentType;
+        api.fetch('ajax/get_Data.php')
+        .then(function(result) {
+          requirements[type] = formatRequirements(result, type);
+          // SEE ABOUT CONVERTING THIS TO RETURN PROMISE
+          callBack(requirements[type]);
+        }, function(reason) {
+          console.log(reason.error);
         });
       }
-      return attributes[type];
+      else {
+        callBack(requirements[type]);
+      }
     };
 
-    var saveFinding = function(fID, attrId) {
-      if (useMocks) {
-        console.log('Saved: fID-' + fID + ' attrId-' + attrId);
-      } else {
-        api.create('ajax/updateFindings.php', {fID: fID, attId: attrId})
+    var getAttributes = function(type, callBack) {
+      if (!attributes[type]) {
+        api.fetch('ajax/getRAAttrs.php')
+        .then(function(result) {
+          attributes = formatAttributes(result);
+          // SEE ABOUT CONVERTING THIS TO RETURN PROMISE
+          callBack(attributes[type]);
+        }, function(reason) {
+          console.log(reason.error);
+        });
+        
+      }
+      else {
+        callBack(attributes[type]);
+      }
+    };
+
+    var saveFinding = function(fID, attrId, value) {
+      console.log('Saving: fID-' + fID + ' attrId-' + attrId + ' value-' + value);
+      if (value) {
+        api.update('ajax/updateFindings.php', {fID: fID, attId: attrId});
+      }
+      else {
+        api.destroy('ajax/updateFindings.php', {fID: fID, attId: attrId})
       }
     };
     

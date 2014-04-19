@@ -2,7 +2,7 @@
   
   hitrust.inputs.directive('htMultiSelect', [function(){
     var getSelectedLabel = function(selected, sortByProperty, labelProperty) {
-      if (selected.length > 3) {
+      if (selected.length > 2) {
         return selected.length + " items selected";
       } else {
         return _.pluck(_.sortBy(selected, sortByProperty), labelProperty).join(', ');
@@ -12,9 +12,19 @@
     var linker = function(scope, elem, attrs) {
       scope.label = scope.label || 'label';
       scope.value = scope.value || 'value';
-      scope.selected = [];
+      scope.selected = scope.selected || [];
       scope.selectedValues = {};
       scope.selectedLabel = getSelectedLabel(scope.selected, scope.value, scope.label);
+
+      scope.$watchCollection('selected', function(newVal, oldVal) {
+        if (angular.isArray(newVal)){
+          scope.selectedValues = {};
+          _.each(newVal, function(val) {
+            scope.selectedValues[val[scope.value]] = true;
+          });
+          scope.selectedLabel = getSelectedLabel(newVal, scope.value, scope.label);
+        }
+      });
     };
 
     var control = ['$scope', function($scope) {
@@ -25,12 +35,19 @@
         if ($scope.selectedValues[option[$scope.value]]) {
           _.remove($scope.selected, function(select) { return select[$scope.value] === option[$scope.value]; });
           $scope.selectedValues[option[$scope.value]] = false;
-          $scope.onSelect({value: null, option: option});
+          _.each($scope.options, function(opt) {
+            if (opt[$scope.value] === option[$scope.value]) {
+              opt.partial = false;
+            }
+          });
         } else {
           $scope.selected.push(option);
           $scope.selectedValues[option[$scope.value]] = true;
-          $scope.onSelect({value: option[$scope.value], option: option});
         }
+        $scope.onSelect()({
+          value: $scope.selectedValues[option[$scope.value]], 
+          option: option
+        });
         $scope.selectedLabel = getSelectedLabel($scope.selected, $scope.value, $scope.label);
       };
 
@@ -46,7 +63,9 @@
         options: '=htSelectOptions',
         label: '@htSelectOptionLabelProp',
         value: '@htSelectOptionValueProp',
-        onSelect: '&htOnSelect'
+        partial: '@htSelectOptionPartialProp',
+        onSelect: '&htOnSelect',
+        selected: '=htSelected'
       }
     };
   }]);

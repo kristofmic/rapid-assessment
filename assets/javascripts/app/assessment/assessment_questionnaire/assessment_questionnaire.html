@@ -1,13 +1,14 @@
 <div  ht-toolbar 
-      ht-requirements-count='requirements.length' 
+      ht-requirements='requirements' 
       ht-search='searchModel' 
       ht-scope-options='scopeOptions' 
-      ht-response-options='responseOptions'>
+      ht-response-options='responseOptions'
+      ht-assessment-type='{{type}}'>
 </div>
 
 <div class='row'>
   <div class='col-sm-12'>
-    <div ht-assessment-table='{{assessmentType}}'
+    <div ht-assessment-table='{{type}}'
          ht-requirements='requirements' 
          ht-headings='headings' 
          ht-scope-options='scopeOptions'
