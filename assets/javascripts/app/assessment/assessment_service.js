@@ -53,7 +53,7 @@
 
     var getRequirements = function(type, callBack) {
       if (!requirements[type]) {
-        api.fetch('ajax/get_Data.php')
+        api.fetch('ajax/get_Data.php', {objectId: getObjectID()})
         .then(function(result) {
           requirements[type] = formatRequirements(result, type);
           // SEE ABOUT CONVERTING THIS TO RETURN PROMISE
@@ -69,7 +69,7 @@
 
     var getAttributes = function(type, callBack) {
       if (!attributes[type]) {
-        api.fetch('ajax/getRAAttrs.php')
+        api.fetch('ajax/getRAAttrs.php', {objectId: getObjectID()})
         .then(function(result) {
           attributes = formatAttributes(result);
           // SEE ABOUT CONVERTING THIS TO RETURN PROMISE
