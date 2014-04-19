@@ -51,10 +51,19 @@
         $scope.$on('toolbarClear', function(e) {
             _.each($scope.htfRequirements, function(req) {
                 if (req.select) {
-                    req.response = null;
-                    $scope.saveAnswer(null, null);
-                    req.scope = null;
-                    $scope.saveAnswer(null, null);
+                    $scope.saveAnswer(null, req.response, req);
+                    req.response = '';
+
+                    if (angular.isArray(req.scope)) {
+                        _.each(req.scope, function(select) {
+                            $scope.saveAnswer(false, select, req);
+                        });
+                        req.scope = [];
+                    }
+                    else {
+                        $scope.saveAnswer(false, req.scope, req);
+                        req.scope = '';
+                    }
                 }
             });
         });

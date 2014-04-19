@@ -13,10 +13,10 @@ module.exports = function(grunt) {
       },
       dist: {
         src: [
-          '<%= scriptsPath %>/vendor/angular.min.js',
+          '!<%= scriptsPath %>/vendor/angular.min.js',
           '<%= scriptsPath %>/vendor/angular-ui-router.min.js',
-          '<%= scriptsPath %>/vendor/jquery.min.js',
-          '<%= scriptsPath %>/vendor/bootstrap.min.js',
+          '!<%= scriptsPath %>/vendor/jquery.min.js',
+          '!<%= scriptsPath %>/vendor/bootstrap.min.js',
           '<%= scriptsPath %>/vendor/lo-dash.min.js',
           '<%= scriptsPath %>/app/api/api.js',
           '<%= scriptsPath %>/app/api/*.js',

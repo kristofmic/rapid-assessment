@@ -1,6 +1,5 @@
- - mocking out endpoints
- 	+ ensure all data Al asked for is sent on all ajax requests
  - toolbar 
+ 	+ update toolbar select dropdown
  	+ need to get access to filtered requirements, not full set of requirements
  
  - loading gif
