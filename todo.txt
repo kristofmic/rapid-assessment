@@ -6,6 +6,7 @@
  - loading gif
   + between state loads
   + during ajax calls
+  + load a subset of requirements to start then pull in the rest
  - column ordering
  - column filtering
  - dashboard

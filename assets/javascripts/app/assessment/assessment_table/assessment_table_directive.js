@@ -27,7 +27,7 @@
         };
 
         $scope.saveAnswer = function(value, option, req) {
-            assessment.saveFinding(req.fID, option.attId, !!value);
+            assessment.saveFinding(req.fID, option.attId, option.attTypeId, !!value);
         };
 
         $scope.setSelected = function(value, req) {
