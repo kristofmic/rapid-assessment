@@ -91,7 +91,8 @@
           objectID: getObjectID(),
           fID: fID, 
           attId: attrId, 
-          attTypeId: attrTypeId
+          attTypeId: attrTypeId,
+          value: value
         });
       }
       else {
@@ -100,7 +101,8 @@
           objectID: getObjectID(),
           fID: fID, 
           attId: attrId, 
-          attTypeId: attrTypeId
+          attTypeId: attrTypeId,
+          value: value
         });
       }
     };
