@@ -1,5 +1,4 @@
  - toolbar 
- 	+ update toolbar select dropdown
  	+ need to get access to filtered requirements, not full set of requirements
  
  - loading gif

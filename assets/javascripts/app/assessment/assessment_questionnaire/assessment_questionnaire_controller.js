@@ -7,9 +7,9 @@
 
 			assessment.getRequirements($scope.type, function(reqs) {
 				$scope.requirements = reqs;
-			});
-			_.each($scope.requirements, function(req) {
-				req.select = false;
+				_.each($scope.requirements, function(req) {
+					req.select = false;
+				});
 			});
 
 			$scope.headings = $state.current.data.headings;
@@ -21,11 +21,7 @@
 		
 			$scope.setNav($state.current.data.nav);
 			events.raise('resetToolbar');
-
-			window.getScope = function() {
-				return $scope;
-			};
-
+			
 		}
 	]);
 

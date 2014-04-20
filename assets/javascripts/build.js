@@ -387,9 +387,9 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
 
 			assessment.getRequirements($scope.type, function(reqs) {
 				$scope.requirements = reqs;
-			});
-			_.each($scope.requirements, function(req) {
-				req.select = false;
+				_.each($scope.requirements, function(req) {
+					req.select = false;
+				});
 			});
 
 			$scope.headings = $state.current.data.headings;
@@ -401,11 +401,7 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
 		
 			$scope.setNav($state.current.data.nav);
 			events.raise('resetToolbar');
-
-			window.getScope = function() {
-				return $scope;
-			};
-
+			
 		}
 	]);
 
@@ -643,7 +639,8 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
           objectID: getObjectID(),
           fID: fID, 
           attId: attrId, 
-          attTypeId: attrTypeId
+          attTypeId: attrTypeId,
+          value: value
         });
       }
       else {
@@ -652,7 +649,8 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
           objectID: getObjectID(),
           fID: fID, 
           attId: attrId, 
-          attTypeId: attrTypeId
+          attTypeId: attrTypeId,
+          value: value
         });
       }
     };
