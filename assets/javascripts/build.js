@@ -256,16 +256,19 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
       scope.label = scope.label || 'label';
       scope.value = scope.value || 'value';
 
+      scope.selectedLabel = scope.selected[scope.label];
+
       scope.$watch('selected', function(newVal, oldVal) {
-        if (newVal && newVal[scope.label]){
-          scope.selected = newVal[scope.label];
+        if (newVal){
+          scope.selected = newVal;
+          scope.selectedLabel = scope.selected[scope.label];
         }
       });
     };
 
     var control = ['$scope', function($scope) {
       $scope.select = function(option) {
-        $scope.selected = option[$scope.label];
+        $scope.selected = option;
         $scope.onSelect()({value: option[$scope.value], option: option});
       };
     }];
@@ -418,12 +421,12 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
 			$scope.selectPartial = false;
 			$scope.activeRequirements = 0;
 			$scope.answers = {
-				response: ''
+				response: {}
 			};
 			if ($scope.type === "Measured" || $scope.type === "Managed") {
         var originalScope = [];
       } else {
-      	var originalScope = '';  
+      	var originalScope = {};  
       }
       $scope.answers.scope = _.clone(originalScope);
 
@@ -453,10 +456,10 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
 			};
 
 			$scope.resetAnswers = function() {
-				$scope.answers.response = '';
+				$scope.answers.response = {};
 				$scope.answers.scope = _.clone(originalScope);
 				_.each($scope.scopeOptions, function(opt){
-					opt.partial = null;
+					opt.partial = false;
 				});
 			};
 
@@ -634,8 +637,8 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
     };
 
     var saveFinding = function(fID, attrId, attrTypeId, value) {
-      console.log('Saving: objectId-' + getObjectID() + ' fID-' + fID + ' attrId-' + attrId + ' attrTypeId-' + attrTypeId + ' value-' + value);
       if (value) {
+        console.log('Saving: objectId-' + getObjectID() + ' fID-' + fID + ' attrId-' + attrId + ' attrTypeId-' + attrTypeId + ' value-' + value);
         api.update('ajax/updateFindings.php', {
           objectID: getObjectID(),
           fID: fID, 
@@ -644,6 +647,7 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
         });
       }
       else {
+        console.log('Deleting: objectId-' + getObjectID() + ' fID-' + fID + ' attrId-' + attrId + ' attrTypeId-' + attrTypeId + ' value-' + value);
         api.destroy('ajax/updateFindings.php', {
           objectID: getObjectID(),
           fID: fID, 
@@ -716,18 +720,20 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
         $scope.$on('toolbarClear', function(e) {
             _.each($scope.htfRequirements, function(req) {
                 if (req.select) {
-                    $scope.saveAnswer(null, req.response, req);
-                    req.response = '';
-
+                    if (!_.isEmpty(req.response)) {
+                        $scope.saveAnswer(false, req.response, req);
+                        req.response = {};
+                    }
+                    
                     if (angular.isArray(req.scope)) {
                         _.each(req.scope, function(select) {
                             $scope.saveAnswer(false, select, req);
                         });
                         req.scope = [];
                     }
-                    else {
+                    else if (!_.isEmpty(req.scope)) {
                         $scope.saveAnswer(false, req.scope, req);
-                        req.scope = '';
+                        req.scope = {};
                     }
                 }
             });

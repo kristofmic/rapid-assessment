@@ -85,8 +85,8 @@
     };
 
     var saveFinding = function(fID, attrId, attrTypeId, value) {
-      console.log('Saving: objectId-' + getObjectID() + ' fID-' + fID + ' attrId-' + attrId + ' attrTypeId-' + attrTypeId + ' value-' + value);
       if (value) {
+        console.log('Saving: objectId-' + getObjectID() + ' fID-' + fID + ' attrId-' + attrId + ' attrTypeId-' + attrTypeId + ' value-' + value);
         api.update('ajax/updateFindings.php', {
           objectID: getObjectID(),
           fID: fID, 
@@ -95,6 +95,7 @@
         });
       }
       else {
+        console.log('Deleting: objectId-' + getObjectID() + ' fID-' + fID + ' attrId-' + attrId + ' attrTypeId-' + attrTypeId + ' value-' + value);
         api.destroy('ajax/updateFindings.php', {
           objectID: getObjectID(),
           fID: fID, 

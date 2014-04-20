@@ -6,16 +6,19 @@
       scope.label = scope.label || 'label';
       scope.value = scope.value || 'value';
 
+      scope.selectedLabel = scope.selected[scope.label];
+
       scope.$watch('selected', function(newVal, oldVal) {
-        if (newVal && newVal[scope.label]){
-          scope.selected = newVal[scope.label];
+        if (newVal){
+          scope.selected = newVal;
+          scope.selectedLabel = scope.selected[scope.label];
         }
       });
     };
 
     var control = ['$scope', function($scope) {
       $scope.select = function(option) {
-        $scope.selected = option[$scope.label];
+        $scope.selected = option;
         $scope.onSelect()({value: option[$scope.value], option: option});
       };
     }];

@@ -7,12 +7,12 @@
 			$scope.selectPartial = false;
 			$scope.activeRequirements = 0;
 			$scope.answers = {
-				response: ''
+				response: {}
 			};
 			if ($scope.type === "Measured" || $scope.type === "Managed") {
         var originalScope = [];
       } else {
-      	var originalScope = '';  
+      	var originalScope = {};  
       }
       $scope.answers.scope = _.clone(originalScope);
 
@@ -42,10 +42,10 @@
 			};
 
 			$scope.resetAnswers = function() {
-				$scope.answers.response = '';
+				$scope.answers.response = {};
 				$scope.answers.scope = _.clone(originalScope);
 				_.each($scope.scopeOptions, function(opt){
-					opt.partial = null;
+					opt.partial = false;
 				});
 			};
 
