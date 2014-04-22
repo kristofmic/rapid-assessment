@@ -25,6 +25,14 @@
             response: 'Documented',
             scope: 'Applies to Scope of Environment'
           }
+        },
+        resolve: {
+          requirements: ['AssessmentSvc', function(assessment) {
+            return assessment.getRequirements('Policy');
+          }],
+          attributes: ['AssessmentSvc', function(assessment) {
+            return assessment.getAttributes('Policy');
+          }]
         }
       })
       .state('assessment.procedure', {
@@ -38,6 +46,14 @@
             response: 'Documented',
             scope: 'Applies to Scope of Environment'
           }
+        },
+        resolve: {
+          requirements: ['AssessmentSvc', function(assessment) {
+            return assessment.getRequirements('Procedure');
+          }],
+          attributes: ['AssessmentSvc', function(assessment) {
+            return assessment.getAttributes('Procedure')
+          }]
         }
       })
       .state('assessment.implemented', {
@@ -51,6 +67,14 @@
             response: 'Implemented',
             scope: 'Applied to Scope of Environment'
           }
+        },
+        resolve: {
+          requirements: ['AssessmentSvc', function(assessment) {
+            return assessment.getRequirements('Implemented');
+          }],
+          attributes: ['AssessmentSvc', function(assessment) {
+            return assessment.getAttributes('Implemented')
+          }]
         }
       })
       .state('assessment.measured', {
@@ -64,6 +88,14 @@
             response: 'Review',
             scope: 'Types of Reviews'
           }
+        },
+        resolve: {
+          requirements: ['AssessmentSvc', function(assessment) {
+            return assessment.getRequirements('Measured');
+          }],
+          attributes: ['AssessmentSvc', function(assessment) {
+            return assessment.getAttributes('Measured')
+          }]
         }
       })
       .state('assessment.managed', {
@@ -77,6 +109,14 @@
             response: 'Corrective Actions',
             scope: 'Types of Corrective Actions'
           }
+        },
+        resolve: {
+          requirements: ['AssessmentSvc', function(assessment) {
+            return assessment.getRequirements('Managed');
+          }],
+          attributes: ['AssessmentSvc', function(assessment) {
+            return assessment.getAttributes('Managed')
+          }]
         }
       });
   }]);

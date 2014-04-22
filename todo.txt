@@ -1,10 +1,6 @@
  - toolbar 
- 	+ need to get access to filtered requirements, not full set of requirements
+ 	+ multiselect is still funky, particularly when you select an answer with toolbar items selected but not via the toolbar
  
- - loading gif
-  + between state loads
-  + during ajax calls
-  + load a subset of requirements to start then pull in the rest
  - column ordering
  - column filtering
  - dashboard

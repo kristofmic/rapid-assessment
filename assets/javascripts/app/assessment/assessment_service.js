@@ -51,36 +51,31 @@
       });
     }
 
-    var getRequirements = function(type, callBack) {
+    var getRequirements = function(type) {
       if (!requirements[type]) {
-        api.fetch('ajax/get_Data.php', {objectId: getObjectID()})
-        .then(function(result) {
-          requirements[type] = formatRequirements(result, type);
-          // SEE ABOUT CONVERTING THIS TO RETURN PROMISE
-          callBack(requirements[type]);
-        }, function(reason) {
-          console.log(reason.error);
-        });
+        return api.fetch('ajax/get_Data.php', {objectId: getObjectID()})
+          .then(function(result) {
+           requirements[type] = formatRequirements(result, type);
+           return requirements[type]; 
+          }
+        );
       }
       else {
-        callBack(requirements[type]);
+        return requirements[type];
       }
     };
 
-    var getAttributes = function(type, callBack) {
+    var getAttributes = function(type) {
       if (!attributes[type]) {
-        api.fetch('ajax/getRAAttrs.php', {objectId: getObjectID()})
-        .then(function(result) {
-          attributes = formatAttributes(result);
-          // SEE ABOUT CONVERTING THIS TO RETURN PROMISE
-          callBack(attributes[type]);
-        }, function(reason) {
-          console.log(reason.error);
-        });
-        
+        return api.fetch('ajax/getRAAttrs.php', {objectId: getObjectID()})
+          .then(function(result) {
+            attributes = formatAttributes(result);
+            return attributes[type];
+          }
+        );
       }
       else {
-        callBack(attributes[type]);
+        return attributes[type];
       }
     };
 

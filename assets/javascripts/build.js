@@ -296,10 +296,10 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
   
   hitrust.inputs.directive('htSelectFactory', ['$compile', function($compile){
 
-    var selectFactory = function(selected) {
+    var selectFactory = function(type) {
       var template = "<span ";
 
-      if (angular.isArray(selected)) {
+      if (angular.isArray(type)) {
         template += "ht-multi-select " +
                     "ht-select-option-partial-prop='{{htSelectOptionPartialProp}}'";
       } else {
@@ -324,6 +324,8 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
     return {
       restrict: 'A',
       replace: true,
+      terminal: true,
+      priority: 1000,
       link: linker,
       scope: {
         htSelectOptions: '=',
@@ -356,11 +358,36 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
 
 }(window.HT));/* END OF SOURCE */
 
+/* SOURCE: ./assets/javascripts/app/loading/loading.js */
+(function(global) {
+
+  angular.module('ht-loading', [])
+  .directive('htLoadingIcon', [function() {
+    var linker = function(scope, element, attrs) {
+      /*
+      scope.$on('EVENT', function() { 
+        element.removeClass('hidden');
+      });
+
+      scope.$on('EVENT', function() { 
+        element.addClass('hidden');
+      });
+      */
+    }
+
+    return {
+     restrict: 'AC',
+     link: linker,
+   };
+  }]);
+
+}(window));/* END OF SOURCE */
+
 /* SOURCE: ./assets/javascripts/app/assessment/assessment.js */
 (function(global) {
 
 	var hitrust = global.HT = global.HT || {};
-  hitrust.assessment = angular.module('ht-assessment', ['ht-events', 'ht-api', 'ht-inputs']);
+  hitrust.assessment = angular.module('ht-assessment', ['ht-events', 'ht-api', 'ht-inputs', 'ht-loading']);
 
 }(window));/* END OF SOURCE */
 
@@ -380,28 +407,24 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
 /* SOURCE: ./assets/javascripts/app/assessment/assessment_questionnaire/assessment_questionnaire_controller.js */
 (function(assessment){
 
-  assessment.controller('AssessmentQuestionnaireCtrl', ['$scope', '$state', 'htEvents', 'AssessmentSvc', 
-		function($scope, $state, events, assessment){
+  assessment.controller('AssessmentQuestionnaireCtrl', 
+  	['$scope', '$state', 'requirements', 'attributes', 'htEvents', 'AssessmentSvc', 
+		function($scope, $state, requirements, attributes, events, assessment){
 
 			$scope.type = $state.current.data.type;
 
-			assessment.getRequirements($scope.type, function(reqs) {
-				$scope.requirements = reqs;
-				_.each($scope.requirements, function(req) {
-					req.select = false;
-				});
-			});
+  		$scope.requirements = _.each(requirements, function(req) {
+  			req.select = false;
+  		});
 
 			$scope.headings = $state.current.data.headings;
 
-			assessment.getAttributes($scope.type, function(attrs) {
-				$scope.scopeOptions = _.filter(attrs, function(attr) { return attr.answerType === 'scope'; });
-				$scope.responseOptions = _.filter(attrs, function(attr) { return attr.answerType === 'response'; });
-			});
+			$scope.scopeOptions = _.filter(attributes, function(attr) { return attr.answerType === 'scope'; });
+			$scope.responseOptions = _.filter(attributes, function(attr) { return attr.answerType === 'response'; });
 		
 			$scope.setNav($state.current.data.nav);
 			events.raise('resetToolbar');
-			
+
 		}
 	]);
 
@@ -412,7 +435,7 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
 
 	assessment.directive('htToolbar', [function() {
 
-		var control = ['$scope', 'htEvents', function($scope, events) {
+		var control = ['$scope', '$filter', 'htEvents', function($scope, $filter, events) {
 			$scope.select = false;
 			$scope.selectPartial = false;
 			$scope.activeRequirements = 0;
@@ -431,8 +454,8 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
 					$scope.activeRequirements = 0;
 					reset();
 				} else {
-					$scope.activeRequirements = $scope.requirements.length;
-					setupMultiSelect($scope.requirements);
+					$scope.activeRequirements = applyFilter($scope.requirements).length;
+					setupMultiSelect(applyFilter($scope.requirements));
 				}
 				selectPartial = false;
 				events.raise('toolbarSelect', {value: value});
@@ -499,8 +522,22 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
 				}
 			};
 
+			var applyFilter = function(reqs) {
+				return $filter('filter')(reqs, $scope.search);
+			};
+
+			var filterSelect = function(req) {
+				return $filter('filter')(req, {select: true});
+			}
+
 			$scope.$on('resetToolbar', function(e) {
 				reset();
+			});
+
+			$scope.$on('answerToolbar', function(e, args) {
+				if ($scope.select) {
+					setupMultiSelect([args.req]);
+				}
 			});
 
 			$scope.$on('requirementSelect', function(e, args) {
@@ -508,13 +545,12 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
 					$scope.select = true;
 					$scope.selectPartial = true;
 					$scope.activeRequirements += 1;
-					if ($scope.activeRequirements === $scope.requirements.length) {
+					if ($scope.activeRequirements === applyFilter($scope.requirements).length) {
 						$scope.selectPartial = false;	
 					}
-					setupMultiSelect([args.req]);
 				} else {
 					$scope.activeRequirements -= 1;
-					if ($scope.activeRequirements !== $scope.requirements.length) {
+					if ($scope.activeRequirements !== applyFilter($scope.requirements).length) {
 						$scope.selectPartial = true;
 					}
 					if ($scope.activeRequirements === 0) {
@@ -523,6 +559,7 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
 						$scope.resetAnswers();
 					}
 				}
+				setupMultiSelect([args.req]);
 			});
 
 		}];
@@ -599,36 +636,31 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
       });
     }
 
-    var getRequirements = function(type, callBack) {
+    var getRequirements = function(type) {
       if (!requirements[type]) {
-        api.fetch('ajax/get_Data.php', {objectId: getObjectID()})
-        .then(function(result) {
-          requirements[type] = formatRequirements(result, type);
-          // SEE ABOUT CONVERTING THIS TO RETURN PROMISE
-          callBack(requirements[type]);
-        }, function(reason) {
-          console.log(reason.error);
-        });
+        return api.fetch('ajax/get_Data.php', {objectId: getObjectID()})
+          .then(function(result) {
+           requirements[type] = formatRequirements(result, type);
+           return requirements[type]; 
+          }
+        );
       }
       else {
-        callBack(requirements[type]);
+        return requirements[type];
       }
     };
 
-    var getAttributes = function(type, callBack) {
+    var getAttributes = function(type) {
       if (!attributes[type]) {
-        api.fetch('ajax/getRAAttrs.php', {objectId: getObjectID()})
-        .then(function(result) {
-          attributes = formatAttributes(result);
-          // SEE ABOUT CONVERTING THIS TO RETURN PROMISE
-          callBack(attributes[type]);
-        }, function(reason) {
-          console.log(reason.error);
-        });
-        
+        return api.fetch('ajax/getRAAttrs.php', {objectId: getObjectID()})
+          .then(function(result) {
+            attributes = formatAttributes(result);
+            return attributes[type];
+          }
+        );
       }
       else {
-        callBack(attributes[type]);
+        return attributes[type];
       }
     };
 
@@ -677,6 +709,7 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
     };
 
     var control = ['$scope', 'htEvents', 'AssessmentSvc', function($scope, events, assessment) {
+
         var saveToolbarAnswer = function(value, option, req) {
             if (option.answerType === 'scope' && angular.isArray(req[option.answerType])) {
                 if (value) {
@@ -694,6 +727,9 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
         };
 
         $scope.saveAnswer = function(value, option, req) {
+            if (req.select) {
+                events.raise('answerToolbar', {req: req});
+            }
             assessment.saveFinding(req.fID, option.attId, option.attTypeId, !!value);
         };
 
@@ -756,7 +792,6 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
     	scope: {
             htAssessmentTable: '@',
     		htRequirements: '=',
-            htfRequirements: '=?',
             htHeadings: '=',
             htScopeOptions: '=',
             htResponseOptions: '=',
@@ -846,6 +881,14 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
             response: 'Documented',
             scope: 'Applies to Scope of Environment'
           }
+        },
+        resolve: {
+          requirements: ['AssessmentSvc', function(assessment) {
+            return assessment.getRequirements('Policy');
+          }],
+          attributes: ['AssessmentSvc', function(assessment) {
+            return assessment.getAttributes('Policy');
+          }]
         }
       })
       .state('assessment.procedure', {
@@ -859,6 +902,14 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
             response: 'Documented',
             scope: 'Applies to Scope of Environment'
           }
+        },
+        resolve: {
+          requirements: ['AssessmentSvc', function(assessment) {
+            return assessment.getRequirements('Procedure');
+          }],
+          attributes: ['AssessmentSvc', function(assessment) {
+            return assessment.getAttributes('Procedure')
+          }]
         }
       })
       .state('assessment.implemented', {
@@ -872,6 +923,14 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
             response: 'Implemented',
             scope: 'Applied to Scope of Environment'
           }
+        },
+        resolve: {
+          requirements: ['AssessmentSvc', function(assessment) {
+            return assessment.getRequirements('Implemented');
+          }],
+          attributes: ['AssessmentSvc', function(assessment) {
+            return assessment.getAttributes('Implemented')
+          }]
         }
       })
       .state('assessment.measured', {
@@ -885,6 +944,14 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
             response: 'Review',
             scope: 'Types of Reviews'
           }
+        },
+        resolve: {
+          requirements: ['AssessmentSvc', function(assessment) {
+            return assessment.getRequirements('Measured');
+          }],
+          attributes: ['AssessmentSvc', function(assessment) {
+            return assessment.getAttributes('Measured')
+          }]
         }
       })
       .state('assessment.managed', {
@@ -898,6 +965,14 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
             response: 'Corrective Actions',
             scope: 'Types of Corrective Actions'
           }
+        },
+        resolve: {
+          requirements: ['AssessmentSvc', function(assessment) {
+            return assessment.getRequirements('Managed');
+          }],
+          attributes: ['AssessmentSvc', function(assessment) {
+            return assessment.getAttributes('Managed')
+          }]
         }
       });
   }]);

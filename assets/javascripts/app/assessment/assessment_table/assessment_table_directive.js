@@ -10,6 +10,7 @@
     };
 
     var control = ['$scope', 'htEvents', 'AssessmentSvc', function($scope, events, assessment) {
+
         var saveToolbarAnswer = function(value, option, req) {
             if (option.answerType === 'scope' && angular.isArray(req[option.answerType])) {
                 if (value) {
@@ -27,6 +28,9 @@
         };
 
         $scope.saveAnswer = function(value, option, req) {
+            if (req.select) {
+                events.raise('answerToolbar', {req: req});
+            }
             assessment.saveFinding(req.fID, option.attId, option.attTypeId, !!value);
         };
 
@@ -89,7 +93,6 @@
     	scope: {
             htAssessmentTable: '@',
     		htRequirements: '=',
-            htfRequirements: '=?',
             htHeadings: '=',
             htScopeOptions: '=',
             htResponseOptions: '=',

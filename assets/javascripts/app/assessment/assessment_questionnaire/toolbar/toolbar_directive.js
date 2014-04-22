@@ -2,7 +2,7 @@
 
 	assessment.directive('htToolbar', [function() {
 
-		var control = ['$scope', 'htEvents', function($scope, events) {
+		var control = ['$scope', '$filter', 'htEvents', function($scope, $filter, events) {
 			$scope.select = false;
 			$scope.selectPartial = false;
 			$scope.activeRequirements = 0;
@@ -21,8 +21,8 @@
 					$scope.activeRequirements = 0;
 					reset();
 				} else {
-					$scope.activeRequirements = $scope.requirements.length;
-					setupMultiSelect($scope.requirements);
+					$scope.activeRequirements = applyFilter($scope.requirements).length;
+					setupMultiSelect(applyFilter($scope.requirements));
 				}
 				selectPartial = false;
 				events.raise('toolbarSelect', {value: value});
@@ -89,8 +89,22 @@
 				}
 			};
 
+			var applyFilter = function(reqs) {
+				return $filter('filter')(reqs, $scope.search);
+			};
+
+			var filterSelect = function(req) {
+				return $filter('filter')(req, {select: true});
+			}
+
 			$scope.$on('resetToolbar', function(e) {
 				reset();
+			});
+
+			$scope.$on('answerToolbar', function(e, args) {
+				if ($scope.select) {
+					setupMultiSelect([args.req]);
+				}
 			});
 
 			$scope.$on('requirementSelect', function(e, args) {
@@ -98,13 +112,12 @@
 					$scope.select = true;
 					$scope.selectPartial = true;
 					$scope.activeRequirements += 1;
-					if ($scope.activeRequirements === $scope.requirements.length) {
+					if ($scope.activeRequirements === applyFilter($scope.requirements).length) {
 						$scope.selectPartial = false;	
 					}
-					setupMultiSelect([args.req]);
 				} else {
 					$scope.activeRequirements -= 1;
-					if ($scope.activeRequirements !== $scope.requirements.length) {
+					if ($scope.activeRequirements !== applyFilter($scope.requirements).length) {
 						$scope.selectPartial = true;
 					}
 					if ($scope.activeRequirements === 0) {
@@ -113,6 +126,7 @@
 						$scope.resetAnswers();
 					}
 				}
+				setupMultiSelect([args.req]);
 			});
 
 		}];

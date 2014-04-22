@@ -2,10 +2,10 @@
   
   hitrust.inputs.directive('htSelectFactory', ['$compile', function($compile){
 
-    var selectFactory = function(selected) {
+    var selectFactory = function(type) {
       var template = "<span ";
 
-      if (angular.isArray(selected)) {
+      if (angular.isArray(type)) {
         template += "ht-multi-select " +
                     "ht-select-option-partial-prop='{{htSelectOptionPartialProp}}'";
       } else {
@@ -30,6 +30,8 @@
     return {
       restrict: 'A',
       replace: true,
+      terminal: true,
+      priority: 1000,
       link: linker,
       scope: {
         htSelectOptions: '=',
