@@ -14,24 +14,26 @@
         var saveToolbarAnswer = function(value, option, req) {
             if (option.answerType === 'scope' && angular.isArray(req[option.answerType])) {
                 if (value) {
-                    req[option.answerType].push(option);
+                    if (!_.contains(req[option.answerType], option)) {
+                        req[option.answerType].push(option);
+                        $scope.saveAnswer(value, option, req);
+                    }
                 }
-                else {
+                else if (_.contains(req[option.answerType], option)) {
                     _.remove(req[option.answerType], function(opt) { return opt.attId === option.attId});
+                    $scope.saveAnswer(value, option, req);
                 }
             } 
-            else {
+            else if (!angular.equals(req[option.answerType], option)) {
                 req[option.answerType] = option;
+                $scope.saveAnswer(value, option, req);
             }
-
-            $scope.saveAnswer(value, option, req);
         };
 
         $scope.saveAnswer = function(value, option, req) {
-            if (req.select) {
-                events.raise('answerToolbar', {req: req});
-            }
+            $scope.$emit('savingAnswerStart');
             assessment.saveFinding(req.fID, option.attId, option.attTypeId, !!value);
+            $scope.$emit('savingAnswerComplete');
         };
 
         $scope.setSelected = function(value, req) {
@@ -45,11 +47,13 @@
         });
 
         $scope.$on('toolbarAnswer', function(e, args) {
+            $scope.$emit('savingAnswerStart');
             _.each($scope.htfRequirements, function(req) {
                 if (req.select) {
-                    saveToolbarAnswer(args.value, args.option, req); // NEED TO HANDLE THIS SO IT UPDATES SELECTS
+                    saveToolbarAnswer(args.value, args.option, req);
                 }
             });
+            $scope.$emit('savingAnswerComplete');
         });
 
         $scope.$on('toolbarClear', function(e) {

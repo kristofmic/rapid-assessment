@@ -1,5 +1,4 @@
- - toolbar 
- 	+ multiselect is still funky, particularly when you select an answer with toolbar items selected but not via the toolbar
+
  
  - column ordering
  - column filtering

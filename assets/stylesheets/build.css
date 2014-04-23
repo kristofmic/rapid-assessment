@@ -12,6 +12,9 @@
 .loading {
   float: right;
   margin-top: -25px;
+  margin-right: 15px;
+}
+.loading img {
   height: 20px;
 }
 

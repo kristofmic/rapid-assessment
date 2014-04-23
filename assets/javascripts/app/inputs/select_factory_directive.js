@@ -6,8 +6,7 @@
       var template = "<span ";
 
       if (angular.isArray(type)) {
-        template += "ht-multi-select " +
-                    "ht-select-option-partial-prop='{{htSelectOptionPartialProp}}'";
+        template += "ht-multi-select ";
       } else {
         template += "ht-select ";
       }
@@ -37,7 +36,6 @@
         htSelectOptions: '=',
         htSelectOptionLabelProp: '@',
         htSelectOptionValueProp: '@',
-        htSelectOptionPartialProp: '@',
         htSelected: '=',
         htOnSelect: '&'
       }

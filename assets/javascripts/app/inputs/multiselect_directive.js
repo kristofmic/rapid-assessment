@@ -35,11 +35,6 @@
         if ($scope.selectedValues[option[$scope.value]]) {
           _.remove($scope.selected, function(select) { return select[$scope.value] === option[$scope.value]; });
           $scope.selectedValues[option[$scope.value]] = false;
-          _.each($scope.options, function(opt) {
-            if (opt[$scope.value] === option[$scope.value]) {
-              opt.partial = false;
-            }
-          });
         } else {
           $scope.selected.push(option);
           $scope.selectedValues[option[$scope.value]] = true;
@@ -63,7 +58,6 @@
         options: '=htSelectOptions',
         label: '@htSelectOptionLabelProp',
         value: '@htSelectOptionValueProp',
-        partial: '@htSelectOptionPartialProp',
         onSelect: '&htOnSelect',
         selected: '=htSelected'
       }

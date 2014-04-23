@@ -210,11 +210,6 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
         if ($scope.selectedValues[option[$scope.value]]) {
           _.remove($scope.selected, function(select) { return select[$scope.value] === option[$scope.value]; });
           $scope.selectedValues[option[$scope.value]] = false;
-          _.each($scope.options, function(opt) {
-            if (opt[$scope.value] === option[$scope.value]) {
-              opt.partial = false;
-            }
-          });
         } else {
           $scope.selected.push(option);
           $scope.selectedValues[option[$scope.value]] = true;
@@ -238,7 +233,6 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
         options: '=htSelectOptions',
         label: '@htSelectOptionLabelProp',
         value: '@htSelectOptionValueProp',
-        partial: '@htSelectOptionPartialProp',
         onSelect: '&htOnSelect',
         selected: '=htSelected'
       }
@@ -300,8 +294,7 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
       var template = "<span ";
 
       if (angular.isArray(type)) {
-        template += "ht-multi-select " +
-                    "ht-select-option-partial-prop='{{htSelectOptionPartialProp}}'";
+        template += "ht-multi-select ";
       } else {
         template += "ht-select ";
       }
@@ -331,7 +324,6 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
         htSelectOptions: '=',
         htSelectOptionLabelProp: '@',
         htSelectOptionValueProp: '@',
-        htSelectOptionPartialProp: '@',
         htSelected: '=',
         htOnSelect: '&'
       }
@@ -363,17 +355,24 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
 
   angular.module('ht-loading', [])
   .directive('htLoadingIcon', [function() {
+    
     var linker = function(scope, element, attrs) {
-      /*
-      scope.$on('EVENT', function() { 
+      scope.$on('$stateChangeStart', function() { 
         element.removeClass('hidden');
       });
 
-      scope.$on('EVENT', function() { 
+      scope.$on('savingAnswerStart', function() { 
+        element.removeClass('hidden');
+      });
+
+      scope.$on('$stateChangeSuccess', function() { 
         element.addClass('hidden');
       });
-      */
-    }
+
+      scope.$on('savingAnswerComplete', function() { 
+        element.addClass('hidden');
+      });
+    };
 
     return {
      restrict: 'AC',
@@ -421,7 +420,7 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
 
 			$scope.scopeOptions = _.filter(attributes, function(attr) { return attr.answerType === 'scope'; });
 			$scope.responseOptions = _.filter(attributes, function(attr) { return attr.answerType === 'response'; });
-		
+
 			$scope.setNav($state.current.data.nav);
 			events.raise('resetToolbar');
 
@@ -455,9 +454,8 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
 					reset();
 				} else {
 					$scope.activeRequirements = applyFilter($scope.requirements).length;
-					setupMultiSelect(applyFilter($scope.requirements));
 				}
-				selectPartial = false;
+				$scope.selectPartial = false;
 				events.raise('toolbarSelect', {value: value});
 			};
 
@@ -489,39 +487,6 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
 				$scope.resetAnswers();
 			};
 
-			var setupMultiSelect = function(reqs) {
-				if (angular.isArray($scope.answers.scope)) {
-					_.each(reqs, function(req){
-						_.each(req.scope, function(selected) {
-							var index = _.findIndex($scope.answers.scope, function(opt) {
-								return opt.attId === selected.attId
-							});
-							if (index >= 0) {
-								$scope.answers.scope[index].count += 1;
-							}
-							else {
-								$scope.answers.scope.push(_.clone(selected));
-								_.last($scope.answers.scope).count = 1;
-							}
-						});
-					});
-
-					_.each($scope.answers.scope, function(opt) {
-						var index = _.findIndex($scope.scopeOptions, function(sOpt) {
-							return sOpt.attId === opt.attId;
-						});
-						if (index >= 0) {
-							if (opt.count < $scope.activeRequirements) {
-								$scope.scopeOptions[index].partial = true;
-							} 
-							else {
-								$scope.scopeOptions[index].partial = false;
-							}
-						}
-					});	
-				}
-			};
-
 			var applyFilter = function(reqs) {
 				return $filter('filter')(reqs, $scope.search);
 			};
@@ -532,12 +497,6 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
 
 			$scope.$on('resetToolbar', function(e) {
 				reset();
-			});
-
-			$scope.$on('answerToolbar', function(e, args) {
-				if ($scope.select) {
-					setupMultiSelect([args.req]);
-				}
 			});
 
 			$scope.$on('requirementSelect', function(e, args) {
@@ -559,7 +518,6 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
 						$scope.resetAnswers();
 					}
 				}
-				setupMultiSelect([args.req]);
 			});
 
 		}];
@@ -713,24 +671,26 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
         var saveToolbarAnswer = function(value, option, req) {
             if (option.answerType === 'scope' && angular.isArray(req[option.answerType])) {
                 if (value) {
-                    req[option.answerType].push(option);
+                    if (!_.contains(req[option.answerType], option)) {
+                        req[option.answerType].push(option);
+                        $scope.saveAnswer(value, option, req);
+                    }
                 }
-                else {
+                else if (_.contains(req[option.answerType], option)) {
                     _.remove(req[option.answerType], function(opt) { return opt.attId === option.attId});
+                    $scope.saveAnswer(value, option, req);
                 }
             } 
-            else {
+            else if (!angular.equals(req[option.answerType], option)) {
                 req[option.answerType] = option;
+                $scope.saveAnswer(value, option, req);
             }
-
-            $scope.saveAnswer(value, option, req);
         };
 
         $scope.saveAnswer = function(value, option, req) {
-            if (req.select) {
-                events.raise('answerToolbar', {req: req});
-            }
+            $scope.$emit('savingAnswerStart');
             assessment.saveFinding(req.fID, option.attId, option.attTypeId, !!value);
+            $scope.$emit('savingAnswerComplete');
         };
 
         $scope.setSelected = function(value, req) {
@@ -744,11 +704,13 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
         });
 
         $scope.$on('toolbarAnswer', function(e, args) {
+            $scope.$emit('savingAnswerStart');
             _.each($scope.htfRequirements, function(req) {
                 if (req.select) {
-                    saveToolbarAnswer(args.value, args.option, req); // NEED TO HANDLE THIS SO IT UPDATES SELECTS
+                    saveToolbarAnswer(args.value, args.option, req);
                 }
             });
+            $scope.$emit('savingAnswerComplete');
         });
 
         $scope.$on('toolbarClear', function(e) {

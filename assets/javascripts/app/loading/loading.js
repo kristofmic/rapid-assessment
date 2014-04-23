@@ -2,17 +2,24 @@
 
   angular.module('ht-loading', [])
   .directive('htLoadingIcon', [function() {
+    
     var linker = function(scope, element, attrs) {
-      /*
-      scope.$on('EVENT', function() { 
+      scope.$on('$stateChangeStart', function() { 
         element.removeClass('hidden');
       });
 
-      scope.$on('EVENT', function() { 
+      scope.$on('savingAnswerStart', function() { 
+        element.removeClass('hidden');
+      });
+
+      scope.$on('$stateChangeSuccess', function() { 
         element.addClass('hidden');
       });
-      */
-    }
+
+      scope.$on('savingAnswerComplete', function() { 
+        element.addClass('hidden');
+      });
+    };
 
     return {
      restrict: 'AC',
