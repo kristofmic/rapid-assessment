@@ -10,9 +10,9 @@
     };
 
     var linker = function(scope, elem, attrs) {
-      scope.label = scope.label || 'label';
-      scope.value = scope.value || 'value';
-      scope.selected = scope.selected || [];
+      scope.label = scope.label;
+      scope.value = scope.value;
+      scope.selected = scope.selected;
       scope.selectedValues = {};
       scope.selectedLabel = getSelectedLabel(scope.selected, scope.value, scope.label);
 

@@ -3,6 +3,8 @@
 	assessment.directive('htToolbar', [function() {
 
 		var control = ['$scope', '$filter', 'htEvents', function($scope, $filter, events) {
+			// Data Setup
+			// --Select
 			$scope.select = false;
 			$scope.selectPartial = false;
 			$scope.activeRequirements = 0;
@@ -16,6 +18,29 @@
       }
       $scope.answers.scope = _.clone(originalScope);
 
+      // --Filter
+      $scope.filter = false;
+      $scope.filterOptions = [
+      	{ 
+      		label: 'Selected', 
+      		options: [
+	      		{ label: 'Selected', value: 1, filter: {select: true} },
+	      		{ label: 'Unselected', value: 0, filter: {select: false} }
+      		], 
+      		active: [] 
+      	},
+      	{ 
+      		label: 'Starred', 
+      		options: [
+	      		{ label: 'Starred', value: 1 },
+	      		{ label: 'Unstarred', value: 0 }
+      		], 
+      		active: [] 
+      	}
+      ];
+      $scope.activeFilters = [];
+
+			// $scope Functions
 			$scope.selected = function(value) {
 				if (!value) {
 					$scope.activeRequirements = 0;
@@ -24,15 +49,15 @@
 					$scope.activeRequirements = applyFilter($scope.requirements).length;
 				}
 				$scope.selectPartial = false;
-				events.raise('toolbarSelect', {value: value});
+				events.raise('toolbarSelect', { value: value });
 			};
 
 			$scope.starred = function(value) {
-				events.raise('toolbarStarred', {value: value});
+				events.raise('toolbarStarred', { value: value });
 			};
 
 			$scope.setAnswers = function(value, option) {
-				events.raise('toolbarAnswer', {	option: option, value: !!value});
+				events.raise('toolbarAnswer', {	option: option, value: !!value });
 			};
 
 			$scope.clearAnswer = function() {
@@ -48,6 +73,18 @@
 				});
 			};
 
+			$scope.addFilter = function(filter, index) {
+				if (!_.contains($scope.activeFilters, filter)) {
+					$scope.filter = true;
+					$scope.activeFilters.push(filter);
+				}
+			};
+
+			$scope.setFilter = function(value, option, filter) {
+				events.raise('toolbarFilter', { filter: option.filter });
+			};
+
+			// Helper Functions
 			var reset = function() {
 				$scope.select = false;
 				$scope.activeRequirements = 0;
@@ -59,10 +96,7 @@
 				return $filter('filter')(reqs, $scope.search);
 			};
 
-			var filterSelect = function(req) {
-				return $filter('filter')(req, {select: true});
-			}
-
+			// Event Handlers
 			$scope.$on('resetToolbar', function(e) {
 				reset();
 			});
@@ -90,6 +124,7 @@
 
 		}];
 
+		// DDO
 		return {
 			restrict: 'A',
 			replace: false,
@@ -102,7 +137,7 @@
 				responseOptions: '=htResponseOptions',
 				type: '@htAssessmentType'
 			}
-		}
+		};
 
 	}]);
 

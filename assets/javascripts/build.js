@@ -185,9 +185,9 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
     };
 
     var linker = function(scope, elem, attrs) {
-      scope.label = scope.label || 'label';
-      scope.value = scope.value || 'value';
-      scope.selected = scope.selected || [];
+      scope.label = scope.label;
+      scope.value = scope.value;
+      scope.selected = scope.selected;
       scope.selectedValues = {};
       scope.selectedLabel = getSelectedLabel(scope.selected, scope.value, scope.label);
 
@@ -435,6 +435,8 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
 	assessment.directive('htToolbar', [function() {
 
 		var control = ['$scope', '$filter', 'htEvents', function($scope, $filter, events) {
+			// Data Setup
+			// --Select
 			$scope.select = false;
 			$scope.selectPartial = false;
 			$scope.activeRequirements = 0;
@@ -448,6 +450,29 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
       }
       $scope.answers.scope = _.clone(originalScope);
 
+      // --Filter
+      $scope.filter = false;
+      $scope.filterOptions = [
+      	{ 
+      		label: 'Selected', 
+      		options: [
+	      		{ label: 'Selected', value: 1, filter: {select: true} },
+	      		{ label: 'Unselected', value: 0, filter: {select: false} }
+      		], 
+      		active: [] 
+      	},
+      	{ 
+      		label: 'Starred', 
+      		options: [
+	      		{ label: 'Starred', value: 1 },
+	      		{ label: 'Unstarred', value: 0 }
+      		], 
+      		active: [] 
+      	}
+      ];
+      $scope.activeFilters = [];
+
+			// $scope Functions
 			$scope.selected = function(value) {
 				if (!value) {
 					$scope.activeRequirements = 0;
@@ -456,15 +481,15 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
 					$scope.activeRequirements = applyFilter($scope.requirements).length;
 				}
 				$scope.selectPartial = false;
-				events.raise('toolbarSelect', {value: value});
+				events.raise('toolbarSelect', { value: value });
 			};
 
 			$scope.starred = function(value) {
-				events.raise('toolbarStarred', {value: value});
+				events.raise('toolbarStarred', { value: value });
 			};
 
 			$scope.setAnswers = function(value, option) {
-				events.raise('toolbarAnswer', {	option: option, value: !!value});
+				events.raise('toolbarAnswer', {	option: option, value: !!value });
 			};
 
 			$scope.clearAnswer = function() {
@@ -480,6 +505,18 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
 				});
 			};
 
+			$scope.addFilter = function(filter, index) {
+				if (!_.contains($scope.activeFilters, filter)) {
+					$scope.filter = true;
+					$scope.activeFilters.push(filter);
+				}
+			};
+
+			$scope.setFilter = function(value, option, filter) {
+				events.raise('toolbarFilter', { filter: option.filter });
+			};
+
+			// Helper Functions
 			var reset = function() {
 				$scope.select = false;
 				$scope.activeRequirements = 0;
@@ -491,10 +528,7 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
 				return $filter('filter')(reqs, $scope.search);
 			};
 
-			var filterSelect = function(req) {
-				return $filter('filter')(req, {select: true});
-			}
-
+			// Event Handlers
 			$scope.$on('resetToolbar', function(e) {
 				reset();
 			});
@@ -522,6 +556,7 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
 
 		}];
 
+		// DDO
 		return {
 			restrict: 'A',
 			replace: false,
@@ -534,7 +569,7 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
 				responseOptions: '=htResponseOptions',
 				type: '@htAssessmentType'
 			}
-		}
+		};
 
 	}]);
 
@@ -668,6 +703,18 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
 
     var control = ['$scope', 'htEvents', 'AssessmentSvc', function($scope, events, assessment) {
 
+        // $scope Functions
+        $scope.saveAnswer = function(value, option, req) {
+            $scope.$emit('savingAnswerStart');
+            assessment.saveFinding(req.fID, option.attId, option.attTypeId, !!value);
+            $scope.$emit('savingAnswerComplete');
+        };
+
+        $scope.setSelected = function(value, req) {
+            events.raise('requirementSelect', {value: value, req: req} );
+        }
+
+        // Helper Functions
         var saveToolbarAnswer = function(value, option, req) {
             if (option.answerType === 'scope' && angular.isArray(req[option.answerType])) {
                 if (value) {
@@ -687,16 +734,7 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
             }
         };
 
-        $scope.saveAnswer = function(value, option, req) {
-            $scope.$emit('savingAnswerStart');
-            assessment.saveFinding(req.fID, option.attId, option.attTypeId, !!value);
-            $scope.$emit('savingAnswerComplete');
-        };
-
-        $scope.setSelected = function(value, req) {
-            events.raise('requirementSelect', {value: value, req: req} );
-        }
-
+        // Event Handlers
         $scope.$on('toolbarSelect', function(e, args) {
             _.each($scope.htfRequirements, function(req) {
                 req.select = args.value;
@@ -743,21 +781,25 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
             });
         });
 
+        $scope.$on('toolbarFilter', function(e, args) {
+          $scope.htFilter = args.filter;
+        });
+
     }];
 
     return {
     	restrict: 'A',
     	templateUrl: 'assets/javascripts/app/assessment/assessment_table/assessment_table.html',
     	replace: false,
-        link: linker,
-        controller: control,
+      link: linker,
+      controller: control,
     	scope: {
-            htAssessmentTable: '@',
+        htAssessmentTable: '@',
     		htRequirements: '=',
-            htHeadings: '=',
-            htScopeOptions: '=',
-            htResponseOptions: '=',
-            htSearch: '='
+        htHeadings: '=',
+        htScopeOptions: '=',
+        htResponseOptions: '=',
+        htSearch: '='
     	}
     };
   }]);

@@ -11,6 +11,18 @@
 
     var control = ['$scope', 'htEvents', 'AssessmentSvc', function($scope, events, assessment) {
 
+        // $scope Functions
+        $scope.saveAnswer = function(value, option, req) {
+            $scope.$emit('savingAnswerStart');
+            assessment.saveFinding(req.fID, option.attId, option.attTypeId, !!value);
+            $scope.$emit('savingAnswerComplete');
+        };
+
+        $scope.setSelected = function(value, req) {
+            events.raise('requirementSelect', {value: value, req: req} );
+        }
+
+        // Helper Functions
         var saveToolbarAnswer = function(value, option, req) {
             if (option.answerType === 'scope' && angular.isArray(req[option.answerType])) {
                 if (value) {
@@ -30,16 +42,7 @@
             }
         };
 
-        $scope.saveAnswer = function(value, option, req) {
-            $scope.$emit('savingAnswerStart');
-            assessment.saveFinding(req.fID, option.attId, option.attTypeId, !!value);
-            $scope.$emit('savingAnswerComplete');
-        };
-
-        $scope.setSelected = function(value, req) {
-            events.raise('requirementSelect', {value: value, req: req} );
-        }
-
+        // Event Handlers
         $scope.$on('toolbarSelect', function(e, args) {
             _.each($scope.htfRequirements, function(req) {
                 req.select = args.value;
@@ -86,21 +89,25 @@
             });
         });
 
+        $scope.$on('toolbarFilter', function(e, args) {
+          $scope.htFilter = args.filter;
+        });
+
     }];
 
     return {
     	restrict: 'A',
     	templateUrl: 'assets/javascripts/app/assessment/assessment_table/assessment_table.html',
     	replace: false,
-        link: linker,
-        controller: control,
+      link: linker,
+      controller: control,
     	scope: {
-            htAssessmentTable: '@',
+        htAssessmentTable: '@',
     		htRequirements: '=',
-            htHeadings: '=',
-            htScopeOptions: '=',
-            htResponseOptions: '=',
-            htSearch: '='
+        htHeadings: '=',
+        htScopeOptions: '=',
+        htResponseOptions: '=',
+        htSearch: '='
     	}
     };
   }]);
