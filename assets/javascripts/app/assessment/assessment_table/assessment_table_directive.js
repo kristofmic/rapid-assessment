@@ -1,12 +1,12 @@
 (function(assessment){
-  
+
   assessment.directive('htAssessmentTable', [function(){
 
     var linker = function(scope, elem, attrs) {
         scope.responses = {};
         scope.scopes = {};
         scope.defaultOrder = ["Domain", "Control"];
-        scope.htFilter = {};
+        scope.htFilter = [];
     };
 
     var control = ['$scope', 'htEvents', 'AssessmentSvc', function($scope, events, assessment) {
@@ -20,7 +20,7 @@
 
         $scope.setSelected = function(value, req) {
             events.raise('requirementSelect', {value: value, req: req} );
-        }
+        };
 
         // Helper Functions
         var saveToolbarAnswer = function(value, option, req) {
@@ -32,10 +32,10 @@
                     }
                 }
                 else if (_.contains(req[option.answerType], option)) {
-                    _.remove(req[option.answerType], function(opt) { return opt.attId === option.attId});
+                    _.remove(req[option.answerType], function(opt) { return opt.attId === option.attId; });
                     $scope.saveAnswer(value, option, req);
                 }
-            } 
+            }
             else if (!angular.equals(req[option.answerType], option)) {
                 req[option.answerType] = option;
                 $scope.saveAnswer(value, option, req);
@@ -66,7 +66,7 @@
                         $scope.saveAnswer(false, req.response, req);
                         req.response = {};
                     }
-                    
+
                     if (angular.isArray(req.scope)) {
                         _.each(req.scope, function(select) {
                             $scope.saveAnswer(false, select, req);
@@ -89,8 +89,12 @@
             });
         });
 
-        $scope.$on('toolbarFilter', function(e, args) {
-          $scope.htFilter = args.filter;
+        $scope.$on('toolbarSetFilter', function(e, args) {
+          $scope.htFilter.push(args.filter);
+        });
+
+        $scope.$on('toolbarRemoveFilter', function(e, args) {
+          _.remove($scope.htFilter, args.filter);
         });
 
     }];

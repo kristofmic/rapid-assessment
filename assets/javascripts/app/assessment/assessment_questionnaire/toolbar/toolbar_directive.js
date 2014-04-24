@@ -14,29 +14,29 @@
 			if ($scope.type === "Measured" || $scope.type === "Managed") {
         var originalScope = [];
       } else {
-      	var originalScope = {};  
+				var originalScope = {};
       }
       $scope.answers.scope = _.clone(originalScope);
 
       // --Filter
       $scope.filter = false;
       $scope.filterOptions = [
-      	{ 
-      		label: 'Selected', 
-      		options: [
-	      		{ label: 'Selected', value: 1, filter: {select: true} },
-	      		{ label: 'Unselected', value: 0, filter: {select: false} }
-      		], 
-      		active: [] 
-      	},
-      	{ 
-      		label: 'Starred', 
-      		options: [
-	      		{ label: 'Starred', value: 1 },
-	      		{ label: 'Unstarred', value: 0 }
-      		], 
-      		active: [] 
-      	}
+				{
+					label: 'Selected',
+					options: [
+						{ label: 'Selected', value: 1, filter: {key: 'select', value: true} },
+						{ label: 'Unselected', value: 0, filter: {key: 'select', value: false} }
+					],
+					active: {}
+				},
+				{
+					label: 'Starred',
+					options: [
+						{ label: 'Starred', value: 1, filter: {key: 'starred', value: true} },
+						{ label: 'Unstarred', value: 0, filter: {key: 'starred', value: false} }
+					],
+					active: {}
+				}
       ];
       $scope.activeFilters = [];
 
@@ -60,7 +60,7 @@
 				events.raise('toolbarAnswer', {	option: option, value: !!value });
 			};
 
-			$scope.clearAnswer = function() {
+			$scope.clearAnswers = function() {
 				events.raise('toolbarClear');
 				$scope.resetAnswers();
 			};
@@ -80,8 +80,31 @@
 				}
 			};
 
+			$scope.removeFilter = function(filter, index) {
+				removeAllFilterOptions(filter.options);
+				$scope.activeFilters.splice(index, 1);
+				filter.active = {};
+			};
+
 			$scope.setFilter = function(value, option, filter) {
-				events.raise('toolbarFilter', { filter: option.filter });
+				if (angular.isArray(filter.active)) {
+					if (value) {
+						events.raise('toolbarSetFilter', { filter: option.filter });
+					}
+					else {
+						events.raise('toolbarRemoveFilter', { filter: option.filter });
+					}
+				}
+				else {
+					removeAllFilterOptions(filter.options);
+					events.raise('toolbarSetFilter', { filter: option.filter });
+				}
+			};
+
+			$scope.clearFilters = function() {
+				while ($scope.activeFilters.length > 0) {
+					$scope.removeFilter($scope.activeFilters[0]);
+				}
 			};
 
 			// Helper Functions
@@ -90,10 +113,17 @@
 				$scope.activeRequirements = 0;
 				$scope.selectPartial = false;
 				$scope.resetAnswers();
+				$scope.clearFilters();
 			};
 
 			var applyFilter = function(reqs) {
 				return $filter('filter')(reqs, $scope.search);
+			};
+
+			var removeAllFilterOptions = function(options) {
+				_.each(options, function(opt) {
+					events.raise('toolbarRemoveFilter', { filter: opt.filter });
+				});
 			};
 
 			// Event Handlers
@@ -107,7 +137,7 @@
 					$scope.selectPartial = true;
 					$scope.activeRequirements += 1;
 					if ($scope.activeRequirements === applyFilter($scope.requirements).length) {
-						$scope.selectPartial = false;	
+						$scope.selectPartial = false;
 					}
 				} else {
 					$scope.activeRequirements -= 1;

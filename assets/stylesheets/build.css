@@ -114,17 +114,25 @@ table button.dropdown-toggle {
 .toolbar #toolbar-select-container + .dropdown-toggle .caret, .toolbar #toolbar-filter-container + .dropdown-toggle .caret {
   margin-left: 0;
 }
-.toolbar .label-filter {
-  font-weight: normal;
-  font-size: 12px;
-  padding: 4px;
-  margin-right: 4px;
-  border-radius: 2px;
+.toolbar .filter-option-container {
+  position: relative;
 }
-.toolbar .label-filter .close {
-  float: none;
-  font-size: 16px;
-  margin-left: 4px;
+.toolbar .filter-option-container:hover button.close {
+  display: block;
+}
+.toolbar .filter-option-container button.close {
+  position: absolute;
+  top: -19;
+  left: -6;
+  z-index: 100;
+  border-radius: 50%;
+  opacity: .8;
+  color: #999;
+  display: none;
+}
+.toolbar .filter-option-container button.close:hover {
+  opacity: .8;
+  color: #333;
 }
 
 .checkbox-label {

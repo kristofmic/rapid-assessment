@@ -446,29 +446,29 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
 			if ($scope.type === "Measured" || $scope.type === "Managed") {
         var originalScope = [];
       } else {
-      	var originalScope = {};  
+				var originalScope = {};
       }
       $scope.answers.scope = _.clone(originalScope);
 
       // --Filter
       $scope.filter = false;
       $scope.filterOptions = [
-      	{ 
-      		label: 'Selected', 
-      		options: [
-	      		{ label: 'Selected', value: 1, filter: {select: true} },
-	      		{ label: 'Unselected', value: 0, filter: {select: false} }
-      		], 
-      		active: [] 
-      	},
-      	{ 
-      		label: 'Starred', 
-      		options: [
-	      		{ label: 'Starred', value: 1 },
-	      		{ label: 'Unstarred', value: 0 }
-      		], 
-      		active: [] 
-      	}
+				{
+					label: 'Selected',
+					options: [
+						{ label: 'Selected', value: 1, filter: {key: 'select', value: true} },
+						{ label: 'Unselected', value: 0, filter: {key: 'select', value: false} }
+					],
+					active: {}
+				},
+				{
+					label: 'Starred',
+					options: [
+						{ label: 'Starred', value: 1, filter: {key: 'starred', value: true} },
+						{ label: 'Unstarred', value: 0, filter: {key: 'starred', value: false} }
+					],
+					active: {}
+				}
       ];
       $scope.activeFilters = [];
 
@@ -492,7 +492,7 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
 				events.raise('toolbarAnswer', {	option: option, value: !!value });
 			};
 
-			$scope.clearAnswer = function() {
+			$scope.clearAnswers = function() {
 				events.raise('toolbarClear');
 				$scope.resetAnswers();
 			};
@@ -512,8 +512,31 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
 				}
 			};
 
+			$scope.removeFilter = function(filter, index) {
+				removeAllFilterOptions(filter.options);
+				$scope.activeFilters.splice(index, 1);
+				filter.active = {};
+			};
+
 			$scope.setFilter = function(value, option, filter) {
-				events.raise('toolbarFilter', { filter: option.filter });
+				if (angular.isArray(filter.active)) {
+					if (value) {
+						events.raise('toolbarSetFilter', { filter: option.filter });
+					}
+					else {
+						events.raise('toolbarRemoveFilter', { filter: option.filter });
+					}
+				}
+				else {
+					removeAllFilterOptions(filter.options);
+					events.raise('toolbarSetFilter', { filter: option.filter });
+				}
+			};
+
+			$scope.clearFilters = function() {
+				while ($scope.activeFilters.length > 0) {
+					$scope.removeFilter($scope.activeFilters[0]);
+				}
 			};
 
 			// Helper Functions
@@ -522,10 +545,17 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
 				$scope.activeRequirements = 0;
 				$scope.selectPartial = false;
 				$scope.resetAnswers();
+				$scope.clearFilters();
 			};
 
 			var applyFilter = function(reqs) {
 				return $filter('filter')(reqs, $scope.search);
+			};
+
+			var removeAllFilterOptions = function(options) {
+				_.each(options, function(opt) {
+					events.raise('toolbarRemoveFilter', { filter: opt.filter });
+				});
 			};
 
 			// Event Handlers
@@ -539,7 +569,7 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
 					$scope.selectPartial = true;
 					$scope.activeRequirements += 1;
 					if ($scope.activeRequirements === applyFilter($scope.requirements).length) {
-						$scope.selectPartial = false;	
+						$scope.selectPartial = false;
 					}
 				} else {
 					$scope.activeRequirements -= 1;
@@ -572,6 +602,36 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
 		};
 
 	}]);
+
+}(window.HT.assessment));/* END OF SOURCE */
+
+/* SOURCE: ./assets/javascripts/app/assessment/assessment_questionnaire/toolbar/toolbar_filter.js */
+(function(assessment) {
+
+  assessment.filter('htToolbarFilters', [function() {
+
+    var filterFunction = function(input, filters) {
+      if (!filters || !filters.length) {
+        return input;
+      }
+      else {
+        var filteredResult = _.filter(input, function(el) {
+          var keep = true;
+          _.each(filters, function(f) {
+            if (el[f.key] !== f.value) {
+              keep = false;
+              return false; // break
+            }
+          });
+          return keep;
+        });
+
+        return filteredResult;
+      }
+    };
+
+    return filterFunction;
+  }]);
 
 }(window.HT.assessment));/* END OF SOURCE */
 
@@ -691,14 +751,14 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
 
 /* SOURCE: ./assets/javascripts/app/assessment/assessment_table/assessment_table_directive.js */
 (function(assessment){
-  
+
   assessment.directive('htAssessmentTable', [function(){
 
     var linker = function(scope, elem, attrs) {
         scope.responses = {};
         scope.scopes = {};
         scope.defaultOrder = ["Domain", "Control"];
-        scope.htFilter = {};
+        scope.htFilter = [];
     };
 
     var control = ['$scope', 'htEvents', 'AssessmentSvc', function($scope, events, assessment) {
@@ -712,7 +772,7 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
 
         $scope.setSelected = function(value, req) {
             events.raise('requirementSelect', {value: value, req: req} );
-        }
+        };
 
         // Helper Functions
         var saveToolbarAnswer = function(value, option, req) {
@@ -724,10 +784,10 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
                     }
                 }
                 else if (_.contains(req[option.answerType], option)) {
-                    _.remove(req[option.answerType], function(opt) { return opt.attId === option.attId});
+                    _.remove(req[option.answerType], function(opt) { return opt.attId === option.attId; });
                     $scope.saveAnswer(value, option, req);
                 }
-            } 
+            }
             else if (!angular.equals(req[option.answerType], option)) {
                 req[option.answerType] = option;
                 $scope.saveAnswer(value, option, req);
@@ -758,7 +818,7 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
                         $scope.saveAnswer(false, req.response, req);
                         req.response = {};
                     }
-                    
+
                     if (angular.isArray(req.scope)) {
                         _.each(req.scope, function(select) {
                             $scope.saveAnswer(false, select, req);
@@ -781,8 +841,12 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
             });
         });
 
-        $scope.$on('toolbarFilter', function(e, args) {
-          $scope.htFilter = args.filter;
+        $scope.$on('toolbarSetFilter', function(e, args) {
+          $scope.htFilter.push(args.filter);
+        });
+
+        $scope.$on('toolbarRemoveFilter', function(e, args) {
+          _.remove($scope.htFilter, args.filter);
         });
 
     }];
