@@ -1,14 +1,14 @@
 (function(assessment){
 
-  assessment.controller('AssessmentQuestionnaireCtrl', 
-  	['$scope', '$state', 'requirements', 'attributes', 'htEvents', 'AssessmentSvc', 
+  assessment.controller('AssessmentQuestionnaireCtrl',
+    ['$scope', '$state', 'requirements', 'attributes', 'htEvents', 'AssessmentSvc',
 		function($scope, $state, requirements, attributes, events, assessment){
 
 			$scope.type = $state.current.data.type;
 
-  		$scope.requirements = _.each(requirements, function(req) {
-  			req.select = false;
-  		});
+      $scope.requirements = _.each(requirements, function(req) {
+        req.select = false;
+      });
 
 			$scope.headings = $state.current.data.headings;
 

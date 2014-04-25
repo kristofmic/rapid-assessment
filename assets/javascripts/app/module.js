@@ -3,7 +3,7 @@
   var hitrust = global.HT = global.HT || {};
   hitrust.ra = angular.module('hitrust-ra', ['ui.router', 'ht-assessment']);
 
-  hitrust.ra.config(['$stateProvider', '$urlRouterProvider', 
+  hitrust.ra.config(['$stateProvider', '$urlRouterProvider',
   function($stateProvider, $urlRouterProvider){
     $urlRouterProvider.otherwise("/assessment/policy");
 
@@ -52,7 +52,7 @@
             return assessment.getRequirements('Procedure');
           }],
           attributes: ['AssessmentSvc', function(assessment) {
-            return assessment.getAttributes('Procedure')
+            return assessment.getAttributes('Procedure');
           }]
         }
       })
@@ -73,7 +73,7 @@
             return assessment.getRequirements('Implemented');
           }],
           attributes: ['AssessmentSvc', function(assessment) {
-            return assessment.getAttributes('Implemented')
+            return assessment.getAttributes('Implemented');
           }]
         }
       })
@@ -94,7 +94,7 @@
             return assessment.getRequirements('Measured');
           }],
           attributes: ['AssessmentSvc', function(assessment) {
-            return assessment.getAttributes('Measured')
+            return assessment.getAttributes('Measured');
           }]
         }
       })
@@ -115,7 +115,7 @@
             return assessment.getRequirements('Managed');
           }],
           attributes: ['AssessmentSvc', function(assessment) {
-            return assessment.getAttributes('Managed')
+            return assessment.getAttributes('Managed');
           }]
         }
       });

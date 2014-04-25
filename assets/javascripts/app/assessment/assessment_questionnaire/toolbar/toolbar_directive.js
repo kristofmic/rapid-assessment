@@ -11,10 +11,11 @@
 			$scope.answers = {
 				response: {}
 			};
+			var originalScope;
 			if ($scope.type === "Measured" || $scope.type === "Managed") {
-        var originalScope = [];
+        originalScope = [];
       } else {
-				var originalScope = {};
+				originalScope = {};
       }
       $scope.answers.scope = _.clone(originalScope);
 
@@ -35,6 +36,28 @@
 						{ label: 'Starred', value: 1, filter: {key: 'starred', value: true} },
 						{ label: 'Unstarred', value: 0, filter: {key: 'starred', value: false} }
 					],
+					active: {}
+				},
+				{
+					label: 'Response',
+					options: _.map($scope.responseOptions, function(opt) {
+						return {
+							label: opt.attDesc,
+							value: opt.attId,
+							filter: {key: 'response', value: opt}
+						};
+					}),
+					active: {}
+				},
+				{
+					label: 'Scope',
+					options: _.map($scope.scopeOptions, function(opt) {
+						return {
+							label: opt.attDesc,
+							value: opt.attId,
+							filter: {key: 'scope', value: opt}
+						};
+					}),
 					active: {}
 				}
       ];
