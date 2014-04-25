@@ -117,7 +117,13 @@
 			};
 
 			var applyFilter = function(reqs) {
-				return $filter('filter')(reqs, $scope.search);
+				var filters = _.mapValues($scope.activeFilters, function(val) {
+					return val.filter;
+				});
+
+				var results = $filter('filter')(reqs, $scope.search);
+				results = $filter('htToolbarFilters')(results, filters);
+				return results;
 			};
 
 			var removeAllFilterOptions = function(options) {

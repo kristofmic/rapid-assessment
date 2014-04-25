@@ -1,5 +1,5 @@
 (function(hitrust){
-  
+
   hitrust.inputs.directive('htSelect', [function(){
 
     var linker = function(scope, elem, attrs) {
@@ -9,7 +9,7 @@
       scope.selectedLabel = scope.selected[scope.label];
 
       scope.$watch('selected', function(newVal, oldVal) {
-        if (newVal){
+        if (angular.isObject(newVal)){
           scope.selected = newVal;
           scope.selectedLabel = scope.selected[scope.label];
         }

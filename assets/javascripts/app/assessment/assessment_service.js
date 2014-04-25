@@ -1,7 +1,7 @@
 (function(assessment){
-  
+
   assessment.factory('AssessmentSvc', ['HTAPI', function(api){
-    var requirements = {}; 
+    var requirements = {};
     var attributes = {};
     var attrMap = {
       1314: {assessmentType: 'Policy', answerType: 'response'},
@@ -12,7 +12,7 @@
       1325: {assessmentType: 'Implemented', answerType: 'scope'},
       1317: {assessmentType: 'Measured', answerType: 'response'},
       1323: {assessmentType: 'Measured', answerType: 'scope'},
-      1318: {assessmentType: 'Managed', answerType: 'response'}, 
+      1318: {assessmentType: 'Managed', answerType: 'response'},
       1324: {assessmentType: 'Managed', answerType: 'scope'}
     };
 
@@ -32,11 +32,11 @@
       _.each(reqs, function(req) {
         req.select = false;
         req.starred = false;
-        req.response = '';
+        req.response = {};
         if (type === "Measured" || type === "Managed") {
           req.scope = [];
-        } else { 
-          req.scope = '';
+        } else {
+          req.scope = {};
         }
       });
 
@@ -56,7 +56,7 @@
         return api.fetch('ajax/get_Data.php', {objectId: getObjectID()})
           .then(function(result) {
            requirements[type] = formatRequirements(result, type);
-           return requirements[type]; 
+           return requirements[type];
           }
         );
       }
@@ -84,8 +84,8 @@
         console.log('Saving: objectId-' + getObjectID() + ' fID-' + fID + ' attrId-' + attrId + ' attrTypeId-' + attrTypeId + ' value-' + value);
         api.update('ajax/updateFindings.php', {
           objectID: getObjectID(),
-          fID: fID, 
-          attId: attrId, 
+          fID: fID,
+          attId: attrId,
           attTypeId: attrTypeId,
           value: value
         });
@@ -94,14 +94,14 @@
         console.log('Deleting: objectId-' + getObjectID() + ' fID-' + fID + ' attrId-' + attrId + ' attrTypeId-' + attrTypeId + ' value-' + value);
         api.destroy('ajax/updateFindings.php', {
           objectID: getObjectID(),
-          fID: fID, 
-          attId: attrId, 
+          fID: fID,
+          attId: attrId,
           attTypeId: attrTypeId,
           value: value
         });
       }
     };
-    
+
     return {
       getRequirements: getRequirements,
       getAttributes: getAttributes,

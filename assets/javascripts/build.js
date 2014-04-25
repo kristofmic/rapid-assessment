@@ -243,7 +243,7 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
 
 /* SOURCE: ./assets/javascripts/app/inputs/select_directive.js */
 (function(hitrust){
-  
+
   hitrust.inputs.directive('htSelect', [function(){
 
     var linker = function(scope, elem, attrs) {
@@ -253,7 +253,7 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
       scope.selectedLabel = scope.selected[scope.label];
 
       scope.$watch('selected', function(newVal, oldVal) {
-        if (newVal){
+        if (angular.isObject(newVal)){
           scope.selected = newVal;
           scope.selectedLabel = scope.selected[scope.label];
         }
@@ -549,7 +549,13 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
 			};
 
 			var applyFilter = function(reqs) {
-				return $filter('filter')(reqs, $scope.search);
+				var filters = _.mapValues($scope.activeFilters, function(val) {
+					return val.filter;
+				});
+
+				var results = $filter('filter')(reqs, $scope.search);
+				results = $filter('htToolbarFilters')(results, filters);
+				return results;
 			};
 
 			var removeAllFilterOptions = function(options) {
@@ -637,9 +643,9 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
 
 /* SOURCE: ./assets/javascripts/app/assessment/assessment_service.js */
 (function(assessment){
-  
+
   assessment.factory('AssessmentSvc', ['HTAPI', function(api){
-    var requirements = {}; 
+    var requirements = {};
     var attributes = {};
     var attrMap = {
       1314: {assessmentType: 'Policy', answerType: 'response'},
@@ -650,7 +656,7 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
       1325: {assessmentType: 'Implemented', answerType: 'scope'},
       1317: {assessmentType: 'Measured', answerType: 'response'},
       1323: {assessmentType: 'Measured', answerType: 'scope'},
-      1318: {assessmentType: 'Managed', answerType: 'response'}, 
+      1318: {assessmentType: 'Managed', answerType: 'response'},
       1324: {assessmentType: 'Managed', answerType: 'scope'}
     };
 
@@ -670,11 +676,11 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
       _.each(reqs, function(req) {
         req.select = false;
         req.starred = false;
-        req.response = '';
+        req.response = {};
         if (type === "Measured" || type === "Managed") {
           req.scope = [];
-        } else { 
-          req.scope = '';
+        } else {
+          req.scope = {};
         }
       });
 
@@ -694,7 +700,7 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
         return api.fetch('ajax/get_Data.php', {objectId: getObjectID()})
           .then(function(result) {
            requirements[type] = formatRequirements(result, type);
-           return requirements[type]; 
+           return requirements[type];
           }
         );
       }
@@ -722,8 +728,8 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
         console.log('Saving: objectId-' + getObjectID() + ' fID-' + fID + ' attrId-' + attrId + ' attrTypeId-' + attrTypeId + ' value-' + value);
         api.update('ajax/updateFindings.php', {
           objectID: getObjectID(),
-          fID: fID, 
-          attId: attrId, 
+          fID: fID,
+          attId: attrId,
           attTypeId: attrTypeId,
           value: value
         });
@@ -732,14 +738,14 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
         console.log('Deleting: objectId-' + getObjectID() + ' fID-' + fID + ' attrId-' + attrId + ' attrTypeId-' + attrTypeId + ' value-' + value);
         api.destroy('ajax/updateFindings.php', {
           objectID: getObjectID(),
-          fID: fID, 
-          attId: attrId, 
+          fID: fID,
+          attId: attrId,
           attTypeId: attrTypeId,
           value: value
         });
       }
     };
-    
+
     return {
       getRequirements: getRequirements,
       getAttributes: getAttributes,
