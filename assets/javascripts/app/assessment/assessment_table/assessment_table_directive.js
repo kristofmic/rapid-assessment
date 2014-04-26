@@ -13,9 +13,7 @@
 
         // $scope Functions
         $scope.saveAnswer = function(value, option, req) {
-            $scope.$emit('savingAnswerStart');
             assessment.saveFinding(req.fID, option.attId, option.attTypeId, !!value);
-            $scope.$emit('savingAnswerComplete');
         };
 
         $scope.setSelected = function(value, req) {
@@ -50,16 +48,17 @@
         });
 
         $scope.$on('toolbarAnswer', function(e, args) {
-            $scope.$emit('savingAnswerStart');
+            events.raise('loadingStart');
             _.each($scope.htfRequirements, function(req) {
                 if (req.select) {
                     saveToolbarAnswer(args.value, args.option, req);
                 }
             });
-            $scope.$emit('savingAnswerComplete');
+            events.raise('loadingComplete');
         });
 
         $scope.$on('toolbarClear', function(e) {
+            events.raise('loadingStart');
             _.each($scope.htfRequirements, function(req) {
                 if (req.select) {
                     if (!_.isEmpty(req.response)) {
@@ -79,6 +78,7 @@
                     }
                 }
             });
+            events.raise('loadingComplete');
         });
 
         $scope.$on('toolbarStarred', function(e, args) {

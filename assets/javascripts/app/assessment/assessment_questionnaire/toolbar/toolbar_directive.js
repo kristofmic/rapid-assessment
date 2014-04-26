@@ -39,7 +39,7 @@
 					active: {}
 				},
 				{
-					label: 'Response',
+					label: $scope.responseHeading,
 					options: _.map($scope.responseOptions, function(opt) {
 						return {
 							label: opt.attDesc,
@@ -50,7 +50,7 @@
 					active: {}
 				},
 				{
-					label: 'Scope',
+					label: $scope.scopeHeading,
 					options: _.map($scope.scopeOptions, function(opt) {
 						return {
 							label: opt.attDesc,
@@ -58,12 +58,13 @@
 							filter: {key: 'scope', value: opt}
 						};
 					}),
-					active: {}
+					active: activeFilterType()
 				}
       ];
       $scope.activeFilters = [];
 
 			// $scope Functions
+			// --Select
 			$scope.selected = function(value) {
 				if (!value) {
 					$scope.activeRequirements = 0;
@@ -96,6 +97,7 @@
 				});
 			};
 
+			// --Filter
 			$scope.addFilter = function(filter, index) {
 				if (!_.contains($scope.activeFilters, filter)) {
 					$scope.filter = true;
@@ -106,7 +108,7 @@
 			$scope.removeFilter = function(filter, index) {
 				removeAllFilterOptions(filter.options);
 				$scope.activeFilters.splice(index, 1);
-				filter.active = {};
+				filter.active = activeFilterType();
 			};
 
 			$scope.setFilter = function(value, option, filter) {
@@ -131,15 +133,15 @@
 			};
 
 			// Helper Functions
-			var reset = function() {
+			function reset() {
 				$scope.select = false;
 				$scope.activeRequirements = 0;
 				$scope.selectPartial = false;
 				$scope.resetAnswers();
 				$scope.clearFilters();
-			};
+			}
 
-			var applyFilter = function(reqs) {
+			function applyFilter(reqs) {
 				var filters = _.mapValues($scope.activeFilters, function(val) {
 					return val.filter;
 				});
@@ -147,13 +149,23 @@
 				var results = $filter('filter')(reqs, $scope.search);
 				results = $filter('htToolbarFilters')(results, filters);
 				return results;
-			};
+			}
 
-			var removeAllFilterOptions = function(options) {
+			function removeAllFilterOptions(options) {
 				_.each(options, function(opt) {
 					events.raise('toolbarRemoveFilter', { filter: opt.filter });
 				});
-			};
+			}
+
+			function activeFilterType() {
+				var active;
+				if ($scope.type === "Measured" || $scope.type === "Managed") {
+					active = [];
+				} else {
+					active = {};
+				}
+				return active;
+			}
 
 			// Event Handlers
 			$scope.$on('resetToolbar', function(e) {
@@ -194,6 +206,8 @@
 				search: '=htSearch',
 				scopeOptions: '=htScopeOptions',
 				responseOptions: '=htResponseOptions',
+				scopeHeading: '=htScopeHeading',
+				responseHeading: '=htResponseHeading',
 				type: '@htAssessmentType'
 			}
 		};

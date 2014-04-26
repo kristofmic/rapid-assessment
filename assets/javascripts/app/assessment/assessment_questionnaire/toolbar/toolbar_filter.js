@@ -10,9 +10,16 @@
         var filteredResult = _.filter(input, function(el) {
           var keep = true;
           _.each(filters, function(f) {
-            if (el[f.key] !== f.value) {
-              keep = false;
-              return false; // break
+            if (angular.isArray(el[f.key])) {
+              if (!_.contains(el[f.key], f.value)) {
+                keep = false;
+                return false; // break
+              }
+            } else {
+              if (el[f.key] !== f.value) {
+                keep = false;
+                return false; // break
+              }
             }
           });
           return keep;

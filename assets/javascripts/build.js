@@ -355,23 +355,46 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
 
   angular.module('ht-loading', [])
   .directive('htLoadingIcon', [function() {
-    
+
     var linker = function(scope, element, attrs) {
-      scope.$on('$stateChangeStart', function() { 
+      var timing = {
+        start: 0,
+        end: 0,
+        elapsed: function(start, end) {
+          return (end - start) / 1000;
+        }
+      };
+
+      scope.$on('$stateChangeStart', function() {
+        logStart();
         element.removeClass('hidden');
       });
 
-      scope.$on('savingAnswerStart', function() { 
+      scope.$on('loadingStart', function() {
+        logStart();
         element.removeClass('hidden');
       });
 
-      scope.$on('$stateChangeSuccess', function() { 
+      scope.$on('$stateChangeSuccess', function() {
+        logComplete();
         element.addClass('hidden');
       });
 
-      scope.$on('savingAnswerComplete', function() { 
+      scope.$on('loadingComplete', function() {
+        logComplete();
         element.addClass('hidden');
       });
+
+      function logStart() {
+        timing.start = Date.now();
+        console.log('loading started: ' + timing.start);
+      }
+
+      function logComplete() {
+        timing.end = Date.now();
+        console.log('loading completed: ' + timing.end);
+        console.log('elapsed time: ' + timing.elapsed(timing.start, timing.end));
+      }
     };
 
     return {
@@ -471,7 +494,7 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
 					active: {}
 				},
 				{
-					label: 'Response',
+					label: $scope.responseHeading,
 					options: _.map($scope.responseOptions, function(opt) {
 						return {
 							label: opt.attDesc,
@@ -482,7 +505,7 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
 					active: {}
 				},
 				{
-					label: 'Scope',
+					label: $scope.scopeHeading,
 					options: _.map($scope.scopeOptions, function(opt) {
 						return {
 							label: opt.attDesc,
@@ -490,12 +513,13 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
 							filter: {key: 'scope', value: opt}
 						};
 					}),
-					active: {}
+					active: activeFilterType()
 				}
       ];
       $scope.activeFilters = [];
 
 			// $scope Functions
+			// --Select
 			$scope.selected = function(value) {
 				if (!value) {
 					$scope.activeRequirements = 0;
@@ -528,6 +552,7 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
 				});
 			};
 
+			// --Filter
 			$scope.addFilter = function(filter, index) {
 				if (!_.contains($scope.activeFilters, filter)) {
 					$scope.filter = true;
@@ -538,7 +563,7 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
 			$scope.removeFilter = function(filter, index) {
 				removeAllFilterOptions(filter.options);
 				$scope.activeFilters.splice(index, 1);
-				filter.active = {};
+				filter.active = activeFilterType();
 			};
 
 			$scope.setFilter = function(value, option, filter) {
@@ -563,15 +588,15 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
 			};
 
 			// Helper Functions
-			var reset = function() {
+			function reset() {
 				$scope.select = false;
 				$scope.activeRequirements = 0;
 				$scope.selectPartial = false;
 				$scope.resetAnswers();
 				$scope.clearFilters();
-			};
+			}
 
-			var applyFilter = function(reqs) {
+			function applyFilter(reqs) {
 				var filters = _.mapValues($scope.activeFilters, function(val) {
 					return val.filter;
 				});
@@ -579,13 +604,23 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
 				var results = $filter('filter')(reqs, $scope.search);
 				results = $filter('htToolbarFilters')(results, filters);
 				return results;
-			};
+			}
 
-			var removeAllFilterOptions = function(options) {
+			function removeAllFilterOptions(options) {
 				_.each(options, function(opt) {
 					events.raise('toolbarRemoveFilter', { filter: opt.filter });
 				});
-			};
+			}
+
+			function activeFilterType() {
+				var active;
+				if ($scope.type === "Measured" || $scope.type === "Managed") {
+					active = [];
+				} else {
+					active = {};
+				}
+				return active;
+			}
 
 			// Event Handlers
 			$scope.$on('resetToolbar', function(e) {
@@ -626,6 +661,8 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
 				search: '=htSearch',
 				scopeOptions: '=htScopeOptions',
 				responseOptions: '=htResponseOptions',
+				scopeHeading: '=htScopeHeading',
+				responseHeading: '=htResponseHeading',
 				type: '@htAssessmentType'
 			}
 		};
@@ -647,9 +684,16 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
         var filteredResult = _.filter(input, function(el) {
           var keep = true;
           _.each(filters, function(f) {
-            if (el[f.key] !== f.value) {
-              keep = false;
-              return false; // break
+            if (angular.isArray(el[f.key])) {
+              if (!_.contains(el[f.key], f.value)) {
+                keep = false;
+                return false; // break
+              }
+            } else {
+              if (el[f.key] !== f.value) {
+                keep = false;
+                return false; // break
+              }
             }
           });
           return keep;
@@ -794,9 +838,7 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
 
         // $scope Functions
         $scope.saveAnswer = function(value, option, req) {
-            $scope.$emit('savingAnswerStart');
             assessment.saveFinding(req.fID, option.attId, option.attTypeId, !!value);
-            $scope.$emit('savingAnswerComplete');
         };
 
         $scope.setSelected = function(value, req) {
@@ -831,16 +873,17 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
         });
 
         $scope.$on('toolbarAnswer', function(e, args) {
-            $scope.$emit('savingAnswerStart');
+            events.raise('loadingStart');
             _.each($scope.htfRequirements, function(req) {
                 if (req.select) {
                     saveToolbarAnswer(args.value, args.option, req);
                 }
             });
-            $scope.$emit('savingAnswerComplete');
+            events.raise('loadingComplete');
         });
 
         $scope.$on('toolbarClear', function(e) {
+            events.raise('loadingStart');
             _.each($scope.htfRequirements, function(req) {
                 if (req.select) {
                     if (!_.isEmpty(req.response)) {
@@ -860,6 +903,7 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
                     }
                 }
             });
+            events.raise('loadingComplete');
         });
 
         $scope.$on('toolbarStarred', function(e, args) {
