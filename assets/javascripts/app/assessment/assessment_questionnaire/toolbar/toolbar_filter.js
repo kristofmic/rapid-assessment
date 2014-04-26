@@ -11,11 +11,19 @@
           var keep = true;
           _.each(filters, function(f) {
             if (angular.isArray(el[f.key])) {
+              if (_.isEmpty(f.value) && _.isEmpty(el[f.key])) {
+                return false; // break
+              }
               if (!_.contains(el[f.key], f.value)) {
                 keep = false;
                 return false; // break
               }
             } else {
+              if (angular.isObject(el[f.key])) {
+                if (_.isEmpty(f.value) && _.isEmpty(el[f.key])) {
+                  return false; // break
+                }
+              }
               if (el[f.key] !== f.value) {
                 keep = false;
                 return false; // break

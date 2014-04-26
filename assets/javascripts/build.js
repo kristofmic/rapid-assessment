@@ -495,24 +495,12 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
 				},
 				{
 					label: $scope.responseHeading,
-					options: _.map($scope.responseOptions, function(opt) {
-						return {
-							label: opt.attDesc,
-							value: opt.attId,
-							filter: {key: 'response', value: opt}
-						};
-					}),
+					options: getAnswerFilterOptions($scope.responseOptions, 'response'),
 					active: {}
 				},
 				{
 					label: $scope.scopeHeading,
-					options: _.map($scope.scopeOptions, function(opt) {
-						return {
-							label: opt.attDesc,
-							value: opt.attId,
-							filter: {key: 'scope', value: opt}
-						};
-					}),
+					options: getAnswerFilterOptions($scope.scopeOptions, 'scope'),
 					active: activeFilterType()
 				}
       ];
@@ -622,6 +610,24 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
 				return active;
 			}
 
+			function getAnswerFilterOptions(options, type) {
+				var options = _.map(options, function(opt) {
+					return {
+						label: opt.attDesc,
+						value: opt.attId,
+						filter: {key: type, value: opt}
+					};
+				});
+
+				options.push({
+					label: 'Unanswered',
+					value: -1,
+					filter: {key: type, value: activeFilterType()}
+				});
+
+				return options;
+			}
+
 			// Event Handlers
 			$scope.$on('resetToolbar', function(e) {
 				reset();
@@ -685,11 +691,19 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
           var keep = true;
           _.each(filters, function(f) {
             if (angular.isArray(el[f.key])) {
+              if (_.isEmpty(f.value) && _.isEmpty(el[f.key])) {
+                return false; // break
+              }
               if (!_.contains(el[f.key], f.value)) {
                 keep = false;
                 return false; // break
               }
             } else {
+              if (angular.isObject(el[f.key])) {
+                if (_.isEmpty(f.value) && _.isEmpty(el[f.key])) {
+                  return false; // break
+                }
+              }
               if (el[f.key] !== f.value) {
                 keep = false;
                 return false; // break

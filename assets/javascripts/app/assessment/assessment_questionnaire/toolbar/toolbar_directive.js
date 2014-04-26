@@ -40,24 +40,12 @@
 				},
 				{
 					label: $scope.responseHeading,
-					options: _.map($scope.responseOptions, function(opt) {
-						return {
-							label: opt.attDesc,
-							value: opt.attId,
-							filter: {key: 'response', value: opt}
-						};
-					}),
+					options: getAnswerFilterOptions($scope.responseOptions, 'response'),
 					active: {}
 				},
 				{
 					label: $scope.scopeHeading,
-					options: _.map($scope.scopeOptions, function(opt) {
-						return {
-							label: opt.attDesc,
-							value: opt.attId,
-							filter: {key: 'scope', value: opt}
-						};
-					}),
+					options: getAnswerFilterOptions($scope.scopeOptions, 'scope'),
 					active: activeFilterType()
 				}
       ];
@@ -165,6 +153,24 @@
 					active = {};
 				}
 				return active;
+			}
+
+			function getAnswerFilterOptions(options, type) {
+				var options = _.map(options, function(opt) {
+					return {
+						label: opt.attDesc,
+						value: opt.attId,
+						filter: {key: type, value: opt}
+					};
+				});
+
+				options.push({
+					label: 'Unanswered',
+					value: -1,
+					filter: {key: type, value: activeFilterType()}
+				});
+
+				return options;
 			}
 
 			// Event Handlers
