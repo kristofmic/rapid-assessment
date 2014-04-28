@@ -111,9 +111,12 @@ table {
 .toolbar {
 	padding: 7px 0;
 
-  #toolbar-select-container, #toolbar-filter-container {
+  #toolbar-select-container,
+  #toolbar-filter-container,
+  #toolbar-sort-container {
     padding: 8px 12px;
     border: 1px solid #ddd;
+    margin-top: 4px;
 
     &:hover, &:active, &:focus {
       border-color: #ddd;
@@ -125,23 +128,28 @@ table {
     }
   }
 
-  #toolbar-filter-container {
+  #toolbar-filter-container, #toolbar-sort-container {
     padding-top: 9px;
     padding-bottom: 9px;
   }
 
-  #toolbar-select-container + .dropdown-toggle, #toolbar-filter-container + .dropdown-toggle {
+  #toolbar-select-container + .dropdown-toggle,
+  #toolbar-filter-container + .dropdown-toggle,
+  #toolbar-sort-container + .dropdown-toggle {
     height: 34px;
+    margin-top: 4px;
 
     .caret {
       margin-left: 0;
     }
   }
 
-  .filter-option-container {
+  .select-option-container,
+  .filter-option-container,
+  .sort-option-container {
     position: relative;
     margin-right: 4px;
-    margin-bottom: 4px;
+    margin-top: 4px;
 
     &:hover {
       button.close {
@@ -165,6 +173,10 @@ table {
       }
 
     }
+  }
+
+  .search-container {
+    margin-top: 4px;
   }
 }
 

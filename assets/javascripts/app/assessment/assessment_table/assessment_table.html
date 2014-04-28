@@ -9,7 +9,7 @@
     <th width='25%'>{{htHeadings.scope}}</th>
   </thead>
   <tbody>
-    <tr ng-repeat='req in htfRequirements = (htRequirements | orderBy:defaultOrder | filter:htSearch | htToolbarFilters:htFilter) track by $index' ng-class="{warning:req.select}">
+    <tr ng-repeat='req in htfRequirements = (htRequirements | orderBy:htSortOrder | filter:htSearch | htToolbarFilters:htFilter) track by $index' ng-class="{warning:req.select}">
       <td width='2.5%'>
         <span ht-checkbox ht-checkbox-id='req-select-{{$index}}' ht-checkbox-change='setSelected(value, req)' ht-checkbox-model='req.select'></span>
       </td>

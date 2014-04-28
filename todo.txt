@@ -1,8 +1,8 @@
  - column ordering
  - column filtering
+  + OR filtering (e.g., control 00.a OR 01.a)
  - dashboard
  - maintain state (toolbar, checks, etc.) across all assessments (maybe)
  - pagination (maybe)
  - answering in separate view (maybe)
  - alerts (maybe)
- 

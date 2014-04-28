@@ -8,7 +8,7 @@
         </span>
         <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
           <span class="caret"></span>
-          <span class="sr-only">Toggle Dropdown</span>
+          <span class="sr-only">Toggle Selects</span>
         </button>
         <ul class="dropdown-menu" role="menu">
           <li><span class='select-option' ng-click='starred(true)'>Starred</span></li>
@@ -22,10 +22,10 @@
 
   <div class='col-xs-3'>
     <form class="form-inline" role="form" ng-show='select'>
-      <div class='form-group'>
+      <div class='form-group select-option-container'>
         <span ht-select-factory ht-select-options='responseOptions' ht-select-option-label-prop='attDesc' ht-select-option-value-prop='attId' ht-selected='answers.response' ht-on-select='setAnswers(value, option)'></span>
       </div>
-      <div class='form-group'>
+      <div class='form-group select-option-container'>
         <span ht-select-factory ht-select-options='scopeOptions' ht-select-option-label-prop='attDesc' ht-select-option-value-prop='attId' ht-selected='answers.scope' ht-on-select='setAnswers(value, option)'></span>
       </div>
     </form>
@@ -39,7 +39,7 @@
         </span>
         <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
           <span class="caret"></span>
-          <span class="sr-only">Toggle Dropdown</span>
+          <span class="sr-only">Toggle Filters</span>
         </button>
         <ul class="dropdown-menu" role="menu">
           <li ng-repeat='filter in filterOptions track by $index'>
@@ -61,8 +61,41 @@
     </form>
   </div>
 
-  <div class='col-xs-3 col-xs-offset-1'>
+  <div class='col-xs-1'>
     <div class="form-group">
+      <div class="btn-group">
+        <span id='toolbar-sort-container' class="btn btn-default">
+          <span class='glyphicon glyphicon-sort'></span>
+        </span>
+        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+          <span class="caret"></span>
+          <span class="sr-only">Toggle Sorting</span>
+        </button>
+        <ul class="dropdown-menu" role="menu">
+          <li ng-repeat='sort in sortOptions track by $index'>
+            <span class='select-option' ng-click='addSort(sort, $index)'>{{sort.label}}</span>
+          </li>
+          <li class="divider"></li>
+          <li><span class='text-danger select-option' ng-click='clearFilters()'>Clear sort</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class='col-xs-3'>
+    <form class="form-inline" role="form" ng-show='sorting'>
+      <div class='form-group sort-option-container' ng-repeat='sort in activeSorting track by $index'>
+        <button type="button" class="close" aria-hidden="true" ng-click='removeSort(sort, $index)'>&times;</button>
+        <span ht-select-factory ht-select-options='aFilter.options' ht-select-option-label-prop='label' ht-select-option-value-prop='value' ht-selected='aFilter.active' ht-on-select='setSort(value, option, aFilter)'></span>
+      </div>
+    </form>
+  </div>
+
+</div>
+
+<div class='row toolbar'>
+  <div class='col-xs-3'>
+    <div class="form-group search-container">
       <input type="text" class="form-control" placeholder="Search" ng-model='search'>
     </div>
   </div>

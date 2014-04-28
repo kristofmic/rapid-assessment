@@ -61,6 +61,15 @@
       ];
       $scope.activeFilters = [];
 
+      // --Sorting
+      $scope.sorting = false;
+      $scope.sortOptions = [
+				{
+					label: 'Domain'
+				}
+      ];
+      $scope.activeSorting = [];
+
 			// $scope Functions
 			// --Select
 			$scope.selected = function(value) {
@@ -131,6 +140,14 @@
 			$scope.clearFilters = function() {
 				while ($scope.activeFilters.length > 0) {
 					$scope.removeFilter($scope.activeFilters[0]);
+				}
+			};
+
+			// --Sort
+			$scope.addSort = function(sort, index) {
+				if (!_.contains($scope.activeSorting, sort)) {
+					$scope.sorting = true;
+					$scope.activeSorting.push(sort);
 				}
 			};
 

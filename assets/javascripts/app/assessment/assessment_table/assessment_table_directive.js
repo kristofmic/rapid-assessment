@@ -5,7 +5,7 @@
     var linker = function(scope, elem, attrs) {
         scope.responses = {};
         scope.scopes = {};
-        scope.defaultOrder = ["Domain", "Control"];
+        scope.htSortOrder = [];
         scope.htFilter = [];
     };
 
@@ -18,6 +18,17 @@
 
         $scope.setSelected = function(value, req) {
             events.raise('requirementSelect', {value: value, req: req} );
+        };
+
+        /* CONVERT TO EVENT HANDLER */
+        $scope.setOrder = function(column) {
+          if (!_.contains($scope.htSortOrder, column)) {
+            $scope.htSortOrder.push(column);
+          } else {
+            _.remove($scope.htSortOrder, function(sort) {
+              return sort === column;
+            });
+          }
         };
 
         // Helper Functions
@@ -100,19 +111,19 @@
     }];
 
     return {
-    	restrict: 'A',
-    	templateUrl: 'assets/javascripts/app/assessment/assessment_table/assessment_table.html',
-    	replace: false,
+      restrict: 'A',
+      templateUrl: 'assets/javascripts/app/assessment/assessment_table/assessment_table.html',
+      replace: false,
       link: linker,
       controller: control,
-    	scope: {
+      scope: {
         htAssessmentTable: '@',
-    		htRequirements: '=',
+        htRequirements: '=',
         htHeadings: '=',
         htScopeOptions: '=',
         htResponseOptions: '=',
         htSearch: '='
-    	}
+      }
     };
   }]);
 
