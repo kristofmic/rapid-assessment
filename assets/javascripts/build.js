@@ -366,22 +366,22 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
       };
 
       scope.$on('$stateChangeStart', function() {
-        logStart();
+        //logStart();
         element.removeClass('hidden');
       });
 
       scope.$on('loadingStart', function() {
-        logStart();
+        //logStart();
         element.removeClass('hidden');
       });
 
       scope.$on('$stateChangeSuccess', function() {
-        logComplete();
+        //logComplete();
         element.addClass('hidden');
       });
 
       scope.$on('loadingComplete', function() {
-        logComplete();
+        //logComplete();
         element.addClass('hidden');
       });
 
@@ -494,6 +494,16 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
 					active: {}
 				},
 				{
+					label: 'Domain',
+					options: getUniqReqCol('Domain'),
+					active: {}
+				},
+				{
+					label: 'Control',
+					options: getUniqReqCol('Control'),
+					active: {}
+				},
+				{
 					label: $scope.responseHeading,
 					options: getAnswerFilterOptions($scope.responseOptions, 'response'),
 					active: {}
@@ -501,7 +511,7 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
 				{
 					label: $scope.scopeHeading,
 					options: getAnswerFilterOptions($scope.scopeOptions, 'scope'),
-					active: activeFilterType()
+					active: {}
 				}
       ];
       $scope.activeFilters = [];
@@ -551,7 +561,11 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
 			$scope.removeFilter = function(filter, index) {
 				removeAllFilterOptions(filter.options);
 				$scope.activeFilters.splice(index, 1);
-				filter.active = activeFilterType();
+				if (angular.isArray(filter.active)) {
+					filter.active = [];
+				} else {
+					filter.active = {};
+				}
 			};
 
 			$scope.setFilter = function(value, option, filter) {
@@ -600,7 +614,7 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
 				});
 			}
 
-			function activeFilterType() {
+			function activeFilterType(type) {
 				var active;
 				if ($scope.type === "Measured" || $scope.type === "Managed") {
 					active = [];
@@ -626,6 +640,19 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
 				});
 
 				return options;
+			}
+
+			function getUniqReqCol(column) {
+				var reqs = _.uniq($scope.requirements, column);
+				reqs = _.map(reqs, function(req) {
+					return {
+						label: req[column],
+						value: req[column].split(' ')[0],
+						filter: {key: column, value: req[column]}
+					};
+				});
+				reqs = _.sortBy(reqs, 'label');
+				return reqs;
 			}
 
 			// Event Handlers

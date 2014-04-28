@@ -18,6 +18,10 @@
   height: 20px;
 }
 
+.dropdown-menu {
+  max-height: 250px;
+  overflow-y: scroll;
+}
 .dropdown-menu li span.select-option {
   display: block;
   padding: 3px 20px;
@@ -116,13 +120,15 @@ table button.dropdown-toggle {
 }
 .toolbar .filter-option-container {
   position: relative;
+  margin-right: 4px;
+  margin-bottom: 4px;
 }
 .toolbar .filter-option-container:hover button.close {
   display: block;
 }
 .toolbar .filter-option-container button.close {
   position: absolute;
-  top: -19;
+  top: -11;
   left: -6;
   z-index: 100;
   border-radius: 50%;

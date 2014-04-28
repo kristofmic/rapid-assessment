@@ -39,6 +39,16 @@
 					active: {}
 				},
 				{
+					label: 'Domain',
+					options: getUniqReqCol('Domain'),
+					active: {}
+				},
+				{
+					label: 'Control',
+					options: getUniqReqCol('Control'),
+					active: {}
+				},
+				{
 					label: $scope.responseHeading,
 					options: getAnswerFilterOptions($scope.responseOptions, 'response'),
 					active: {}
@@ -46,7 +56,7 @@
 				{
 					label: $scope.scopeHeading,
 					options: getAnswerFilterOptions($scope.scopeOptions, 'scope'),
-					active: activeFilterType()
+					active: {}
 				}
       ];
       $scope.activeFilters = [];
@@ -96,7 +106,11 @@
 			$scope.removeFilter = function(filter, index) {
 				removeAllFilterOptions(filter.options);
 				$scope.activeFilters.splice(index, 1);
-				filter.active = activeFilterType();
+				if (angular.isArray(filter.active)) {
+					filter.active = [];
+				} else {
+					filter.active = {};
+				}
 			};
 
 			$scope.setFilter = function(value, option, filter) {
@@ -145,7 +159,7 @@
 				});
 			}
 
-			function activeFilterType() {
+			function activeFilterType(type) {
 				var active;
 				if ($scope.type === "Measured" || $scope.type === "Managed") {
 					active = [];
@@ -171,6 +185,19 @@
 				});
 
 				return options;
+			}
+
+			function getUniqReqCol(column) {
+				var reqs = _.uniq($scope.requirements, column);
+				reqs = _.map(reqs, function(req) {
+					return {
+						label: req[column],
+						value: req[column].split(' ')[0],
+						filter: {key: column, value: req[column]}
+					};
+				});
+				reqs = _.sortBy(reqs, 'label');
+				return reqs;
 			}
 
 			// Event Handlers

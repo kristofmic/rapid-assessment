@@ -13,22 +13,22 @@
       };
 
       scope.$on('$stateChangeStart', function() {
-        logStart();
+        //logStart();
         element.removeClass('hidden');
       });
 
       scope.$on('loadingStart', function() {
-        logStart();
+        //logStart();
         element.removeClass('hidden');
       });
 
       scope.$on('$stateChangeSuccess', function() {
-        logComplete();
+        //logComplete();
         element.addClass('hidden');
       });
 
       scope.$on('loadingComplete', function() {
-        logComplete();
+        //logComplete();
         element.addClass('hidden');
       });
 

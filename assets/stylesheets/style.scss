@@ -16,6 +16,9 @@
 }
 
 .dropdown-menu {
+  max-height: 250px;
+  overflow-y: scroll;
+
   li {
     span.select-option {
       display: block;
@@ -137,6 +140,8 @@ table {
 
   .filter-option-container {
     position: relative;
+    margin-right: 4px;
+    margin-bottom: 4px;
 
     &:hover {
       button.close {
@@ -146,7 +151,7 @@ table {
 
     button.close {
       position: absolute;
-      top: -19;
+      top: -11;
       left: -6;
       z-index: 100;
       border-radius: 50%;

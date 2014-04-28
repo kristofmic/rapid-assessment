@@ -54,11 +54,9 @@
 
   <div class='col-xs-3'>
     <form class="form-inline" role="form" ng-show='filter'>
-      <div class='form-group'>
-        <span class='filter-option-container' ng-repeat='aFilter in activeFilters track by $index'>
-          <button type="button" class="close" aria-hidden="true" ng-click='removeFilter(aFilter, $index)'>&times;</button>
-          <span ht-select-factory ht-select-options='aFilter.options' ht-select-option-label-prop='label' ht-select-option-value-prop='value' ht-selected='aFilter.active' ht-on-select='setFilter(value, option, aFilter)'></span>
-        </span>
+      <div class='form-group filter-option-container' ng-repeat='aFilter in activeFilters track by $index'>
+        <button type="button" class="close" aria-hidden="true" ng-click='removeFilter(aFilter, $index)'>&times;</button>
+        <span ht-select-factory ht-select-options='aFilter.options' ht-select-option-label-prop='label' ht-select-option-value-prop='value' ht-selected='aFilter.active' ht-on-select='setFilter(value, option, aFilter)'></span>
       </div>
     </form>
   </div>
