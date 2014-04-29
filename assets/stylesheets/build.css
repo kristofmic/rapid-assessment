@@ -114,7 +114,7 @@ table button.dropdown-toggle {
   padding-bottom: 9px;
 }
 .toolbar #toolbar-filter-container .glyphicon.enabled, .toolbar #toolbar-sort-container .glyphicon.enabled {
-  color: #f0ad4e;
+  color: #66afe9;
   text-shadow: 0 2px 2px rgba(0, 0, 0, 0.075);
 }
 .toolbar #toolbar-select-container + .dropdown-toggle,

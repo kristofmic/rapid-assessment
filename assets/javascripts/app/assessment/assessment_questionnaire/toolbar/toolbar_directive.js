@@ -153,6 +153,11 @@
 			$scope.removeFilter = function(filter, index) {
 				removeAllFilterOptions(filter.options);
 				$scope.activeFilters.splice(index, 1);
+
+				if ($scope.activeFilters.length === 0) {
+					$scope.toolbarOption = '';
+				}
+
 				if (angular.isArray(filter.active)) {
 					filter.active = [];
 				} else {
@@ -179,6 +184,7 @@
 				while ($scope.activeFilters.length > 0) {
 					$scope.removeFilter($scope.activeFilters[0]);
 				}
+				$scope.toolbarOption = '';
 			};
 
 			// --Sort
@@ -197,7 +203,19 @@
 			$scope.removeSort = function(sort, index) {
 				removeAllSortOptions(sort.options);
 				$scope.activeSorts.splice(index, 1);
+
+				if ($scope.activeSorts.length === 0) {
+					$scope.toolbarOption = '';
+				}
+
 				sort.active = {};
+			};
+
+			$scope.clearSorts = function() {
+				while ($scope.activeSorts.length > 0) {
+					$scope.removeSort($scope.activeSorts[0]);
+				}
+				$scope.toolbarOption = '';
 			};
 
 			// Helper Functions

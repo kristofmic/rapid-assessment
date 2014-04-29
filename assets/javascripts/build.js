@@ -147,7 +147,7 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
 
 /* SOURCE: ./assets/javascripts/app/inputs/checkbox_directive.js */
 (function(hitrust){
-  
+
   hitrust.inputs.directive('htCheckbox', [function(){
 
     var control = ['$scope', function($scope) {
@@ -608,6 +608,11 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
 			$scope.removeFilter = function(filter, index) {
 				removeAllFilterOptions(filter.options);
 				$scope.activeFilters.splice(index, 1);
+
+				if ($scope.activeFilters.length === 0) {
+					$scope.toolbarOption = '';
+				}
+
 				if (angular.isArray(filter.active)) {
 					filter.active = [];
 				} else {
@@ -634,6 +639,7 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
 				while ($scope.activeFilters.length > 0) {
 					$scope.removeFilter($scope.activeFilters[0]);
 				}
+				$scope.toolbarOption = '';
 			};
 
 			// --Sort
@@ -652,7 +658,19 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
 			$scope.removeSort = function(sort, index) {
 				removeAllSortOptions(sort.options);
 				$scope.activeSorts.splice(index, 1);
+
+				if ($scope.activeSorts.length === 0) {
+					$scope.toolbarOption = '';
+				}
+
 				sort.active = {};
+			};
+
+			$scope.clearSorts = function() {
+				while ($scope.activeSorts.length > 0) {
+					$scope.removeSort($scope.activeSorts[0]);
+				}
+				$scope.toolbarOption = '';
 			};
 
 			// Helper Functions

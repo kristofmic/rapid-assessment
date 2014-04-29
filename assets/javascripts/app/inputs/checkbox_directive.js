@@ -1,5 +1,5 @@
 (function(hitrust){
-  
+
   hitrust.inputs.directive('htCheckbox', [function(){
 
     var control = ['$scope', function($scope) {
