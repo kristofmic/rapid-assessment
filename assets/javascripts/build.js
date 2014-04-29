@@ -459,8 +459,8 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
 
 		var control = ['$scope', '$filter', 'htEvents', function($scope, $filter, events) {
 			// Data Setup
+			$scope.toolbarOption = '';
 			// --Select
-			$scope.select = false;
 			$scope.selectPartial = false;
 			$scope.activeRequirements = 0;
 			$scope.answers = {
@@ -475,7 +475,6 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
       $scope.answers.scope = _.clone(originalScope);
 
       // --Filter
-      $scope.filter = false;
       $scope.filterOptions = [
 				{
 					label: 'Selected',
@@ -517,44 +516,54 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
       $scope.activeFilters = [];
 
       // --Sorting
-      $scope.sorting = false;
       $scope.sortOptions = [
 				{
 					label: 'Selected',
-					options: [
-						{ label: 'Select - Asc', value: 0, sort: 'select' },
-						{ label: 'Select - Desc', value: 1, sort: '-select' }
-					],
+					options: {
+						asc: { label: 'Select - Asc', value: 0, sort: 'select' },
+						desc: { label: 'Select - Desc', value: 1, sort: '-select' }
+					},
 					active: {}
 				},
 				{
 					label: 'Starred',
-					options: [
-						{ label: 'Starred - Asc', value: 0, sort: 'starred' },
-						{ label: 'Starred - Desc', value: 1, sort: '-starred' }
-					],
+					options: {
+						asc: { label: 'Starred - Asc', value: 0, sort: 'starred' },
+						desc: { label: 'Starred - Desc', value: 1, sort: '-starred' }
+					},
 					active: {}
 				},
 				{
 					label: 'Domain',
-					options: [
-						{ label: 'Domain - Asc', value: 0, sort: 'Domain' },
-						{ label: 'Domain - Desc', value: 1, sort: '-Domain' }
-					],
+					options: {
+						asc: { label: 'Domain - Asc', value: 0, sort: 'Domain' },
+						desc: { label: 'Domain - Desc', value: 1, sort: '-Domain' }
+					},
 					active: {}
 				},
 				{
 					label: 'Control',
-					options: [
-						{ label: 'Control - Asc', value: 0, sort: 'Control' },
-						{ label: 'Control - Desc', value: 1, sort: '-Control' }
-					],
+					options: {
+						asc: { label: 'Control - Asc', value: 0, sort: 'Control' },
+						desc: { label: 'Control - Desc', value: 1, sort: '-Control' }
+					},
 					active: {}
 				}
       ];
-      $scope.activeSorts = [];
+      $scope.activeSorts = [$scope.sortOptions[2], $scope.sortOptions[3]];
+      $scope.sortOptions[2].active = $scope.sortOptions[2].options.asc;
+      $scope.sortOptions[3].active = $scope.sortOptions[3].options.asc;
 
 			// $scope Functions
+			$scope.setToolbarOption = function(option) {
+				if ($scope.toolbarOption === option) {
+					$scope.toolbarOption = '';
+				}
+				else {
+					$scope.toolbarOption = option;
+				}
+			};
+
 			// --Select
 			$scope.selected = function(value) {
 				if (!value) {
@@ -591,7 +600,7 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
 			// --Filter
 			$scope.addFilter = function(filter, index) {
 				if (!_.contains($scope.activeFilters, filter)) {
-					$scope.filter = true;
+					$scope.toolbarOption = 'filter';
 					$scope.activeFilters.push(filter);
 				}
 			};
@@ -630,7 +639,7 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
 			// --Sort
 			$scope.addSort = function(sort, index) {
 				if (!_.contains($scope.activeSorts, sort)) {
-					$scope.sorting = true;
+					$scope.toolbarOption = 'sorts'
 					$scope.activeSorts.push(sort);
 				}
 			};
@@ -648,7 +657,7 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
 
 			// Helper Functions
 			function reset() {
-				$scope.select = false;
+				$scope.toolbarOption = '';
 				$scope.activeRequirements = 0;
 				$scope.selectPartial = false;
 				$scope.resetAnswers();
@@ -725,7 +734,7 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
 
 			$scope.$on('requirementSelect', function(e, args) {
 				if (args.value) {
-					$scope.select = true;
+					$scope.toolbarOption = 'select';
 					$scope.selectPartial = true;
 					$scope.activeRequirements += 1;
 					if ($scope.activeRequirements === applyFilter($scope.requirements).length) {
@@ -737,7 +746,7 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
 						$scope.selectPartial = true;
 					}
 					if ($scope.activeRequirements === 0) {
-						$scope.select = false;
+						$scope.toolbarOption = '';
 						$scope.selectPartial = false;
 						$scope.resetAnswers();
 					}
@@ -934,7 +943,7 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
     var linker = function(scope, elem, attrs) {
         scope.responses = {};
         scope.scopes = {};
-        scope.htSortOrder = [];
+        scope.htSortOrder = ['Domain', 'Control'];
         scope.htFilter = [];
     };
 

@@ -102,24 +102,20 @@ table button.dropdown-toggle {
   padding: 8px 12px;
   border: 1px solid #ddd;
   margin-top: 4px;
+  margin-left: 4px;
 }
-.toolbar #toolbar-select-container:hover, .toolbar #toolbar-select-container:active, .toolbar #toolbar-select-container:focus,
-.toolbar #toolbar-filter-container:hover,
-.toolbar #toolbar-filter-container:active,
-.toolbar #toolbar-filter-container:focus,
-.toolbar #toolbar-sort-container:hover,
-.toolbar #toolbar-sort-container:active,
-.toolbar #toolbar-sort-container:focus {
-  border-color: #ddd;
-  background-color: #fff;
-  cursor: default;
-  box-shadow: none;
-  -webkit-box-shadow: none;
-  -moz-box-shadow: none;
+.toolbar #toolbar-select-container.active,
+.toolbar #toolbar-filter-container.active,
+.toolbar #toolbar-sort-container.active {
+  border-color: #adadad;
 }
 .toolbar #toolbar-filter-container, .toolbar #toolbar-sort-container {
   padding-top: 9px;
   padding-bottom: 9px;
+}
+.toolbar #toolbar-filter-container .glyphicon.enabled, .toolbar #toolbar-sort-container .glyphicon.enabled {
+  color: #f0ad4e;
+  text-shadow: 0 2px 2px rgba(0, 0, 0, 0.075);
 }
 .toolbar #toolbar-select-container + .dropdown-toggle,
 .toolbar #toolbar-filter-container + .dropdown-toggle,

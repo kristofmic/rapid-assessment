@@ -5,7 +5,7 @@
     var linker = function(scope, elem, attrs) {
         scope.responses = {};
         scope.scopes = {};
-        scope.htSortOrder = [];
+        scope.htSortOrder = ['Domain', 'Control'];
         scope.htFilter = [];
     };
 
