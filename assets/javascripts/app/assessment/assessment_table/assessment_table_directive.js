@@ -20,17 +20,6 @@
             events.raise('requirementSelect', {value: value, req: req} );
         };
 
-        /* CONVERT TO EVENT HANDLER */
-        $scope.setOrder = function(column) {
-          if (!_.contains($scope.htSortOrder, column)) {
-            $scope.htSortOrder.push(column);
-          } else {
-            _.remove($scope.htSortOrder, function(sort) {
-              return sort === column;
-            });
-          }
-        };
-
         // Helper Functions
         var saveToolbarAnswer = function(value, option, req) {
             if (option.answerType === 'scope' && angular.isArray(req[option.answerType])) {
@@ -106,6 +95,21 @@
 
         $scope.$on('toolbarRemoveFilter', function(e, args) {
           _.remove($scope.htFilter, args.filter);
+        });
+
+        $scope.$on('toolbarSetSort', function(e, args) {
+          $scope.htSortOrder.push(args.column);
+        });
+
+        $scope.$on('toolbarRemoveSort', function(e, args) {
+          if (args.index) {
+            $scope.htSortOrder.splice(args.index, 1);
+          }
+          else {
+            _.remove($scope.htSortOrder, function(sort) {
+              return sort === args.column;
+            });
+          }
         });
 
     }];

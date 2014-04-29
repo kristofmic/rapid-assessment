@@ -520,10 +520,39 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
       $scope.sorting = false;
       $scope.sortOptions = [
 				{
-					label: 'Domain'
+					label: 'Selected',
+					options: [
+						{ label: 'Select - Asc', value: 0, sort: 'select' },
+						{ label: 'Select - Desc', value: 1, sort: '-select' }
+					],
+					active: {}
+				},
+				{
+					label: 'Starred',
+					options: [
+						{ label: 'Starred - Asc', value: 0, sort: 'starred' },
+						{ label: 'Starred - Desc', value: 1, sort: '-starred' }
+					],
+					active: {}
+				},
+				{
+					label: 'Domain',
+					options: [
+						{ label: 'Domain - Asc', value: 0, sort: 'Domain' },
+						{ label: 'Domain - Desc', value: 1, sort: '-Domain' }
+					],
+					active: {}
+				},
+				{
+					label: 'Control',
+					options: [
+						{ label: 'Control - Asc', value: 0, sort: 'Control' },
+						{ label: 'Control - Desc', value: 1, sort: '-Control' }
+					],
+					active: {}
 				}
       ];
-      $scope.activeSorting = [];
+      $scope.activeSorts = [];
 
 			// $scope Functions
 			// --Select
@@ -600,10 +629,21 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
 
 			// --Sort
 			$scope.addSort = function(sort, index) {
-				if (!_.contains($scope.activeSorting, sort)) {
+				if (!_.contains($scope.activeSorts, sort)) {
 					$scope.sorting = true;
-					$scope.activeSorting.push(sort);
+					$scope.activeSorts.push(sort);
 				}
+			};
+
+			$scope.setSort = function(value, option, sort) {
+				removeAllSortOptions(sort.options);
+				events.raise('toolbarSetSort', { column: option.sort });
+			};
+
+			$scope.removeSort = function(sort, index) {
+				removeAllSortOptions(sort.options);
+				$scope.activeSorts.splice(index, 1);
+				sort.active = {};
 			};
 
 			// Helper Functions
@@ -670,6 +710,12 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
 				});
 				reqs = _.sortBy(reqs, 'label');
 				return reqs;
+			}
+
+			function removeAllSortOptions(options) {
+				_.each(options, function(opt) {
+					events.raise('toolbarRemoveSort', { column: opt.sort });
+				});
 			}
 
 			// Event Handlers
@@ -903,17 +949,6 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
             events.raise('requirementSelect', {value: value, req: req} );
         };
 
-        /* CONVERT TO EVENT HANDLER */
-        $scope.setOrder = function(column) {
-          if (!_.contains($scope.htSortOrder, column)) {
-            $scope.htSortOrder.push(column);
-          } else {
-            _.remove($scope.htSortOrder, function(sort) {
-              return sort === column;
-            });
-          }
-        };
-
         // Helper Functions
         var saveToolbarAnswer = function(value, option, req) {
             if (option.answerType === 'scope' && angular.isArray(req[option.answerType])) {
@@ -989,6 +1024,21 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
 
         $scope.$on('toolbarRemoveFilter', function(e, args) {
           _.remove($scope.htFilter, args.filter);
+        });
+
+        $scope.$on('toolbarSetSort', function(e, args) {
+          $scope.htSortOrder.push(args.column);
+        });
+
+        $scope.$on('toolbarRemoveSort', function(e, args) {
+          if (args.index) {
+            $scope.htSortOrder.splice(args.index, 1);
+          }
+          else {
+            _.remove($scope.htSortOrder, function(sort) {
+              return sort === args.column;
+            });
+          }
         });
 
     }];

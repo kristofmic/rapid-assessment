@@ -65,10 +65,39 @@
       $scope.sorting = false;
       $scope.sortOptions = [
 				{
-					label: 'Domain'
+					label: 'Selected',
+					options: [
+						{ label: 'Select - Asc', value: 0, sort: 'select' },
+						{ label: 'Select - Desc', value: 1, sort: '-select' }
+					],
+					active: {}
+				},
+				{
+					label: 'Starred',
+					options: [
+						{ label: 'Starred - Asc', value: 0, sort: 'starred' },
+						{ label: 'Starred - Desc', value: 1, sort: '-starred' }
+					],
+					active: {}
+				},
+				{
+					label: 'Domain',
+					options: [
+						{ label: 'Domain - Asc', value: 0, sort: 'Domain' },
+						{ label: 'Domain - Desc', value: 1, sort: '-Domain' }
+					],
+					active: {}
+				},
+				{
+					label: 'Control',
+					options: [
+						{ label: 'Control - Asc', value: 0, sort: 'Control' },
+						{ label: 'Control - Desc', value: 1, sort: '-Control' }
+					],
+					active: {}
 				}
       ];
-      $scope.activeSorting = [];
+      $scope.activeSorts = [];
 
 			// $scope Functions
 			// --Select
@@ -145,10 +174,21 @@
 
 			// --Sort
 			$scope.addSort = function(sort, index) {
-				if (!_.contains($scope.activeSorting, sort)) {
+				if (!_.contains($scope.activeSorts, sort)) {
 					$scope.sorting = true;
-					$scope.activeSorting.push(sort);
+					$scope.activeSorts.push(sort);
 				}
+			};
+
+			$scope.setSort = function(value, option, sort) {
+				removeAllSortOptions(sort.options);
+				events.raise('toolbarSetSort', { column: option.sort });
+			};
+
+			$scope.removeSort = function(sort, index) {
+				removeAllSortOptions(sort.options);
+				$scope.activeSorts.splice(index, 1);
+				sort.active = {};
 			};
 
 			// Helper Functions
@@ -215,6 +255,12 @@
 				});
 				reqs = _.sortBy(reqs, 'label');
 				return reqs;
+			}
+
+			function removeAllSortOptions(options) {
+				_.each(options, function(opt) {
+					events.raise('toolbarRemoveSort', { column: opt.sort });
+				});
 			}
 
 			// Event Handlers
