@@ -481,16 +481,16 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
 				{
 					label: 'Selected',
 					options: [
-						{ label: 'Selected', value: 1, filter: {key: 'select', value: true} },
-						{ label: 'Unselected', value: 0, filter: {key: 'select', value: false} }
+						{ label: 'Selected', icon: 'glyphicon-check', value: 1, filter: {key: 'select', value: true} },
+						{ label: 'Unselected', icon: 'glyphicon-unchecked', value: 0, filter: {key: 'select', value: false} }
 					],
 					active: {}
 				},
 				{
 					label: 'Starred',
 					options: [
-						{ label: 'Starred', value: 1, filter: {key: 'starred', value: true} },
-						{ label: 'Unstarred', value: 0, filter: {key: 'starred', value: false} }
+						{ label: 'Starred', icon: 'glyphicon-star', value: 1, filter: {key: 'starred', value: true} },
+						{ label: 'Unstarred', icon: 'glyphicon-star-empty', value: 0, filter: {key: 'starred', value: false} }
 					],
 					active: {}
 				},
@@ -554,16 +554,16 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
 				{
 					label: $scope.responseHeading,
 					options: {
-						asc: { label: $scope.responseHeading + '', icon: 'glyphicon-sort-by-attributes', value: 0, sort: 'response.attId' },
-						desc: { label: $scope.responseHeading + '', icon: 'glyphicon-sort-by-attributes-alt', value: 1, sort: '-response.attId' }
+						asc: { label: $scope.responseHeading + '', icon: 'glyphicon-sort-by-attributes-alt', value: 0, sort: 'response.attId' },
+						desc: { label: $scope.responseHeading + '', icon: 'glyphicon-sort-by-attributes', value: 1, sort: '-response.attId' }
 					},
 					active: {}
 				},
 				{
 					label: $scope.scopeHeading,
 					options: {
-						asc: { label: $scope.scopeHeading + '', icon: 'glyphicon-sort-by-attributes', value: 0, sort: ('scope.' + getScopeSort($scope.type)) },
-						desc: { label: $scope.scopeHeading + '', icon: 'glyphicon-sort-by-attributes-alt', value: 1, sort: '-scope.' + getScopeSort($scope.type) }
+						asc: { label: $scope.scopeHeading + '', icon: 'glyphicon-sort-by-attributes-alt', value: 0, sort: ('scope.' + getScopeSort($scope.type)) },
+						desc: { label: $scope.scopeHeading + '', icon: 'glyphicon-sort-by-attributes', value: 1, sort: '-scope.' + getScopeSort($scope.type) }
 					},
 					active: {}
 				}
@@ -573,12 +573,14 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
       $scope.sortOptions[3].active = $scope.sortOptions[3].options.asc;
 
 			// $scope Functions
-			$scope.setToolbarOption = function(option) {
-				if ($scope.toolbarOption === option) {
-					$scope.toolbarOption = '';
-				}
-				else {
-					$scope.toolbarOption = option;
+			$scope.setToolbarOption = function($event, option) {
+				if ($event.target === $event.currentTarget) {
+					if ($scope.toolbarOption === option) {
+						$scope.toolbarOption = '';
+					}
+					else {
+						$scope.toolbarOption = option;
+					}
 				}
 			};
 
@@ -586,8 +588,10 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
 			$scope.selected = function(value) {
 				if (!value) {
 					$scope.activeRequirements = 0;
+					$scope.toolbarOption = '';
 					reset();
 				} else {
+					$scope.toolbarOption = 'select';
 					$scope.activeRequirements = applyFilter($scope.requirements).length;
 				}
 				$scope.selectPartial = false;

@@ -1,8 +1,6 @@
 
  - column filtering
   + OR filtering (e.g., control 00.a OR 01.a)
- - toolbar
-  + selecting select checkbox propagates to containing button
  - dashboard
  - maintain state (toolbar, checks, etc.) across all assessments (maybe)
  - pagination (maybe)
