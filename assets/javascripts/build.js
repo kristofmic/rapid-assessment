@@ -251,11 +251,13 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
       scope.value = scope.value || 'value';
 
       scope.selectedLabel = scope.selected[scope.label];
+      scope.selectedIcon = scope.selected.icon;
 
       scope.$watch('selected', function(newVal, oldVal) {
         if (angular.isObject(newVal)){
           scope.selected = newVal;
           scope.selectedLabel = scope.selected[scope.label];
+          scope.selectedIcon = scope.selected.icon;
         }
       });
     };
@@ -520,32 +522,48 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
 				{
 					label: 'Selected',
 					options: {
-						asc: { label: 'Select - Asc', value: 0, sort: 'select' },
-						desc: { label: 'Select - Desc', value: 1, sort: '-select' }
+						asc: { label: 'Select', icon: 'glyphicon-sort-by-attributes', value: 0, sort: 'select' },
+						desc: { label: 'Select', icon: 'glyphicon-sort-by-attributes-alt', value: 1, sort: '-select' }
 					},
 					active: {}
 				},
 				{
 					label: 'Starred',
 					options: {
-						asc: { label: 'Starred - Asc', value: 0, sort: 'starred' },
-						desc: { label: 'Starred - Desc', value: 1, sort: '-starred' }
+						asc: { label: 'Starred', icon: 'glyphicon-sort-by-attributes', value: 0, sort: 'starred' },
+						desc: { label: 'Starred', icon: 'glyphicon-sort-by-attributes-alt', value: 1, sort: '-starred' }
 					},
 					active: {}
 				},
 				{
 					label: 'Domain',
 					options: {
-						asc: { label: 'Domain - Asc', value: 0, sort: 'Domain' },
-						desc: { label: 'Domain - Desc', value: 1, sort: '-Domain' }
+						asc: { label: 'Domain', icon: 'glyphicon-sort-by-attributes', value: 0, sort: 'Domain' },
+						desc: { label: 'Domain', icon: 'glyphicon-sort-by-attributes-alt', value: 1, sort: '-Domain' }
 					},
 					active: {}
 				},
 				{
 					label: 'Control',
 					options: {
-						asc: { label: 'Control - Asc', value: 0, sort: 'Control' },
-						desc: { label: 'Control - Desc', value: 1, sort: '-Control' }
+						asc: { label: 'Control', icon: 'glyphicon-sort-by-attributes', value: 0, sort: 'Control' },
+						desc: { label: 'Control', icon: 'glyphicon-sort-by-attributes-alt', value: 1, sort: '-Control' }
+					},
+					active: {}
+				},
+				{
+					label: $scope.responseHeading,
+					options: {
+						asc: { label: $scope.responseHeading + '', icon: 'glyphicon-sort-by-attributes', value: 0, sort: 'response.attId' },
+						desc: { label: $scope.responseHeading + '', icon: 'glyphicon-sort-by-attributes-alt', value: 1, sort: '-response.attId' }
+					},
+					active: {}
+				},
+				{
+					label: $scope.scopeHeading,
+					options: {
+						asc: { label: $scope.scopeHeading + '', icon: 'glyphicon-sort-by-attributes', value: 0, sort: ('scope.' + getScopeSort($scope.type)) },
+						desc: { label: $scope.scopeHeading + '', icon: 'glyphicon-sort-by-attributes-alt', value: 1, sort: '-scope.' + getScopeSort($scope.type) }
 					},
 					active: {}
 				}
@@ -651,7 +669,7 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
 			};
 
 			$scope.setSort = function(value, option, sort) {
-				removeAllSortOptions(sort.options);
+				//removeAllSortOptions(sort.options);
 				events.raise('toolbarSetSort', { column: option.sort });
 			};
 
@@ -744,6 +762,15 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
 					events.raise('toolbarRemoveSort', { column: opt.sort });
 				});
 			}
+
+			function getScopeSort(type) {
+				if (type === 'Measured' || type === 'Managed') {
+					return 'length';
+				}
+				else {
+					return 'attId';
+				}
+			};
 
 			// Event Handlers
 			$scope.$on('resetToolbar', function(e) {
@@ -1054,7 +1081,24 @@ var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G.
         });
 
         $scope.$on('toolbarSetSort', function(e, args) {
-          $scope.htSortOrder.push(args.column);
+          var replaceIndex = -1;
+          if (args.column[0] === '-') {
+            replaceIndex = _.findIndex($scope.htSortOrder, function(col) {
+              return col === args.column.split('-')[1];
+            });
+          }
+          else {
+            replaceIndex = _.findIndex($scope.htSortOrder, function(col) {
+              return col === ('-' + args.column);
+            });
+          }
+
+          if (replaceIndex >= 0) {
+            $scope.htSortOrder.splice(replaceIndex, 1, args.column);
+          }
+          else {
+            $scope.htSortOrder.push(args.column);
+          }
         });
 
         $scope.$on('toolbarRemoveSort', function(e, args) {

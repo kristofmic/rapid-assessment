@@ -1,5 +1,4 @@
- - column ordering
-  + answers
+
  - column filtering
   + OR filtering (e.g., control 00.a OR 01.a)
  - toolbar

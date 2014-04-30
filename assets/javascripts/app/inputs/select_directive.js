@@ -7,11 +7,13 @@
       scope.value = scope.value || 'value';
 
       scope.selectedLabel = scope.selected[scope.label];
+      scope.selectedIcon = scope.selected.icon;
 
       scope.$watch('selected', function(newVal, oldVal) {
         if (angular.isObject(newVal)){
           scope.selected = newVal;
           scope.selectedLabel = scope.selected[scope.label];
+          scope.selectedIcon = scope.selected.icon;
         }
       });
     };

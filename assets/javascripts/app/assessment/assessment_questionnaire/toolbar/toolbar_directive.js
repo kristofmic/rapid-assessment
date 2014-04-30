@@ -65,32 +65,48 @@
 				{
 					label: 'Selected',
 					options: {
-						asc: { label: 'Select - Asc', value: 0, sort: 'select' },
-						desc: { label: 'Select - Desc', value: 1, sort: '-select' }
+						asc: { label: 'Select', icon: 'glyphicon-sort-by-attributes', value: 0, sort: 'select' },
+						desc: { label: 'Select', icon: 'glyphicon-sort-by-attributes-alt', value: 1, sort: '-select' }
 					},
 					active: {}
 				},
 				{
 					label: 'Starred',
 					options: {
-						asc: { label: 'Starred - Asc', value: 0, sort: 'starred' },
-						desc: { label: 'Starred - Desc', value: 1, sort: '-starred' }
+						asc: { label: 'Starred', icon: 'glyphicon-sort-by-attributes', value: 0, sort: 'starred' },
+						desc: { label: 'Starred', icon: 'glyphicon-sort-by-attributes-alt', value: 1, sort: '-starred' }
 					},
 					active: {}
 				},
 				{
 					label: 'Domain',
 					options: {
-						asc: { label: 'Domain - Asc', value: 0, sort: 'Domain' },
-						desc: { label: 'Domain - Desc', value: 1, sort: '-Domain' }
+						asc: { label: 'Domain', icon: 'glyphicon-sort-by-attributes', value: 0, sort: 'Domain' },
+						desc: { label: 'Domain', icon: 'glyphicon-sort-by-attributes-alt', value: 1, sort: '-Domain' }
 					},
 					active: {}
 				},
 				{
 					label: 'Control',
 					options: {
-						asc: { label: 'Control - Asc', value: 0, sort: 'Control' },
-						desc: { label: 'Control - Desc', value: 1, sort: '-Control' }
+						asc: { label: 'Control', icon: 'glyphicon-sort-by-attributes', value: 0, sort: 'Control' },
+						desc: { label: 'Control', icon: 'glyphicon-sort-by-attributes-alt', value: 1, sort: '-Control' }
+					},
+					active: {}
+				},
+				{
+					label: $scope.responseHeading,
+					options: {
+						asc: { label: $scope.responseHeading + '', icon: 'glyphicon-sort-by-attributes', value: 0, sort: 'response.attId' },
+						desc: { label: $scope.responseHeading + '', icon: 'glyphicon-sort-by-attributes-alt', value: 1, sort: '-response.attId' }
+					},
+					active: {}
+				},
+				{
+					label: $scope.scopeHeading,
+					options: {
+						asc: { label: $scope.scopeHeading + '', icon: 'glyphicon-sort-by-attributes', value: 0, sort: ('scope.' + getScopeSort($scope.type)) },
+						desc: { label: $scope.scopeHeading + '', icon: 'glyphicon-sort-by-attributes-alt', value: 1, sort: '-scope.' + getScopeSort($scope.type) }
 					},
 					active: {}
 				}
@@ -196,7 +212,7 @@
 			};
 
 			$scope.setSort = function(value, option, sort) {
-				removeAllSortOptions(sort.options);
+				//removeAllSortOptions(sort.options);
 				events.raise('toolbarSetSort', { column: option.sort });
 			};
 
@@ -289,6 +305,15 @@
 					events.raise('toolbarRemoveSort', { column: opt.sort });
 				});
 			}
+
+			function getScopeSort(type) {
+				if (type === 'Measured' || type === 'Managed') {
+					return 'length';
+				}
+				else {
+					return 'attId';
+				}
+			};
 
 			// Event Handlers
 			$scope.$on('resetToolbar', function(e) {

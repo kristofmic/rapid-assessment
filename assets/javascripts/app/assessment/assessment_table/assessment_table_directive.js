@@ -98,7 +98,24 @@
         });
 
         $scope.$on('toolbarSetSort', function(e, args) {
-          $scope.htSortOrder.push(args.column);
+          var replaceIndex = -1;
+          if (args.column[0] === '-') {
+            replaceIndex = _.findIndex($scope.htSortOrder, function(col) {
+              return col === args.column.split('-')[1];
+            });
+          }
+          else {
+            replaceIndex = _.findIndex($scope.htSortOrder, function(col) {
+              return col === ('-' + args.column);
+            });
+          }
+
+          if (replaceIndex >= 0) {
+            $scope.htSortOrder.splice(replaceIndex, 1, args.column);
+          }
+          else {
+            $scope.htSortOrder.push(args.column);
+          }
         });
 
         $scope.$on('toolbarRemoveSort', function(e, args) {
